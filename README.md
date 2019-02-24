@@ -37,9 +37,9 @@ Once the music has been created it will be saved to the database and be availabl
 
 ## Description of Technologies Used
 - Angular6: used for all front end views. Chosen as its a very easy to learn framework with wide support, and it follows the taught principles of separating UI and API functionality within front end code. Easily manageable, deployable and produces clean code structure.
-- MongoDB: used for all database storage. Chosen because easily integrated, widely supported, great documentationt and support for storing files efficiently.
+- MongoDB: used for all database storage. Chosen because easily integrated, widely supported, great documentation and support for storing files efficiently.
 - Heroku: used for deployment. Chosen as its free, provides easy hosting, wide support, integrates well with our chosen MEAN stack and good documentation.
-- Web Audio API: used for audio integrations. manipulations and interactions n in new browsers. Will allow us to possibly implement more advanced featuires.
+- Web Audio API: used for audio integrations. Manipulations and interactions in new browsers. Will allow us to possibly implement more advanced featuires.
 
 ## Technical Challenges
 
@@ -47,4 +47,4 @@ Once the music has been created it will be saved to the database and be availabl
 2. Managing audio-file upload, storage and creation
 3. Recording and saving instruments and samples
 4. Managing user -> object and database relations to enable quick and efficent lookups, inserts, updates, etc.
-5. Learning and developing with new frameworks, technologies asnd being able to integrate them all well.
+5. Learning and developing with new frameworks, technologies and being able to integrate them all well.
