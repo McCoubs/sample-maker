@@ -1,5 +1,3 @@
-import { environment} from './src/environments/environment';
-
 let express = require('express');
 let bodyParser = require('body-parser');
 let mongodb = require('mongodb');
@@ -16,7 +14,7 @@ app.use(express.static(distDir));
 let db;
 
 // Connect to the database before starting the application server.
-mongodb.MongoClient.connect(environment.mongodbURI, function (err, client) {
+mongodb.MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/test', function (err, client) {
   if (err) {
     console.log(err);
     process.exit(1);
@@ -27,7 +25,7 @@ mongodb.MongoClient.connect(environment.mongodbURI, function (err, client) {
   console.log('Database connection ready');
 
   // Initialize the app.
-  let server = app.listen(environment.port, function () {
+  let server = app.listen(process.env.port || 8080, function () {
     let port = server.address().port;
     console.log('App now running on port', port);
   });
