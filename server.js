@@ -1,5 +1,4 @@
-import { environment } from './src/environments/environment';
-
+let environment = require('./src/environments/environment');
 
 let express = require('express');
 let bodyParser = require('body-parser');
