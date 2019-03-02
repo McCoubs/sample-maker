@@ -6,10 +6,10 @@
     "run": "ng serve --host 0.0.0.0 --disable-host-check",
     "start": "node server.js",
     "build": "ng build",
+    "heroku-postbuild": "ng build --prod --output-path dist",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "postinstall": "ng build --prod --output-path dist"
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
@@ -50,5 +50,6 @@
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
     "typescript": "~3.1.6"
-  }
+  },
+  "heroku-run-build-script": true
 }
