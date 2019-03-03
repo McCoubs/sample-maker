@@ -1,45 +1,45 @@
 let express = require('express');
 let bodyParser = require('body-parser');
-let mongodb = require('mongodb');
-let ObjectID = mongodb.ObjectID;
+let mongoose = require('mongoose');
+let passport = require('passport');
+require('./src/api/models/users');
+require('./src/api/config/passport');
+let jwt = require('express-jwt');
 
 let app = express();
 app.use(bodyParser.json());
+app.use(passport.initialize());
 
 // Create link to Angular build directory
 let distDir = __dirname + '/dist/';
 app.use(express.static(distDir));
 
-// Create a database letiable outside of the database connection callback to reuse the connection pool in your app.
-let db;
+// connect to mongoDB and bind errors to console
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/test', { useNewUrlParser: true });
+let db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-// Connect to the database before starting the application server.
-mongodb.MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/test', function (err, client) {
-  if (err) {
-    console.log(err);
-    process.exit(1);
-  }
-
-  // Save database object from the callback for reuse.
-  db = client.db();
-  console.log('Database connection ready');
-
-  // Initialize the app.
-  let server = app.listen(process.env.PORT || 8080, function () {
-    let port = server.address().port;
-    console.log('App now running on port', port);
-  });
+// Initialize the app.
+let server = app.listen(process.env.PORT || 8080, function () {
+  let port = server.address().port;
+  console.log('App now running on port', port);
 });
 
-// app routes
-// TODO: fix this example terrible error handler
-function handleError(res, reason, message, code) {
-  console.log('ERROR: ' + reason);
-  res.status(code || 500).json({'error': message});
-}
+// helper function to validate jwt tokens, pass to routers to use
+let jwtAuth = jwt({
+  secret: process.env.JWT_SECRET || 'LOCALSECRETTHISDOESNTMATTER',
+  userProperty: 'payload'
+});
 
-// TODO: actual routes, probably move to their own files (object constructors around node app)
-app.post('', function(req, res) {});
-app.get('', function(req, res) {});
-app.put('', function(req, res) {});
-app.delete('', function(req, res) {});
+// error handlers
+// Catch unauthorised errors
+app.use(function (err, req, res, next) {
+  if (err && err.name === 'UnauthorizedError') {
+    res.status(401);
+    res.json({'message' : err.name + ': ' + err.message});
+  }
+});
+
+
+// app routes
+require('./src/api/controllers/user-routing')(app, jwtAuth);
