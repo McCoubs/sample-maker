@@ -6,6 +6,7 @@ Thumbs.db
 node_modules
 uploads
 db
+dist
 *-lock.json
 
 # IDE files
