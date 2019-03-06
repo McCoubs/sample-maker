@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   form: FormGroup;
   returnUrl: string;
   loading = false;
-  messages: Array<string>;
+  messages: Array<string> = [];
   loginAction = true;
 
   constructor(
@@ -31,7 +31,6 @@ export class LoginComponent implements OnInit {
       password: ['', Validators.required],
       name: ['']
     });
-    this.messages = [];
   }
 
   ngOnInit(): void {
