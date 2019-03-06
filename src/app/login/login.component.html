@@ -12,12 +12,12 @@
       </div>
       <div class="input-container">
         <label class="form-label" for="email">Your Email:</label><br>
-        <input class="form-control" type="email" id="email" name="email" formControlName="email" required>
+        <input class="form-control" type="email" id="email" name="email" formControlName="email">
         <fa class="input-icon" name="envelope"></fa>
       </div>
       <div class="input-container">
         <label class="form-label" for="password">Password:</label><br>
-        <input class="form-control" type="password" id="password" name="password" formControlName="password" required>
+        <input class="form-control" type="password" id="password" name="password" formControlName="password">
         <fa class="input-icon" name="lock"></fa>
       </div>
       <button class="btn btn-primary action-btn" type="submit" [disabled]="loading">{{ loginAction ? 'Sign In' : 'Register'}}</button>

@@ -31,6 +31,7 @@ export class LoginComponent implements OnInit {
       password: ['', Validators.required],
       name: ['']
     });
+    this.messages = [];
   }
 
   ngOnInit(): void {
@@ -52,6 +53,7 @@ export class LoginComponent implements OnInit {
             this.userService.setJWTToken(data.token);
             this.router.navigateByUrl(this.returnUrl);
             this.loading = false;
+            this.messages = [];
           },
           (error) => {
             // on error, display the given message
@@ -74,6 +76,7 @@ export class LoginComponent implements OnInit {
             this.userService.setJWTToken(data.token);
             this.router.navigateByUrl(this.returnUrl);
             this.loading = false;
+            this.messages = [];
           },
           (error) => {
             // on error, display the given message
