@@ -27,33 +27,17 @@ export class AuthenticationService {
   public logout(): void {
     // clear storage and navigate to home
     this.userService.clearStorage();
-    this.router.navigateByUrl('/');
+    this.router.navigateByUrl('/login');
   }
 
-  public register(user: Object): Observable<any> {
-    // hit register api and pipe token data to user service
-    return this.http.post('/api/register', user).pipe(
-        map((data: TokenResponse) => {
-          if (data.token) {
-            this.userService.setCurrentUser(this.userService.parseJWTToken(data.token));
-            this.userService.setJWTToken(data.token);
-          }
-          return data;
-        })
-    );
+  public register(user: TokenPayload): Observable<any> {
+    // hit register api with given user
+    return this.http.post('/api/register', user);
   }
 
   public login(user: TokenPayload): Observable<any> {
-    // hit login api and pipe token data to user service
-    return this.http.post('/api/login', user).pipe(
-        map((data: TokenResponse) => {
-          if (data.token) {
-            this.userService.setCurrentUser(this.userService.parseJWTToken(data.token));
-            this.userService.setJWTToken(data.token);
-          }
-          return data;
-        })
-    );
+    // hit login api with given user info
+    return this.http.post('/api/login', user);
   }
 
   public profile(): Observable<any> {

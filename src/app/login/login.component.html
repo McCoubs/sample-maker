@@ -1,0 +1,30 @@
+<div class="login-component">
+  <div class="action-container col-8">
+    <div *ngIf="!!messages && messages.length > 0" class="notifications-container" >
+      <fa class="exclamation" name="exclamation"></fa>
+      <div *ngFor="let message of messages" class="message">{{ message }}</div>
+    </div>
+    <form class="sign-in-form action-form" [formGroup]="form" (submit)="loginAction ? login() : register()">
+      <div *ngIf="!loginAction" class="input-container">
+        <label class="form-label" for="name">Your Name:</label><br>
+        <input class="form-control" type="text" id="name" name="name" formControlName="name">
+        <fa class="input-icon" name="signature"></fa>
+      </div>
+      <div class="input-container">
+        <label class="form-label" for="email">Your Email:</label><br>
+        <input class="form-control" type="email" id="email" name="email" formControlName="email" required>
+        <fa class="input-icon" name="envelope"></fa>
+      </div>
+      <div class="input-container">
+        <label class="form-label" for="password">Password:</label><br>
+        <input class="form-control" type="password" id="password" name="password" formControlName="password" required>
+        <fa class="input-icon" name="lock"></fa>
+      </div>
+      <button class="btn btn-primary action-btn" type="submit" [disabled]="loading">{{ loginAction ? 'Sign In' : 'Register'}}</button>
+
+      <button class="btn btn-secondary swap-btn" type="button" [disabled]="loading" (click)="loginAction = !loginAction">
+        Looking to {{ loginAction ? 'Register?' : 'Sign In?'}}
+      </button>
+    </form>
+  </div>
+</div>

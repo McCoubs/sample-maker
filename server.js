@@ -25,6 +25,12 @@ let server = app.listen(process.env.PORT || 8080, function () {
   console.log('App now running on port', port);
 });
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 // helper function to validate jwt tokens, pass to routers to use
 let jwtAuth = jwt({
   secret: process.env.JWT_SECRET || 'LOCALSECRETTHISDOESNTMATTER',
@@ -40,6 +46,19 @@ app.use(function (err, req, res, next) {
   }
 });
 
+// helper to generate errors json
+let errorGenerator = function(err, status, message = '') {
+  return {
+    'message': message,
+    'error': err !== undefined && err !== null ? err.name + ': ' + err.message : '',
+    'status': status
+  }
+};
 
 // app routes
-require('./src/api/controllers/user-routing')(app, jwtAuth);
+require('./src/api/controllers/user-routing')(app, jwtAuth, errorGenerator);
+
+// Catch all other routes and return the index file
+app.get('*', (req, res) => {
+  res.sendFile(__dirname + '/dist/index.html');
+});

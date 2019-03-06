@@ -1,1 +1,46 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css?family=Raleway:400,700|Roboto:400,700|Poppins:400,500');
+@import "styles-variables";
+
+.row {
+  margin: 0 !important;
+}
+
+// global button styles, use anywhere to apply
+.btn {
+  &.btn-primary {
+    background-color: $palette-blue;
+    color: #ffffff;
+    border: 1px solid $palette-blue;
+
+    &:hover:not([disabled]) {
+      background-color: #ffffff;
+      color: $palette-blue;
+      border: 1px solid $palette-blue;
+    }
+  }
+
+  &.btn-secondary {
+    background-color: darkgray;
+    color: #ffffff;
+    border: 1px solid darkgray;
+
+    &:hover:not([disabled]) {
+      background-color: #ffffff;
+      color: darkgray;
+      border: 1px solid darkgray;
+    }
+  }
+
+  &.btn-negative {
+    background-color: #e35c5b;
+    color: #ffffff;
+    border: 1px solid #e35c5b;
+
+    &:hover:not([disabled]) {
+      background-color: #ffffff;
+      color: #e35c5b;
+      border: 1px solid #e35c5b;
+    }
+  }
+}
+
