@@ -51,7 +51,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     // remove all stored session info
-    this.authService.logout();
+    this.userService.clearStorage();
     // store the return url to redirect the user after proper login
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
   }

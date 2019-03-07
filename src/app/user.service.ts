@@ -22,7 +22,7 @@ export class UserService {
   public setCurrentUser(data: UserData): void {
     // Set current user
     this.currentUser = new User(data);
-    this.cookieService.set('currentUser', JSON.stringify(this.currentUser));
+    this.cookieService.set('currentUser', JSON.stringify(this.currentUser), this.currentUser.exp);
   }
 
   public setJWTToken(token: string): void {
@@ -33,7 +33,7 @@ export class UserService {
   public getCurrentUser(): User {
     // retrieve and set current user
     if (isNullOrUndefined(this.currentUser)) {
-      const localUser = JSON.parse(this.cookieService.get('currentUser'));
+      const localUser = this.cookieService.check('currentUser') ? JSON.parse(this.cookieService.get('currentUser')) : null;
       if (!isNullOrUndefined(localUser)) {
         this.currentUser = new User(localUser);
       }
@@ -43,7 +43,7 @@ export class UserService {
 
   public getJWTToken(): string {
     if (isNullOrUndefined(this.token)) {
-      this.token = this.cookieService.get('jwt-token');
+      this.token = this.cookieService.check('jwt-token') ? this.cookieService.get('jwt-token') : null;
     }
     return this.token;
   }
