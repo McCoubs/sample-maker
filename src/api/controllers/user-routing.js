@@ -20,18 +20,12 @@ module.exports = function UserRouting(app, auth = () => {}, errorGenerator = () 
   app.post('/api/login', function(req, res) {
     passport.authenticate('local', function(err, user, info) {
       // If Passport throws/catches an error
-      if (err) {
-        res.status(404).json(errorGenerator(err, 404));
+      if (err || !user) {
+        res.status(401).json(errorGenerator(err, 401, 'Failed to login. Email and/or password are incorrect'));
         return;
       }
-
       // If a user is found
-      if (user) {
-        res.json({'token' : user.generateJwt()});
-      } else {
-        // If user is not found
-        res.status(401).json(info);
-      }
+      res.json({'token' : user.generateJwt()});
     })(req, res);
   });
 

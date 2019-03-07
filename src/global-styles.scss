@@ -1,0 +1,65 @@
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px
+);
+
+$palette-blue: #30a9e5;
+$palette-darkgray: darkgray;
+$palette-lightgray: #f3f3f3;
+$palette-error: #e35c5b;
+
+.container {
+  box-sizing: border-box;
+  border-radius: 3px;
+  border: 2px $palette-blue solid;
+}
+
+.row {
+  margin: 0 !important;
+}
+
+// global button styles, use anywhere to apply
+.btn {
+  &.btn-primary {
+    background-color: $palette-blue;
+    color: #ffffff;
+    border: 1px solid $palette-blue;
+
+    &:hover:not([disabled]) {
+      background-color: #ffffff;
+      color: $palette-blue;
+      border: 1px solid $palette-blue;
+    }
+  }
+
+  &.btn-secondary {
+    background-color: $palette-darkgray;
+    color: #ffffff;
+    border: 1px solid $palette-darkgray;
+
+    &:hover:not([disabled]) {
+      background-color: #ffffff;
+      color: $palette-darkgray;
+      border: 1px solid $palette-darkgray;
+    }
+  }
+
+  &.btn-negative {
+    background-color: $palette-error;
+    color: #ffffff;
+    border: 1px solid $palette-error;
+
+    &:hover:not([disabled]) {
+      background-color: #ffffff;
+      color: $palette-error;
+      border: 1px solid $palette-error;
+    }
+  }
+}
+
+.error {
+  color: $palette-error;
+}

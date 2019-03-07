@@ -1,26 +1,38 @@
-<div class="login-component">
-  <div class="action-container col-8">
-    <div *ngIf="!!messages && messages.length > 0" class="notifications-container" >
-      <fa class="exclamation" name="exclamation"></fa>
-      <div *ngFor="let message of messages" class="message">{{ message }}</div>
+<div class="login-component container">
+  <div class="action-container">
+    <div *ngIf="!!message" class="notifications-container">
+      <fa-icon class="exclamation" [icon]="faExclamation"></fa-icon>
+      {{ message }}
     </div>
     <form class="sign-in-form action-form" [formGroup]="form" (submit)="loginAction ? login() : register()">
       <div *ngIf="!loginAction" class="input-container">
         <label class="form-label" for="name">Your Name:</label><br>
         <input class="form-control" type="text" id="name" name="name" formControlName="name">
-        <fa class="input-icon" name="signature"></fa>
+        <fa-icon class="input-icon" [icon]="faSignature"></fa-icon>
       </div>
       <div class="input-container">
         <label class="form-label" for="email">Your Email:</label><br>
-        <input class="form-control" type="email" id="email" name="email" formControlName="email">
-        <fa class="input-icon" name="envelope"></fa>
+        <div class="input-container">
+          <input class="form-control" type="email" id="email" name="email" formControlName="email">
+          <fa-icon class="input-icon" [icon]="faEnvelope"></fa-icon>
+        </div>
+        <div *ngIf="emailInvalid && form.controls.email.errors" class="error form-error">
+          <div *ngIf="form.controls.email.errors.required">Email is required.</div>
+          <div *ngIf="form.controls.email.errors.email">Email must be valid.</div>
+        </div>
       </div>
       <div class="input-container">
         <label class="form-label" for="password">Password:</label><br>
-        <input class="form-control" type="password" id="password" name="password" formControlName="password">
-        <fa class="input-icon" name="lock"></fa>
+        <div class="input-container">
+          <input class="form-control" type="password" id="password" name="password" formControlName="password">
+          <fa-icon class="input-icon" [icon]="faLock"></fa-icon>
+        </div>
+        <div *ngIf="passwordInvalid && form.controls.password.errors" class="error form-error">
+          <div *ngIf="form.controls.password.errors.required">Password is required.</div>
+          <div *ngIf="form.controls.password.errors.minlength">Password must be 6 characters long.</div>
+        </div>
       </div>
-      <button class="btn btn-primary action-btn" type="submit" [disabled]="loading">{{ loginAction ? 'Sign In' : 'Register'}}</button>
+      <button class="btn btn-primary action-btn" type="submit" [disabled]="loading">{{ loginAction ? 'Sign In' : 'Register' }}</button>
 
       <button class="btn btn-secondary swap-btn" type="button" [disabled]="loading" (click)="loginAction = !loginAction">
         Looking to {{ loginAction ? 'Register?' : 'Sign In?'}}
