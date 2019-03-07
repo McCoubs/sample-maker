@@ -2,11 +2,15 @@ let express = require('express');
 let bodyParser = require('body-parser');
 let mongoose = require('mongoose');
 let passport = require('passport');
+let forceSecure = require("force-secure-express");
 require('./src/api/models/users');
 require('./src/api/config/passport');
 let jwt = require('express-jwt');
 
 let app = express();
+app.use(forceSecure([
+  'sample-maker.herokuapp.com'
+]));
 app.use(bodyParser.json());
 app.use(passport.initialize());
 

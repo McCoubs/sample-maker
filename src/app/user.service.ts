@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserData } from './interfaces/authentication';
+import { environment } from '../environments/environment';
 import { User } from './classes/user';
 import { isNullOrUndefined } from 'util';
 import { CookieService } from 'ngx-cookie-service';
@@ -22,12 +23,12 @@ export class UserService {
   public setCurrentUser(data: UserData): void {
     // Set current user
     this.currentUser = new User(data);
-    this.cookieService.set('currentUser', JSON.stringify(this.currentUser), this.currentUser.exp);
+    this.setCookie('currentUser', JSON.stringify(this.currentUser));
   }
 
   public setJWTToken(token: string): void {
     this.token = token;
-    this.cookieService.set('jwt-token', token);
+    this.setCookie('jwt-token', token);
   }
 
   public getCurrentUser(): User {
@@ -53,6 +54,11 @@ export class UserService {
     this.token = null;
     this.currentUser = null;
     this.cookieService.set('currentUser', null);
-    this.cookieService.set('jwt-token', null);
+    this.setCookie('currentUser', null);
+    this.setCookie('jwt-token', null);
+  }
+
+  private setCookie(cookie: string, value) {
+    this.cookieService.set(cookie, value, undefined, undefined, undefined, environment.secureFlag, 'Strict');
   }
 }
