@@ -22,5 +22,4 @@ passport.use(new LocalStrategy({usernameField: 'email'}, function(username, pass
     // If credentials are correct, return the user object
     return done(null, user);
   });
-}
-));
+}));

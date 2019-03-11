@@ -53,14 +53,6 @@ connection.once('open', function callback () {
     next();
   });
 
-  // Catch unauthorised errors
-  app.use(function (err, req, res, next) {
-    if (err && err.name === 'UnauthorizedError') {
-      res.status(401);
-      res.json({'message' : err.name + ': ' + err.message});
-    }
-  });
-
   // app routes
   require('./src/api/controllers/user-routing')(app, jwtAuth, errorGenerator);
   require('./src/api/controllers/sample-routing')(app, connection, jwtAuth, errorGenerator);
@@ -68,5 +60,12 @@ connection.once('open', function callback () {
   // Catch all other routes and return the index file
   app.get('*', (req, res) => {
     res.sendFile(__dirname + '/dist/index.html');
+  });
+
+  // Catch unauthorised errors
+  app.use(function (err, req, res, next) {
+    if (err && err.name === 'UnauthorizedError') {
+      res.status(401).json({'message' : 'you do not have permission for this action, please login'});
+    }
   });
 });

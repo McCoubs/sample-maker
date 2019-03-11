@@ -8,7 +8,7 @@ module.exports = function SampleRouting(app, conn, auth = () => {}, errorGenerat
   let gfs = Grid(conn.db, mongoose.mongo);
 
   // route for sample upload TODO: add user id to the upload
-  app.post('/api/samples', (req, res) => {
+  app.post('/api/samples', auth, (req, res) => {
     let sample = req.files.sample;
     // create writestream for new file
     let writestream = gfs.createWriteStream({ filename: sample.name, content_type: sample.mimetype });
@@ -30,7 +30,7 @@ module.exports = function SampleRouting(app, conn, auth = () => {}, errorGenerat
   });
 
   // get metadata for a single sample
-  app.get('/api/samples/:id', (req, res) => {
+  app.get('/api/samples/:id', auth, (req, res) => {
     // attempt to find file
     gfs.findOne({ _id: req.params.id }, (err, file) => {
       // on error, generate error
@@ -40,7 +40,7 @@ module.exports = function SampleRouting(app, conn, auth = () => {}, errorGenerat
   });
 
   // get actual music file for sample
-  app.get('/api/samples/:id/download', (req, res) => {
+  app.get('/api/samples/:id/download', auth, (req, res) => {
     // check existence of file
     gfs.findOne({ _id: req.params.id }, (err, file) => {
       // if no file
@@ -56,7 +56,7 @@ module.exports = function SampleRouting(app, conn, auth = () => {}, errorGenerat
 
   // Route for getting all the files
   // TODO: make routes for search and shit
-  app.get('/api/samples', (req, res) => {
+  app.get('/api/samples', auth, (req, res) => {
     // get all files
     gfs.files.find({}).toArray((err, files) => {
       // return error on error
