@@ -14,6 +14,9 @@ let userSchema = new mongoose.Schema({
   },
   hash: String,
   salt: String
+},
+{
+  timestamps: true
 });
 
 userSchema.methods.setPassword = function(password){

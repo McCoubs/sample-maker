@@ -4,7 +4,7 @@ let User = mongoose.model('User');
 
 module.exports = function UserRouting(app, auth = () => {}, errorGenerator = () => {}) {
 
-  app.post('/api/register', function(req, res) {
+  app.post('/api/register', (req, res) => {
     let user = new User();
 
     user.name = req.body.name;
@@ -17,7 +17,7 @@ module.exports = function UserRouting(app, auth = () => {}, errorGenerator = () 
     });
   });
 
-  app.post('/api/login', function(req, res) {
+  app.post('/api/login', (req, res) => {
     passport.authenticate('local', function(err, user, info) {
       // If Passport throws/catches an error
       if (err || !user) {
@@ -29,20 +29,20 @@ module.exports = function UserRouting(app, auth = () => {}, errorGenerator = () 
     })(req, res);
   });
 
-  app.get('/api/users/:id', function(req, res) {
+  app.get('/api/users/:id', (req, res) => {
     // If no user ID exists in the JWT return a 401
     if (!req.params.id) {
       res.status(401).json(errorGenerator(null, 401, 'UnauthorizedError: private profile'));
     } else {
       // Otherwise continue
-      User.findById(req.params.id).exec(function(err, user) {
-        if (err || user === null) return res.status(500).json(errorGenerator(err, 401, 'no user found with id: ' + req.params.id));
+      User.findById(req.params.id).exec((err, user) => {
+        if (err || !user) return res.status(500).json(errorGenerator(err, 500, 'no user found with id: ' + req.params.id));
         res.status(200).json(user);
       });
     }
   });
 
-  app.delete('/api/users/:id', function(req, res) {
+  app.delete('/api/users/:id', (req, res) => {
 
   });
 };
