@@ -13,7 +13,7 @@ module.exports = function UserRouting(app) {
 
     // attempt to save new user; on error => error else => return token
     user.save(function(err) {
-      if (err) res.status(500).json(errorGenerator(err, 500, 'Error creating new user with email: ' + req.body.email));
+      if (err) return res.status(500).json(errorGenerator(err, 500, 'Error creating new user with email: ' + req.body.email));
       res.json({'token' : user.generateJwt()});
     });
   });
@@ -22,10 +22,10 @@ module.exports = function UserRouting(app) {
     // try to find user by email
     User.findOne({ email: req.body.email }, (err, user) => {
       // return error on error or no user
-      if (err || !user) res.status(500).json(errorGenerator(err, 500, 'Cannot find user with provided email'));
+      if (err || !user) return res.status(500).json(errorGenerator(err, 500, 'Cannot find user with provided email'));
       // Return if password is wrong
       if (!user.validPassword(req.body.password)) {
-        res.status(401).json(errorGenerator(err, 401, 'Failed to login. Email and/or password are incorrect'));
+        return res.status(401).json(errorGenerator(err, 401, 'Failed to login. Email and/or password are incorrect'));
       }
       res.json({'token' : user.generateJwt()});
     });
@@ -34,7 +34,7 @@ module.exports = function UserRouting(app) {
   app.get('/api/users/:id', (req, res) => {
     // If no user ID exists in the JWT return a 401
     if (!req.params.id) {
-      res.status(401).json(errorGenerator(null, 401, 'UnauthorizedError: private profile'));
+      return res.status(401).json(errorGenerator(null, 401, 'UnauthorizedError: private profile'));
     } else {
       // Otherwise continue
       User.findById(req.params.id).exec((err, user) => {

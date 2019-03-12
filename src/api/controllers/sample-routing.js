@@ -38,7 +38,7 @@ module.exports = function SampleRouting(app, conn) {
     });
     // on write error
     writestream.on('error', function() {
-      res.status(500).json(errorGenerator(null, 500, 'Error storing sample'));
+      return res.status(500).json(errorGenerator(null, 500, 'Error storing sample'));
     });
   });
 
@@ -70,7 +70,7 @@ module.exports = function SampleRouting(app, conn) {
     // get all samples
     Sample.find({}, (err, samples) => {
       // return error on error
-      if (err || !samples) res.status(500).json(errorGenerator(err, 500, 'Server ERROR: could not get samples'));
+      if (err || !samples) return res.status(500).json(errorGenerator(err, 500, 'Server ERROR: could not get samples'));
       res.json(samples);
     });
   });
