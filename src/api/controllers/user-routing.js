@@ -1,32 +1,34 @@
-let passport = require('passport');
 let mongoose = require('mongoose');
 let User = mongoose.model('User');
+let { errorGenerator, jwtAuth } = require('../helpers');
 
-module.exports = function UserRouting(app, auth = () => {}, errorGenerator = () => {}) {
+module.exports = function UserRouting(app) {
 
   app.post('/api/register', (req, res) => {
     let user = new User();
-
+    // set new user info
     user.name = req.body.name;
     user.email = req.body.email;
-
     user.setPassword(req.body.password);
 
+    // attempt to save new user; on error => error else => return token
     user.save(function(err) {
+      if (err) res.status(500).json(errorGenerator(err, 500, 'Error creating new user with email: ' + req.body.email));
       res.json({'token' : user.generateJwt()});
     });
   });
 
   app.post('/api/login', (req, res) => {
-    passport.authenticate('local', function(err, user, info) {
-      // If Passport throws/catches an error
-      if (err || !user) {
+    // try to find user by email
+    User.findOne({ email: req.body.email }, (err, user) => {
+      // return error on error or no user
+      if (err || !user) res.status(500).json(errorGenerator(err, 500, 'Cannot find user with provided email'));
+      // Return if password is wrong
+      if (!user.validPassword(req.body.password)) {
         res.status(401).json(errorGenerator(err, 401, 'Failed to login. Email and/or password are incorrect'));
-        return;
       }
-      // If a user is found
       res.json({'token' : user.generateJwt()});
-    })(req, res);
+    });
   });
 
   app.get('/api/users/:id', (req, res) => {

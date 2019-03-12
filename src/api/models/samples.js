@@ -5,6 +5,8 @@ let sampleSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  file_id: { type: mongoose.Schema.Types.ObjectId },
   tags: [{type: String, lowercase: true, trim: true}],
   genres: [{type: String, lowercase: true, trim: true}],
   published: {

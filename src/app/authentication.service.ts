@@ -42,14 +42,6 @@ export class AuthenticationService {
 
   public profile(): Observable<any> {
     const user = this.userService.getCurrentUser();
-    return this.http.get('api/users/' + user._id, { headers: { Authorization: `Bearer ${this.userService.getJWTToken()}` }}).pipe(
-        map((data: TokenResponse) => {
-          if (data.token) {
-            this.userService.setCurrentUser(this.userService.parseJWTToken(data.token));
-            this.userService.setJWTToken(data.token);
-          }
-          return data;
-        })
-    );
+    return this.http.get('api/users/' + user._id);
   }
 }

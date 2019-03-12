@@ -19,16 +19,19 @@ let userSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// hashes and encrypts password
 userSchema.methods.setPassword = function(password){
   this.salt = crypto.randomBytes(16).toString('hex');
   this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha512').toString('hex');
 };
 
+// checks if password if valid
 userSchema.methods.validPassword = function(password) {
   let hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha512').toString('hex');
   return this.hash === hash;
 };
 
+// helper to generate a jwt for a user
 userSchema.methods.generateJwt = function() {
   // set expiry for 7 days from now
   let expiry = new Date();

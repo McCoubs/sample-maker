@@ -1,67 +1,77 @@
 let mongoose = require('mongoose');
+let Sample = mongoose.model('Sample');
 let stream = require('stream');
 let Grid = require('gridfs-stream');
+let { errorGenerator, jwtAuth } = require('../helpers');
 // crap monkey patch for mongoose error
 eval(`Grid.prototype.findOne = ${Grid.prototype.findOne.toString().replace('nextObject', 'next')}`);
 
-module.exports = function SampleRouting(app, conn, auth = () => {}, errorGenerator = () => {}) {
+module.exports = function SampleRouting(app, conn) {
   let gfs = Grid(conn.db, mongoose.mongo);
 
-  // route for sample upload TODO: add user id to the upload
-  app.post('/api/samples', auth, (req, res) => {
-    let sample = req.files.sample;
+  // route for sample upload
+  app.post('/api/samples', jwtAuth, (req, res) => {
+    let sampleFile = req.files.sample;
     // create writestream for new file
-    let writestream = gfs.createWriteStream({ filename: sample.name, content_type: sample.mimetype });
+    let writestream = gfs.createWriteStream({ filename: sampleFile.name, content_type: sampleFile.mimetype });
 
     // create readable from given file, pipe into db
     let readable = new stream.Readable();
-    readable.push(sample.data);
+    readable.push(sampleFile.data);
     readable.push(null);
     readable.pipe(writestream);
 
-    // on successful write, return data
+    // on successful write
     writestream.on('close', function (file) {
-      res.json({message: 'File Created: ' + file.filename + ' with id: ' + file._id, _id: file._id});
+      // create a sample with given data TODO: add genres, tags, etc....
+      Sample.create({ name: file.filename, author: req.user._id, file_id: file._id }, (err, sample) => {
+        // on error need to delete file and respond with error
+        if (err || !sample) {
+          gfs.remove({ _id: file._id }, function (err) {
+            if (err) return res.status(500).json(errorGenerator(err, 500, 'Error creating sample'));
+            return res.status(500).json(errorGenerator(err, 500, 'Error creating sample'));
+          });
+        }
+        // else respond with created sample
+        res.json(sample);
+      });
     });
-    // catch error and return
+    // on write error
     writestream.on('error', function() {
-      res.status(500).json(errorGenerator(null, 500, 'Error storing file'));
+      res.status(500).json(errorGenerator(null, 500, 'Error storing sample'));
     });
   });
 
-  // get metadata for a single sample
-  app.get('/api/samples/:id', auth, (req, res) => {
-    // attempt to find file
-    gfs.findOne({ _id: req.params.id }, (err, file) => {
+  // get data for single sample
+  app.get('/api/samples/:id', jwtAuth, (req, res) => {
+    // attempt to find sample
+    Sample.findOne({ _id: req.params.id }, (err, sample) => {
       // on error, generate error
-      if (err || !file) return res.status(500).json(errorGenerator(err, 500, 'no sample found with id: ' + req.params.id));
-      res.json(file);
+      if (err || !sample) return res.status(500).json(errorGenerator(err, 500, 'no sample found with id: ' + req.params.id));
+      res.json(sample);
     });
   });
 
   // get actual music file for sample
-  app.get('/api/samples/:id/download', auth, (req, res) => {
-    // check existence of file
-    gfs.findOne({ _id: req.params.id }, (err, file) => {
-      // if no file
-      if (err || !file) return res.status(500).json(errorGenerator(err, 500, 'no sample found with id: ' + req.params.id));
+  app.get('/api/samples/:id/download', jwtAuth, (req, res) => {
+    // find sample
+    Sample.findOne({ _id: req.params.id }, (err, sample) => {
+      // if no sample, respond with error
+      if (err || !sample) return res.status(500).json(errorGenerator(err, 500, 'no sample found with id: ' + req.params.id));
 
-      // set the proper content type
-      res.set('Content-Type', file.contentType);
       // create and pipe file to response
-      let readstream = gfs.createReadStream({ _id: req.params.id });
+      let readstream = gfs.createReadStream({ _id: sample.file_id });
       readstream.pipe(res);
     });
   });
 
-  // Route for getting all the files
-  // TODO: make routes for search and shit
-  app.get('/api/samples', auth, (req, res) => {
-    // get all files
-    gfs.files.find({}).toArray((err, files) => {
+  // Route for getting all the samples TODO: make routes for search and shit
+  app.get('/api/samples', jwtAuth, (req, res) => {
+    // get all samples
+    Sample.find({}, (err, samples) => {
       // return error on error
-      if (err || !files) res.status(500).json(errorGenerator(err, 500, 'Server ERROR: could not process file upload'));
-      res.json(files);
+      if (err || !samples) res.status(500).json(errorGenerator(err, 500, 'Server ERROR: could not get samples'));
+      res.json(samples);
     });
   });
 };
