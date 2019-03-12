@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  secureFlag: true
+  secureFlag: true,
+  apiEndpoint: 'https://sample-maker.herokuapp.com'
 };
