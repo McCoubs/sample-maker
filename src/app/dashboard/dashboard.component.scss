@@ -1,6 +1,17 @@
+@import '~src/global-styles';
+
 .play {
     height: 100px;
     width: 100px;
     background: red;
     cursor: pointer;
+}
+
+.dashboard {
+    margin: 0 auto;
+    padding: 20px;
+    width: 100%;
+    @media only screen and (min-width: map_get($grid-breakpoints, 'md')) {
+        width: 80%;
+    }
 }
