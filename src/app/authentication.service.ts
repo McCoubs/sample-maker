@@ -1,18 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { TokenPayload, TokenResponse } from './interfaces/authentication';
+import { TokenPayload } from './interfaces/authentication';
 import { UserService } from './user.service';
 import { isNullOrUndefined } from 'util';
+import { EndpointService } from './endpoint.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
 
-  constructor(private http: HttpClient, private router: Router, private userService: UserService) {}
+  constructor(private http: HttpClient,
+              private router: Router,
+              private userService: UserService,
+              private endpointService: EndpointService
+  ) {}
 
   public isLoggedIn(): boolean {
     // get current user and check expiry token
@@ -32,16 +36,16 @@ export class AuthenticationService {
 
   public register(user: TokenPayload): Observable<any> {
     // hit register api with given user
-    return this.http.post('/api/register', user);
+    return this.http.post(this.endpointService.generateUrl('register'), user);
   }
 
   public login(user: TokenPayload): Observable<any> {
     // hit login api with given user info
-    return this.http.post('/api/login', user);
+    return this.http.post(this.endpointService.generateUrl('login'), user);
   }
 
   public profile(): Observable<any> {
     const user = this.userService.getCurrentUser();
-    return this.http.get('api/users/' + user._id);
+    return this.http.get(this.endpointService.generateUrl('user', user._id));
   }
 }

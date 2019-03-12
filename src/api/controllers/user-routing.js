@@ -44,6 +44,7 @@ module.exports = function UserRouting(app) {
     }
   });
 
+  // TODO: implement FE and BE deletion routing
   app.delete('/api/users/:id', (req, res) => {
 
   });

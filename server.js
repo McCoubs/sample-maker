@@ -26,7 +26,7 @@ let connection = mongoose.connection;
 connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 connection.once('open', function callback () {
   // Initialize the app.
-  let server = app.listen(process.env.PORT || 8080, function () {
+  let server = app.listen(process.env.PORT || 3000, function () {
     let port = server.address().port;
     console.log('App now running on port', port);
   });
