@@ -1,8 +1,6 @@
 <app-header></app-header>
 <div class="dashboard">
-  <p>
-    dashboard-page works!
-  </p>
-  <div class="play" (click)="playNoise()"></div>
-  <app-card></app-card>
+  <ng-template *ngIf="sampleCache.length > 0" *ngFor="let sample of sampleCache[currentSamples]">
+    <app-card [sample]=sample></app-card>
+  </ng-template>
 </div>

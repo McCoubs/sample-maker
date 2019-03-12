@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { UserService } from './user.service';
 import { Observable } from 'rxjs';
 import { EndpointService } from './endpoint.service';
@@ -26,6 +26,20 @@ export class SampleService {
 
   public getSample(id: string | number): Observable<any> {
     return this.http.get(this.endpointService.generateUrl('sample', id));
+  }
+
+  public getSamples(limit?: number, tags?: Array<string>, genres?: Array<string>): Observable<any> {
+    let params= new HttpParams();
+    if (limit) {
+      params = params.append('limit', limit);
+    }
+    if (tags && tags.length > 0) {
+      params = params.append('tags', tags.join(','));
+    }
+    if (genres && genres.length > 0) {
+      params = params.append('genres', genres.join(','));
+    }
+    return this.http.get(this.endpointService.generateUrl('samples'), {params: params});
   }
 
   public downloadSample(id: string | number): Observable<any> {

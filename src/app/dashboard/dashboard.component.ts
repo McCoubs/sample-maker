@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { SampleService } from '../sample.service';
+import { Sample } from '../classes/sample';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -7,22 +9,23 @@ import { Component, OnInit } from '@angular/core';
 })
 
 export class DashboardComponent implements OnInit {
+  
+  sampleCache: Array<Array<Sample>>;
+  currentSamples = 0;
 
-  audio = new Audio();
-  constructor() {
-   }
+  constructor(private sampleService: SampleService) {
+
+  }
 
   ngOnInit() {
-    this.createSound();
-    this.audio.load();
-  }
-
-  playNoise() {
-    this.audio.play();
-  }
-
-  createSound() {
-    this.audio.src = "../../assets/song.mp3";
+    this.sampleService.getSamples(5).subscribe(
+      (samples) => {
+        this.sampleCache.push(samples.map((sample) => new Sample(sample)));
+      },
+      (error) => {
+        console.log("whio[eps");
+      }
+    );
   }
 
 }
