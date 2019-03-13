@@ -1,3 +1,8 @@
-<p>
-  dashboard-page works!
-</p>
+<app-header></app-header>
+<div class="dashboard">
+  <div *ngFor="let sample of sampleCache[currentSamples]">
+    <app-card [sample]=sample></app-card>
+  </div>
+  <input #fileTester type="file" name="fileUpload"/>
+  <button (click)="press(fileTester.files[0])"> butt dasfasdfsa dfsdf dsf</button>
+</div>
