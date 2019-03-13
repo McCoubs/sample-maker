@@ -5,8 +5,9 @@
 export const environment = {
   production: false,
   mongodbURI: 'mongodb://localhost:27017/test',
-  port: 8080,
-  secureFlag: false
+  port: 3000,
+  secureFlag: false,
+  apiEndpoint: 'http://localhost:3000',
 };
 
 /*
