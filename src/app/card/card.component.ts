@@ -7,12 +7,17 @@ import { Sample } from '../classes/sample';
   styleUrls: ['./card.component.scss']
 })
 export class CardComponent implements OnInit {
-  @Input() sample: Sample;
-  name = Sample.name;
+  _name;
+  _sample;
+  @Input()
+  set sample(sample: Sample) {
+    this._sample = sample;
+  }
 
   constructor() { }
 
   ngOnInit() {
+    this._name = this._sample.name;
   }
 
 }

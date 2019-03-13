@@ -1,6 +1,8 @@
 <app-header></app-header>
 <div class="dashboard">
-  <ng-template *ngIf="sampleCache.length > 0" *ngFor="let sample of sampleCache[currentSamples]">
+  <div *ngFor="let sample of sampleCache[currentSamples]">
     <app-card [sample]=sample></app-card>
-  </ng-template>
+  </div>
+  <input #fileTester type="file" name="fileUpload"/>
+  <button (click)="press(fileTester.files[0])"> butt dasfasdfsa dfsdf dsf</button>
 </div>

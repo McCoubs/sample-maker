@@ -9,8 +9,7 @@ import { Sample } from '../classes/sample';
 })
 
 export class DashboardComponent implements OnInit {
-  
-  sampleCache: Array<Array<Sample>>;
+  sampleCache: Array<Array<string>>;
   currentSamples = 0;
 
   constructor(private sampleService: SampleService) {
@@ -18,6 +17,8 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.sampleCache = [];
+    // this.sampleCache.push(['butt', 'poop']);
     this.sampleService.getSamples(5).subscribe(
       (samples) => {
         this.sampleCache.push(samples.map((sample) => new Sample(sample)));
@@ -25,6 +26,13 @@ export class DashboardComponent implements OnInit {
       (error) => {
         console.log("whio[eps");
       }
+    );
+  }
+
+  press(file) {
+    this.sampleService.createSample(file, {}).subscribe(
+      (data) => console.log(data),
+      (error) => console.log(error)
     );
   }
 
