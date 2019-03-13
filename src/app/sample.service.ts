@@ -31,7 +31,7 @@ export class SampleService {
   public getSamples(limit?: number, tags?: Array<string>, genres?: Array<string>): Observable<any> {
     let params= new HttpParams();
     if (limit) {
-      params = params.append('limit', limit);
+      params = params.append('limit', limit.toString());
     }
     if (tags && tags.length > 0) {
       params = params.append('tags', tags.join(','));
