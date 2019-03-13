@@ -25,17 +25,16 @@
             Edit Profile
         </button>
     </ng-template>
-    <div>
+    <div class="tab-container">
         <div class="profile-tabs">
             <button class="btn btn-primary" type="button" (click)="onSelect('Samples')">
-                <span class="tab-header">Samples</span> <br> {{selectedUser.samples}}
+                <span class="tab-header">Samples</span> <br>
             </button>
             <button class="btn btn-primary" type="button" (click)="onSelect('Subscriptions')">
-                <span class="tab-header"> Subscriptions </span> <br> {{selectedUser.subscriptions}}
+                <span class="tab-header">Subscriptions</span>
             </button>
             <button class="btn btn-primary" type="button" (click)="onSelect('Subscribers')">
                 <span class="tab-header">Subscribers</span> <br>
-                {{selectedUser.subscribers}}
             </button>
         </div>
         <div class="profile-content" *ngIf="selectedTab === 0">

@@ -9,9 +9,6 @@ module.exports = function UserRouting(app, auth = () => {}, errorGenerator = () 
 
     user.name = req.body.name;
     user.email = req.body.email;
-    user.samples = '0';
-    user.subscriptions = '0';
-    user.subscribers = '0';
 
     user.setPassword(req.body.password);
 

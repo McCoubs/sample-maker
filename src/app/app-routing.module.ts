@@ -20,14 +20,17 @@ const routes: Routes = [
     component: DashboardComponent,
     canActivate: [AuthGuard]
   },
+
+  {
+    path: 'profile',
+    component: ProfileComponent
+  },
+
   {
     path: '**',
     component: LoginComponent
   },
-  {
-    path: 'profile',
-    component: ProfileComponent
-  }
+
 ];
 
 @NgModule({

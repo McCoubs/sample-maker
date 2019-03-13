@@ -15,17 +15,24 @@
     width: 60%;
   }
 
+  .tab-container {
+    width: 100%;
+
+    .profile-tabs {
+      display: flex;
+      justify-content: center;
+      flex-basis: 100%;
+      width: 100%;
+      .btn {
+        border-radius: 0%;
+      }
+    }
+  }
+
   .tab-header {
     font-weight: bold;
   }
-  .profile-tabs {
-    justify-content: center;
-    flex-basis: 100%;
-    width: 100%;
-    .btn {
-      border-radius: 0%;
-    }
-  }
+
 
   .profile-pic {
     border-radius: 50%;
