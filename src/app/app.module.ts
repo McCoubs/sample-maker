@@ -18,7 +18,7 @@ import { CardComponent } from './card/card.component';
     AppComponent,
     LoginComponent,
     DashboardComponent,
-    ProfileComponent
+    ProfileComponent,
     HeaderComponent,
     CardComponent
   ],
