@@ -1,0 +1,21 @@
+@import '~src/global-styles';
+
+.sample-creator-component {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .sample-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .controls-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+}

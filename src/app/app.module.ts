@@ -11,6 +11,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { TokenInterceptor } from './token.interceptor';
 import { HeaderComponent } from './header/header.component';
 import { CardComponent } from './card/card.component';
+import { SampleCreatorComponent } from './sample-creator/sample-creator.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { CardComponent } from './card/card.component';
     LoginComponent,
     DashboardComponent,
     HeaderComponent,
-    CardComponent
+    CardComponent,
+    SampleCreatorComponent
   ],
   imports: [
     BrowserModule,
