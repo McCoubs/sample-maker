@@ -36,4 +36,11 @@ export class DashboardComponent implements OnInit {
     );
   }
 
+  loadNext() {
+    console.log("loadNext");
+  }
+
+  loadLast() {
+    console.log("loadLast");
+  }
 }

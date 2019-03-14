@@ -1,13 +1,11 @@
 @import '~src/global-styles';
 
-.play {
-    height: 100px;
-    width: 100px;
-    background: red;
-    cursor: pointer;
+.body {
+    background: $palette-lightgray;
 }
 
 .dashboard {
+    background: #ffffff;
     margin: 0 auto;
     padding: 20px;
     width: 100%;

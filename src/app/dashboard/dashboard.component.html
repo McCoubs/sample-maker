@@ -1,8 +1,8 @@
 <app-header></app-header>
 <div class="dashboard">
-  <div *ngFor="let sample of sampleCache[currentSamples]">
-    <app-card [sample]=sample></app-card>
-  </div>
+  <app-carousel [inputCache]="sampleCache[currentSamples]"></app-carousel>
+  <button class="nextSet" (click)="loadNext()">Next</button>
+  <button class="prevSet" (click)="loadLast()">Previous</button>
   <input #fileTester type="file" name="fileUpload"/>
   <button (click)="press(fileTester.files[0])"> butt dasfasdfsa dfsdf dsf</button>
 </div>

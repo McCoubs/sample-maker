@@ -1,0 +1,17 @@
+@import '~src/global-styles';
+
+.carousel-container {
+    display: flex;
+    flex-direction: column;
+    .card-component {
+        margin: 10px;
+    }
+    @media only screen and (min-width: map_get($grid-breakpoints, 'md')) {
+        flex-direction: row;
+    }
+
+}
+
+.card-component {
+    margin: 10px;
+}
