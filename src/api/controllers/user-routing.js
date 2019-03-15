@@ -1,5 +1,6 @@
 let mongoose = require('mongoose');
 let User = mongoose.model('User');
+let Sample = mongoose.model('Sample');
 let { errorGenerator, jwtAuth } = require('../helpers');
 
 module.exports = function UserRouting(app) {
@@ -32,14 +33,24 @@ module.exports = function UserRouting(app) {
   });
 
   app.get('/api/users/:id', (req, res) => {
-    // If no user ID exists in the JWT return a 401
     if (!req.params.id) {
-      return res.status(401).json(errorGenerator(null, 401, 'UnauthorizedError: private profile'));
+      return res.status(400).json(errorGenerator(null, 400, 'Invalid request, ID not provided'));
     } else {
       // Otherwise continue
       User.findById(req.params.id).exec((err, user) => {
         if (err || !user) return res.status(500).json(errorGenerator(err, 500, 'no user found with id: ' + req.params.id));
         res.status(200).json(user);
+      });
+    }
+  });
+
+  app.get('/api/users/:id/samples',jwtAuth, (req, res) => {
+    if (!req.params.id) {
+      return res.status(400).json(errorGenerator(null, 400, 'Invalid request, ID not provided'));
+    } else {
+      Sample.find({author: req.params.id}).toArray((err, samples) =>{
+        if (err) return res.status(500).json(errorGenerator(err,500, 'Could not find samples for user: ' + req.params.id));
+        res.json(samples);
       });
     }
   });

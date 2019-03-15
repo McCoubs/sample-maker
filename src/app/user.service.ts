@@ -4,6 +4,9 @@ import { environment } from '../environments/environment';
 import { User } from './classes/user';
 import { isNullOrUndefined } from 'util';
 import { CookieService } from 'ngx-cookie-service';
+import {Observable} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {EndpointService} from './endpoint.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +16,7 @@ export class UserService {
   private currentUser: User;
   private token: string;
 
-  constructor(private cookieService: CookieService) {}
+  constructor(private cookieService: CookieService, private http: HttpClient, private endpointService: EndpointService) {}
 
   public parseJWTToken(token: string): UserData {
       const payload = token.split('.')[1];
@@ -56,6 +59,14 @@ export class UserService {
     this.cookieService.set('currentUser', null);
     this.setCookie('currentUser', null);
     this.setCookie('jwt-token', null);
+  }
+
+  public getUser(id: string | number): Observable<any> {
+    return this.http.get(this.endpointService.generateUrl('user', id));
+  }
+
+  public getUserSamples(id: string | number): Observable<any> {
+    return this.http.get(this.endpointService.generateUrl('user_samples', id));
   }
 
   private setCookie(cookie: string, value) {
