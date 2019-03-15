@@ -17,7 +17,7 @@
 
   .tab-container {
     width: 100%;
-
+    background-color: $palette-blue;
     .profile-tabs {
       display: flex;
       justify-content: center;
@@ -26,6 +26,9 @@
       .btn {
         border-radius: 0%;
       }
+    }
+    .profile-content {
+      background-color: white;
     }
   }
 

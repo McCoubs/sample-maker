@@ -7,6 +7,7 @@ let fileUpload = require('express-fileupload');
 // importing mongoose models
 require('./src/api/models/users');
 require('./src/api/models/samples');
+require('./src/api/models/subscriptions');
 
 // setup app components
 let app = express();
@@ -41,6 +42,7 @@ connection.once('open', function callback () {
   // app routes
   require('./src/api/controllers/user-routing')(app);
   require('./src/api/controllers/sample-routing')(app, connection);
+  require('./src/api/controllers/subscription-routing')(app, connection);
 
   // Catch all other routes and route through the index file
   app.get('*', (req, res) => {
