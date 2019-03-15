@@ -12,6 +12,7 @@
     <input #panner type="range" max="1" min="-1" step="0.1" (change)="pan(+panner.value)">
     <button (click)="record()">record</button>
     <button (click)="stopRecording()">stop recording</button>
-    <button (click)="exportRecording()">export</button>
+    <button (click)="listenToRecording()">listen to recording</button>
+    <button (click)="downloadAudio('tester')">download</button>
   </div>
 </div>

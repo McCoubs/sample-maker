@@ -15,7 +15,7 @@ export class EndpointService {
     user: '/api/users/:id',
     samples: '/api/samples',
     sample: '/api/samples/:id',
-    sample_download: '/api/samples/:id/download'
+    sample_download: '/api/samples/:id/audio'
   };
 
   constructor() {}

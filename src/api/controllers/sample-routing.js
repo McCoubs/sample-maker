@@ -53,7 +53,7 @@ module.exports = function SampleRouting(app, conn) {
   });
 
   // get actual music file for sample
-  app.get('/api/samples/:id/download', jwtAuth, (req, res) => {
+  app.get('/api/samples/:id/audio', jwtAuth, (req, res) => {
     // find sample
     Sample.findOne({ _id: req.params.id }, (err, sample) => {
       // if no sample, respond with error

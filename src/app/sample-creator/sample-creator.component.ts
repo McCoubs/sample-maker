@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { AudioWrapper } from '../classes/AudioWrapper';
 import { RecorderWrapper } from '../classes/RecorderWrapper';
+import { SampleService } from '../sample.service';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-sample-creator',
@@ -11,8 +13,9 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
 
   audioWrapper: AudioWrapper = null;
   recorder: RecorderWrapper = null;
+  recordedAudio: AudioWrapper = null;
 
-  constructor() {}
+  constructor(private sampleService: SampleService) {}
 
   ngOnInit() {
     this.audioWrapper = new AudioWrapper();
@@ -23,7 +26,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
   }
 
   onFileUpload(file) {
-    this.audioWrapper.readFile(file, () => {
+    this.audioWrapper.decodeFile(file, () => {
       alert('ready for interaction');
     });
   }
@@ -65,14 +68,25 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     this.recorder.stop();
   }
 
-  exportRecording() {
+  listenToRecording() {
     this.audioWrapper.pauseAudio();
 
-    const testAudio = new AudioWrapper();
-    const newBuffer = this.recorder.getBuffer();
-    testAudio.buffer = newBuffer;
-    testAudio.startAudio();
+    // testing playback
+    this.recordedAudio = new AudioWrapper();
+    this.recordedAudio.buffer = this.recorder.getBuffer();
+    this.recordedAudio.startAudio();
+  }
 
-    console.log(this.recorder.convertToFile('test'));
+  saveRecording(name: string) {
+    // this code saves into db
+    const file = this.recordedAudio.convertToFile(name);
+    this.sampleService.createSample(file, {}).subscribe(
+        (data) => console.log(data),
+        (error) => console.log(error)
+    );
+  }
+
+  downloadAudio(name: string) {
+    saveAs(this.recordedAudio.convertToFile(name));
   }
 }

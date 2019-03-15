@@ -1,6 +1,7 @@
 import { isNullOrUndefined } from 'util';
-declare var AudioContext, webkitAudioContext, mozAudioContext: any; // ADDED
+declare var AudioContext, webkitAudioContext, mozAudioContext: any;
 import { AudioContextEnum } from './AudioContextEnum';
+import audioBufferToWav from 'audiobuffer-to-wav';
 
 /**
  * Class abstracts the web audio API for use
@@ -36,18 +37,23 @@ export class AudioWrapper {
     this.connectNode = this.pannerNode;
   }
 
-  /**
-   * helper converts a file into usable audio buffer
-   */
-  readFile(file: File, callback?: Function) {
-    let fileReader = new FileReader();
+  decodeFile(file: File, callback?: Function): void {
+    const fileReader = new FileReader();
     fileReader.onload = () => {
-      this.audioContext.decodeAudioData(<ArrayBuffer> fileReader.result, (buffer) => {
-        this.buffer = buffer;
-        if (callback) { callback(); }
-      });
+      this.decodeArrayBuffer(<ArrayBuffer> fileReader.result, callback);
     };
     fileReader.readAsArrayBuffer(file);
+  }
+
+  decodeArrayBuffer(arrayBuffer: ArrayBuffer, callback?: Function): void {
+    this.audioContext.decodeAudioData(arrayBuffer, (buffer) => {
+      this.buffer = buffer;
+      if (callback) { callback(); }
+    });
+  }
+
+  convertToFile(name: string): File {
+    return new File([audioBufferToWav(this.buffer, {})], name + '.wav', {type: 'audio/wav'});
   }
 
   /**
