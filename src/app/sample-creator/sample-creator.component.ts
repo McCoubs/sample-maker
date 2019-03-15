@@ -21,9 +21,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     this.audioWrapper = new AudioWrapper();
   }
 
-  ngAfterViewInit(): void {
-
-  }
+  ngAfterViewInit(): void {}
 
   onFileUpload(file) {
     this.audioWrapper.decodeFile(file, () => {
@@ -31,6 +29,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     });
   }
 
+  ///////// PLAYBACK CONTROL METHODS /////////
   play() {
     this.audioWrapper.startAudio();
     this.recorder = new RecorderWrapper(this.audioWrapper.sourceNode);
@@ -44,49 +43,79 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     this.audioWrapper.resumeAudio();
   }
 
-  applyFilter() {
-    this.audioWrapper.applyFilter('highpass', 100, 0.5);
+  ///////// EDITING CONTROL METHODS /////////
+  applyFilter(type: string, frequency: number, gain: number) {
+    this.audioWrapper.applyFilter(type, frequency, gain);
   }
 
-  playback() {
-    this.audioWrapper.setPlayBackRate(3);
+  setPlaybackRate(rate: number) {
+    this.audioWrapper.setPlayBackRate(rate);
   }
 
-  fade() {
-    this.audioWrapper.fadeAudioIn(10);
+  applyFadeIn(percent: number) {
+    this.audioWrapper.fadeAudioIn(percent);
   }
 
   pan(value) {
     this.audioWrapper.setPan(value);
   }
 
+  ///////// RECORDING CONTROL METHODS /////////
   record() {
+    // reset temp recording
+    if (this.recordedAudio) {
+      this.recordedAudio.stopAudio();
+      this.recordedAudio = null;
+    }
+    // begin recording
     this.recorder.record();
   }
 
   stopRecording() {
     this.recorder.stop();
-  }
-
-  listenToRecording() {
-    this.audioWrapper.pauseAudio();
-
-    // testing playback
+    // save current recorded setPlaybackRate
     this.recordedAudio = new AudioWrapper();
     this.recordedAudio.buffer = this.recorder.getBuffer();
-    this.recordedAudio.startAudio();
+  }
+
+  playRecording() {
+    // start if not started, else resume
+    if (this.recordedAudio.sourceNode) {
+      this.recordedAudio.resumeAudio();
+    } else {
+      this.recordedAudio.startAudio();
+    }
+  }
+
+  pauseRecording() {
+    this.recordedAudio.pauseAudio();
+  }
+
+  resetRecording() {
+    this.recorder.reset();
+    this.recordedAudio.stopAudio();
+    this.recordedAudio = null;
   }
 
   saveRecording(name: string) {
     // this code saves into db
     const file = this.recordedAudio.convertToFile(name);
     this.sampleService.createSample(file, {}).subscribe(
-        (data) => console.log(data),
+        (data) => {
+          console.log(data);
+          /*this.sampleService.downloadSample(data._id).subscribe(
+              (arrayBuffer) => {
+                debugger;
+                const test = new AudioWrapper();
+                test.decodeArrayBuffer(arrayBuffer, () => test.startAudio());
+              },
+              (error) => console.log(error));*/
+        },
         (error) => console.log(error)
     );
   }
 
-  downloadAudio(name: string) {
+  downloadRecording(name: string) {
     saveAs(this.recordedAudio.convertToFile(name));
   }
 }

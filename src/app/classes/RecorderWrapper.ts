@@ -42,7 +42,7 @@ export class RecorderWrapper {
     this.recording = false;
   }
 
-  clear() {
+  reset() {
     this.recordedLength = 0;
     this.recordedLeftBuffers = [];
     this.recordedRightBuffers = [];

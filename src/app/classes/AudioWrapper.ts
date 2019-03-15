@@ -1,7 +1,7 @@
 import { isNullOrUndefined } from 'util';
 declare var AudioContext, webkitAudioContext, mozAudioContext: any;
 import { AudioContextEnum } from './AudioContextEnum';
-import { audioBufferToWav } from 'audiobuffer-to-wav';
+import audioBufferToWav from 'audiobuffer-to-wav';
 
 /**
  * Class abstracts the web audio API for use

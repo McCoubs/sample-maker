@@ -2,20 +2,56 @@
 
 .sample-creator-component {
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height: calc(100vh - 70px);
+  @include flex-center;
+
+  .form-control, .form-control-range {
+    border: 1px solid $palette-blue;
+    background-color: #ffffff;
+    display: inline-block;
+    max-width: 45%;
+    margin: 4px 0;
+  }
 
   .sample-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    min-height: inherit;
+    @include flex-center;
+
+    .playback-controls, .recording-controls, .editing-controls {
+      @include  flex-center;
+      flex-direction: column;
+    }
   }
 
   .controls-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    min-height: inherit;
+    @include flex-center;
     flex-direction: column;
+    background-color: $palette-lightgray;
+
+    .recording-controls, .editing-controls {
+      @include  flex-center;
+      flex-direction: column;
+      width: 100%;
+
+      .edit-container {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        flex-wrap: wrap;
+        width: 100%;
+        padding: 12px;
+        margin: 4px 0;
+
+        &:not(:last-child) {
+          border-bottom: 2px $palette-darkgray solid;
+        }
+
+        .btn {
+          margin-top: 4px;
+          width: 80%;
+        }
+      }
+    }
   }
 }
