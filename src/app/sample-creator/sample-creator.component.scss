@@ -25,9 +25,20 @@
 
   .controls-container {
     min-height: inherit;
-    @include flex-center;
+    display: flex;
+    align-items: center;
     flex-direction: column;
     background-color: $palette-lightgray;
+
+    .container {
+      margin-top: 8px;
+
+      .title {
+        font-size: 18px;
+        margin-top: 8px;
+        margin-bottom: -8px;
+      }
+    }
 
     .recording-controls, .editing-controls {
       @include  flex-center;
