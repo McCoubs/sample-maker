@@ -1,9 +1,5 @@
 @import '~src/global-styles';
 
-.body {
-    background: $palette-lightgray;
-}
-
 .dashboard {
     background: #ffffff;
     margin: 0 auto;
@@ -12,4 +8,11 @@
     @media only screen and (min-width: map_get($grid-breakpoints, 'md')) {
         width: 80%;
     }
+}
+
+.newest-title {
+    font-size: 24px;
+    text-align: center;
+    padding-top: 20px;
+    margin-bottom: 30px;
 }

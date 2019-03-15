@@ -68,8 +68,10 @@ module.exports = function SampleRouting(app, conn) {
   // Route for getting all the samples TODO: make routes for search and shit
   app.get('/api/samples', jwtAuth, (req, res) => {
     // get all samples
+    let limit = parseInt(req.query.limit) || 0;
+    let skip = parseInt(req.query.skip) || 0;
     let searchParams = {};
-    Sample.find(searchParams).limit(req.query.limit || 0).exec((err, samples) => {
+    Sample.find(searchParams).sort({createdAt: -1}).skip(skip).limit(limit).exec((err, samples) => {
       // return error on error
       if (err || !samples) return res.status(500).json(errorGenerator(err, 500, 'Server ERROR: could not get samples'));
       res.json(samples);

@@ -11,6 +11,7 @@ import { Sample } from '../classes/sample';
 export class DashboardComponent implements OnInit {
   sampleCache: Array<Array<string>>;
   currentSamples = 0;
+  showNext = false;
 
   constructor(private sampleService: SampleService) {
 
@@ -27,6 +28,18 @@ export class DashboardComponent implements OnInit {
         console.log("whio[eps");
       }
     );
+
+    this.sampleService.getSamples(5, (this.currentSamples + 1) * 5).subscribe(
+      (samples) => {
+        if(samples.length > 0){
+          this.sampleCache.push(samples.map((sample) => new Sample(sample)));
+          this.showNext = true;
+        }
+      },
+      (error) => {
+        console.log("whio[eps");
+      }
+    );
   }
 
   press(file) {
@@ -37,10 +50,21 @@ export class DashboardComponent implements OnInit {
   }
 
   loadNext() {
-    console.log("loadNext");
+    this.currentSamples++;
+    this.sampleService.getSamples(5, (this.currentSamples + 1) * 5).subscribe(
+      (samples) => {
+        if(samples.length > 0){
+          this.sampleCache.push(samples.map((sample) => new Sample(sample)));
+        } else {this.showNext = false;}
+      },
+      (error) => {
+        console.log("whio[eps");
+      }
+    );
   }
 
   loadLast() {
-    console.log("loadLast");
+    this.currentSamples--;
+    this.showNext = true;
   }
 }
