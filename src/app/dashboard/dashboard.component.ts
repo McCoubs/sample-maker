@@ -19,7 +19,6 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.sampleCache = [];
-    // this.sampleCache.push(['butt', 'poop']);
     this.sampleService.getSamples(5).subscribe(
       (samples) => {
         this.sampleCache.push(samples.map((sample) => new Sample(sample)));
@@ -43,7 +42,7 @@ export class DashboardComponent implements OnInit {
   }
 
   press(file) {
-    this.sampleService.createSample(file, {}).subscribe(
+    this.sampleService.createSample(file, {'tags':'anime'}).subscribe(
       (data) => console.log(data),
       (error) => console.log(error)
     );
@@ -69,6 +68,20 @@ export class DashboardComponent implements OnInit {
   }
 
   search(input) {
-    console.log(input);
+    this.sampleService.getSamples(5, 0, ['anime']).subscribe(
+      (samples) => {
+        console.log(samples);
+        if(samples.length > 0){
+          this.sampleCache.push(samples.map((sample) => new Sample(sample)));
+        } else {this.showNext = false;}
+      },
+      (error) => {
+        console.log("whio[eps");
+      }
+    );
+  }
+
+  reset() {
+    console.log("reset");
   }
 }

@@ -13,9 +13,9 @@ export class SampleService {
 
   public createSample(sample: File, data: Object): Observable<any> {
     // add sample to form data
-    const formData: FormData = new FormData();
+    let formData = new FormData();
     formData.append('sample', sample, sample.name);
-
+    debugger;
     // for every data key, add to form data
     Object.keys(data).forEach((key) => {
       formData.append(key, data[key]);
@@ -46,6 +46,6 @@ export class SampleService {
   }
 
   public downloadSample(id: string | number): Observable<any> {
-    return this.http.get(this.endpointService.generateUrl('sample_download', id));
+    return this.http.get(this.endpointService.generateUrl('sample_download', id), {responseType: 'arraybuffer'});
   }
 }
