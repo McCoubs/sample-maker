@@ -14,7 +14,7 @@ module.exports = function SampleRouting(app, conn) {
     let sampleFile = req.files.sample;
     // create writestream for new file
     let writestream = gfs.createWriteStream({ filename: sampleFile.name, content_type: sampleFile.mimetype });
-
+    let readable = new stream.Readable();
     // create readable from given file, pipe into db    let readable = new stream.Readable();
     readable.push(sampleFile.data);
     readable.push(null);
