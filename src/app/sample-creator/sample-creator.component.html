@@ -1,0 +1,61 @@
+<div class="sample-creator-component row">
+  <div class="sample-container col-12 col-md-8">
+    <input type="file" #fileInput (change)="onFileUpload(fileInput.files[0])" />
+    <div *ngIf="audioLoaded" class="playback-controls container">
+      <button (click)="play()">play</button>
+      <button (click)="pause()">pause</button>
+      <button (click)="resume()">resume</button>
+      <igx-slider #audioTracker class="music-slider" [step]="0.1" [minValue]="0" [maxValue]="audioWrapper.buffer.duration | number: '3.0-1'" [value]="currentTime" (onValueChange)="updateCurrentTime($event)"></igx-slider>
+      <igx-slider class="music-slider" [type]="sliderType.RANGE" [step]="0.1" [minValue]="0" [maxValue]="audioWrapper.buffer.duration | number: '3.0-1'" [(ngModel)]="audioRange"></igx-slider>
+    </div>
+    <div class="recording-controls container">
+      <span class="title">Recording Controls</span>
+      <button (click)="record()">record</button>
+      <button (click)="stopRecording()">stop recording</button>
+      <button (click)="playRecording()">listen to recording</button>
+      <button (click)="saveRecording('tester')">save</button>
+      <button (click)="downloadRecording('tester')">download</button>
+    </div>
+  </div>
+  <div class="controls-container col-12 col-md-4">
+    <span class="title">Editing Controls</span>
+    <div class="edit-container">
+      <label for="pannerInput">Panner:</label>
+      <input #pannerInput id="pannerInput" class="form-control-range" type="range" value="0" max="1" min="-1" step="0.1" (change)="pan(+pannerInput.value)">
+      <span>{{ pannerInput.value }}</span>
+    </div>
+    <div class="edit-container">
+      <label for="playBackRate">Playback Rate:</label>
+      <input #playbackInput id="playBackRate" class="form-control-range" type="range" value="1" max="3" min="0.1" step="0.1" (change)="setPlaybackRate(+playbackInput.value)">
+      <span>{{ playbackInput.value }}</span>
+    </div>
+    <div class="edit-container">
+      <input #fadeInPercent placeholder="percent..." class="form-control" type="number" min="1" step="1" max="20" id="fadeInPercent">
+      <button class="btn btn-primary btn-inline" (click)="applyFadeIn(+fadeInPercent.value)">Apply Fade In</button>
+    </div>
+    <div class="edit-container">
+      <input #fadeOutPercent placeholder="percent..." class="form-control" type="number" min="1" step="1" max="20" id="fadeOutPercent">
+      <button class="btn btn-primary btn-inline" (click)="applyFadeOut(+fadeOutPercent.value)">Apply Fade Out</button>
+    </div>
+    <div class="edit-container">
+      <select #filterSelect class="form-control">
+        <option value="">filter...</option>
+        <option value="lowpass">lowpass</option>
+        <option value="highpass">highpass</option>
+        <option value="bandpass">bandpass</option>
+        <option value="lowshelf">lowshelf</option>
+        <option value="highshelf">highshelf</option>
+        <option value="peaking">peaking</option>
+        <option value="notch">notch</option>
+        <option value="allpass">allpass</option>
+      </select>
+      <input #filterFreq placeholder="frequency..." class="form-control" type="number" min="0" step="5" max="2250" id="fadeInFrequency" name="fadeInFrequency">
+      <div style="width: 100%;display: flex;justify-content: space-around;align-items: center;">
+        <label for="filterGain" style="">Gain:</label>
+        <input #filterGain placeholder="gain..." class="form-control-range" type="range" min="0" max="1" step="0.1" id="filterGain" name="filterGain">
+        <span>{{ filterGain.value }}</span>
+      </div>
+      <button class="btn btn-primary" (click)="applyFilter(filterSelect.value, +filterFreq.value, +filterGain.value)">Apply Filter</button>
+    </div>
+  </div>
+</div>
