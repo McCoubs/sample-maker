@@ -13,9 +13,9 @@ export class SampleService {
 
   public createSample(sample: File, data: Object): Observable<any> {
     // add sample to form data
-    let formData = new FormData();
+    const formData: FormData = new FormData();
     formData.append('sample', sample, sample.name);
-    debugger;
+
     // for every data key, add to form data
     Object.keys(data).forEach((key) => {
       formData.append(key, data[key]);
@@ -29,7 +29,7 @@ export class SampleService {
   }
 
   public getSamples(limit?: number, skip?: number, tags?: Array<string>, genres?: Array<string>): Observable<any> {
-    let params= new HttpParams();
+    let params = new HttpParams();
     if (limit) {
       params = params.append('limit', limit.toString());
     }

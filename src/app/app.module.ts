@@ -11,6 +11,9 @@ import { CookieService } from 'ngx-cookie-service';
 import { TokenInterceptor } from './token.interceptor';
 import { HeaderComponent } from './header/header.component';
 import { CardComponent } from './card/card.component';
+import { SampleCreatorComponent } from './sample-creator/sample-creator.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { IgxSliderModule } from 'igniteui-angular';
 import { CarouselComponent } from './carousel/carousel.component';
 
 @NgModule({
@@ -20,6 +23,7 @@ import { CarouselComponent } from './carousel/carousel.component';
     DashboardComponent,
     HeaderComponent,
     CardComponent,
+    SampleCreatorComponent,
     CarouselComponent
   ],
   imports: [
@@ -28,7 +32,9 @@ import { CarouselComponent } from './carousel/carousel.component';
     HttpClientModule,
     FontAwesomeModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    IgxSliderModule
   ],
   providers: [
     CookieService,

@@ -19,7 +19,6 @@ let sampleSchema = new mongoose.Schema({
   }
 },
 {
-  capped: 314572800,
   timestamps: true
 });
 
