@@ -57,6 +57,13 @@ export class ProfileComponent implements OnInit {
     this.selectedUser = this.selectedUser;
   }
 
+  hasNoSamples(): Boolean {
+    if (this.userSamples.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
   ngOnInit() {
     this.userService.getUser(this.route.snapshot.paramMap.get('id')).subscribe(
         (user) => {

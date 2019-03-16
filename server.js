@@ -42,7 +42,6 @@ connection.once('open', function callback () {
   // app routes
   require('./src/api/controllers/user-routing')(app);
   require('./src/api/controllers/sample-routing')(app, connection);
-  require('./src/api/controllers/subscription-routing')(app, connection);
 
   // Catch all other routes and route through the index file
   app.get('*', (req, res) => {

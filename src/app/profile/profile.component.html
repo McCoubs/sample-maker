@@ -9,7 +9,7 @@
         <fa-icon class="input-icon" [icon]="faEnvelope"></fa-icon>
         <label class="detail-label">{{selectedUser.email}}</label>
     </div>
-    <div id="sub-unsub"*ngIf="selectedUser !== currentUser; else editButton">
+    <div id="sub-unsub"*ngIf="!isMyProfile; else editButton">
         <div *ngIf="!subscribed; else unsubButton">
             <button id="subscribe-button" class="btn btn-secondary" type="button" (click)="subscribe()">
                 Subscribe
@@ -41,6 +41,9 @@
         <div class="profile-content" *ngIf="selectedTab === 0">
             <div *ngFor="let sample of userSamples">
                 <app-card [sample]=sample></app-card>
+            </div>
+            <div *ngIf="hasNoSamples() || !userSamples">
+                No samples to display.
             </div>
         </div>
         <div class="profile-content" *ngIf="selectedTab === 1">
