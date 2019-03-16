@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+//import { AudioWrapper } from '../classes/AudioWrapper';
 import { Sample } from '../classes/sample';
 import { SampleService } from '../sample.service';
 
@@ -9,6 +10,7 @@ import { SampleService } from '../sample.service';
 })
 export class CardComponent implements OnInit {
   _name;
+  _author;
   _sample;
   playing;
   audioTrack;
@@ -22,11 +24,12 @@ export class CardComponent implements OnInit {
 
   ngOnInit() {
     this._name = this._sample.name;
+    this._author = this._sample.author;
   }
 
   play() {
     if(!this.playing){
-      this.sampleService.downloadSample(this._sample.id).subscribe(
+      this.sampleService.downloadSample(this._sample.file_id).subscribe(
         (sample) => {
           this.audioTrack = new Audio();
           this.audioTrack.src = sample;
@@ -42,5 +45,25 @@ export class CardComponent implements OnInit {
       this.audioTrack.stop();
       this.playing = false;
     }
+  }
+
+  download() {
+    // this.sampleService.downloadSample(this.sample._id).subscribe(
+    //   (arrayBuffer) => {
+    //     debugger;
+    //     const test = new AudioWrapper();
+    //     test.decodeArrayBuffer(arrayBuffer, () => test.startAudio());
+    //   },
+    //   (error) => console.log(error)
+    // );
+    // console.log(this._sample);
+    // this.sampleService.downloadSample(this._sample._id).subscribe(
+    //   (sample) => {
+    //     this.audioTrack = sample;
+    //   },
+    //   (error) => {
+    //     console.error("could not get file");
+    //   }
+    // )
   }
 }

@@ -61,7 +61,7 @@ module.exports = function SampleRouting(app, conn) {
 
       // create and pipe file to response
       let readstream = gfs.createReadStream({ _id: sample.file_id });
-      readstream.pipe(res);
+      console.log(readstream.pipe(res));
     });
   });
 

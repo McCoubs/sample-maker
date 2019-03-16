@@ -67,4 +67,8 @@ export class DashboardComponent implements OnInit {
     this.currentSamples--;
     this.showNext = true;
   }
+
+  search(input) {
+    console.log(input);
+  }
 }
