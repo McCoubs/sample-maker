@@ -5,7 +5,7 @@ import { User } from './classes/user';
 import { isNullOrUndefined } from 'util';
 import { CookieService } from 'ngx-cookie-service';
 import {Observable} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {EndpointService} from './endpoint.service';
 
 @Injectable({
@@ -67,6 +67,14 @@ export class UserService {
 
   public getUserSamples(id: string | number): Observable<any> {
     return this.http.get(this.endpointService.generateUrl('user_samples', id));
+  }
+
+  public getUserSubscribers(id: string | number): Observable<any> {
+    return this.http.get(this.endpointService.generateUrl('user_subscribers', id));
+  }
+
+  public getUserSubscriptions(id: string | number): Observable<any> {
+    return this.http.get(this.endpointService.generateUrl('user_subscriptions', id));
   }
 
   private setCookie(cookie: string, value) {

@@ -11,7 +11,7 @@
     </div>
     <div id="sub-unsub"*ngIf="!isMyProfile; else editButton">
         <div *ngIf="!subscribed; else unsubButton">
-            <button id="subscribe-button" class="btn btn-secondary" type="button" (click)="subscribe()">
+            <button id="subscribe-button" class="btn btn-secondary" type="button" (click)="sub()">
                 Subscribe
             </button>
         </div>

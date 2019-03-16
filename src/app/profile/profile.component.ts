@@ -5,7 +5,7 @@ import { faEnvelope, faSignature } from '@fortawesome/free-solid-svg-icons';
 import {ActivatedRoute} from '@angular/router';
 import {User} from '../classes/user';
 import {Sample} from '../classes/sample';
-//import { MOCKUSER } from 'src/app/mock-user';
+// import { MOCKUSER } from 'src/app/mock-user';
 
 
 @Component({
@@ -20,12 +20,13 @@ export class ProfileComponent implements OnInit {
   // temp profile picture
   profilePic = 'https://i.stack.imgur.com/l60Hf.png';
 
-  subscribed = false; //temp TODO: this is currently a jank boolean
   // selectedUser will be passed in when clicking user link, currentUser for now
   selectedUser: User;
   isMyProfile: Boolean = false;
   selectedTab = 0;
   userSamples: Array<Sample> = [];
+  subscribers: Array<User> = [];
+  subscriptions: Array<User> = [];
   currentUser = this.userService.getCurrentUser();
 
   constructor(
@@ -44,13 +45,12 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  // sub and unsub temp TODO: use db instead of jank booleans
-  subscribe(): void {
-    this.subscribed = true;
+  sub(): void {
+    this.subscribers = this.getSubscribers();
   }
 
   unsub(): void {
-    this.subscribed = false;
+    this.subscribers = this.getSubscribers();
   }
 
   edit(): void {
@@ -64,18 +64,44 @@ export class ProfileComponent implements OnInit {
     return false;
   }
 
+  getSubscribers(): Array<User> {
+    this.userService.getUserSubscribers(this.selectedUser._id).subscribe(
+        (subscribers) => {
+          return (subscribers.map((subscriber) => new User(subscriber)));
+        },
+        (error) => {
+          console.log(error);
+        }
+    );
+    return [];
+  }
+
+  getSubscriptions(): Array<User> {
+    this.userService.getUserSubscriptions(this.selectedUser._id).subscribe(
+        (subscriptions) => {
+          return (subscriptions.map((subscription) => new User(subscription)));
+        },
+        (error) => {
+          console.log(error);
+        }
+    );
+    return [];
+  }
+
   ngOnInit() {
     this.userService.getUser(this.route.snapshot.paramMap.get('id')).subscribe(
         (user) => {
           this.selectedUser = new User(user);
+          this.isMyProfile = this.selectedUser._id === this.currentUser._id;
           this.userService.getUserSamples(this.selectedUser._id).subscribe(
               (samples) => {
                 this.userSamples = (samples.map((sample) => new Sample(sample)));
               }, (error) => {
                 console.log(error);
               }
-          )
-          this.isMyProfile = this.selectedUser._id === this.currentUser._id;
+          );
+          this.subscribers = this.getSubscribers();
+          this.subscriptions = this.getSubscriptions();
         },
         (error) => {
           console.log(error);
