@@ -3,7 +3,7 @@ import { AudioWrapper } from '../classes/AudioWrapper';
 import { RecorderWrapper } from '../classes/RecorderWrapper';
 import { SampleService } from '../sample.service';
 import { saveAs } from 'file-saver';
-import {IgxSliderComponent, ISliderValueChangeEventArgs, SliderType} from 'igniteui-angular';
+import { IgxSliderComponent, ISliderValueChangeEventArgs, SliderType } from 'igniteui-angular';
 
 class AudioRange {constructor(public lower: number, public upper: number) {}}
 

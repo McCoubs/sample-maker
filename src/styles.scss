@@ -1,5 +1,4 @@
 // CSS Reset, comment out if not required or using a different module
-@import '~minireset.css/minireset';
 @import url('https://fonts.googleapis.com/css?family=Raleway:400,700|Roboto:400,700|Poppins:400,500');
 @import "global-styles";
 
@@ -11,5 +10,4 @@ body {
 $app-palette: igx-palette($palette-blue, $palette-blue, $error: $palette-error);
 
 @include igx-core();
-@include igx-typography($font-family: "'Roboto', sans-serif");
 @include igx-theme($app-palette);
