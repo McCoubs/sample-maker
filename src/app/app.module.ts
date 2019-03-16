@@ -12,6 +12,9 @@ import { ProfileComponent } from './profile/profile.component';
 import { TokenInterceptor } from './token.interceptor';
 import { HeaderComponent } from './header/header.component';
 import { CardComponent } from './card/card.component';
+import { SampleCreatorComponent } from './sample-creator/sample-creator.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { IgxSliderModule } from 'igniteui-angular';
 
 @NgModule({
   declarations: [
@@ -20,15 +23,18 @@ import { CardComponent } from './card/card.component';
     DashboardComponent,
     ProfileComponent,
     HeaderComponent,
-    CardComponent
+    CardComponent,
+    SampleCreatorComponent
   ],
   imports: [
     AppRoutingModule,
     BrowserModule,
+      HttpClientModule,
     FontAwesomeModule,
     FormsModule,
-    HttpClientModule,
     ReactiveFormsModule,
+    BrowserAnimationsModule,
+    IgxSliderModule
   ],
   providers: [
     CookieService,

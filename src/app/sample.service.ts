@@ -29,7 +29,7 @@ export class SampleService {
   }
 
   public getSamples(limit?: number, tags?: Array<string>, genres?: Array<string>): Observable<any> {
-    let params= new HttpParams();
+    let params = new HttpParams();
     if (limit) {
       params = params.append('limit', limit.toString());
     }
@@ -43,6 +43,6 @@ export class SampleService {
   }
 
   public downloadSample(id: string | number): Observable<any> {
-    return this.http.get(this.endpointService.generateUrl('sample_download', id));
+    return this.http.get(this.endpointService.generateUrl('sample_download', id), {responseType: 'arraybuffer'});
   }
 }

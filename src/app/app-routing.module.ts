@@ -4,13 +4,9 @@ import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProfileComponent} from './profile/profile.component';
 import { AuthGuard} from './auth.guard';
+import { SampleCreatorComponent } from './sample-creator/sample-creator.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: 'dashboard' // original
-  },
   {
     path: 'login',
     component: LoginComponent
@@ -27,10 +23,20 @@ const routes: Routes = [
   },
 
   {
-    path: '**',
-    component: LoginComponent
+    path: 'sample-creator',
+    component: SampleCreatorComponent
+    // TODO: canActivate: [AuthGuard]
   },
-
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'dashboard'
+  },
+  {
+    path: '**',
+    // TODO: make 404 page
+    component: DashboardComponent
+  }
 ];
 
 @NgModule({

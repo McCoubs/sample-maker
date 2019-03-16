@@ -23,7 +23,7 @@ module.exports = function SampleRouting(app, conn) {
     // on successful write
     writestream.on('close', function (file) {
       // create a sample with given data TODO: add genres, tags, etc....
-      Sample.create({ name: file.filename, author: req.user._id, file_id: file._id }, (err, sample) => {
+      Sample.create({ name: req.body.name || file.filename, author: req.user._id, file_id: file._id }, (err, sample) => {
         // on error need to delete file and respond with error
         if (err || !sample) {
           gfs.remove({ _id: file._id }, function (err) {
@@ -52,7 +52,7 @@ module.exports = function SampleRouting(app, conn) {
   });
 
   // get actual music file for sample
-  app.get('/api/samples/:id/download', jwtAuth, (req, res) => {
+  app.get('/api/samples/:id/audio', jwtAuth, (req, res) => {
     // find sample
     Sample.findOne({ _id: req.params.id }, (err, sample) => {
       // if no sample, respond with error

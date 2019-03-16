@@ -1,0 +1,75 @@
+@import '~src/global-styles';
+
+.sample-creator-component {
+  width: 100%;
+  min-height: calc(100vh - 70px);
+  @include flex-center;
+
+  .form-control, .form-control-range {
+    border: 1px solid $palette-blue;
+    background-color: #ffffff;
+    display: inline-block;
+    max-width: 45%;
+    margin: 4px 0;
+  }
+
+  .sample-container {
+    min-height: inherit;
+    @include flex-center;
+
+    .playback-controls, .recording-controls, .editing-controls {
+      @include  flex-center;
+      flex-direction: column;
+    }
+
+    .playback-controls {
+      width: 100%;
+
+      .music-slider {
+        width: 100%;
+      }
+    }
+  }
+
+  .controls-container {
+    min-height: inherit;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: $palette-lightgray;
+
+    .container {
+      margin-top: 8px;
+
+      .title {
+        font-size: 18px;
+        margin-top: 8px;
+        margin-bottom: -8px;
+      }
+    }
+
+    .edit-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      width: 100%;
+      padding: 12px;
+      margin: 4px 0;
+
+      &:not(:last-child) {
+        border-bottom: 2px $palette-darkgray solid;
+      }
+
+      .btn {
+        margin-top: 4px;
+        width: 80%;
+
+        &.btn-inline {
+          width: fit-content;
+          margin-top: 0;
+        }
+      }
+    }
+  }
+}

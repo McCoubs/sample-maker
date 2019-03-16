@@ -17,6 +17,17 @@ $palette-error: #e35c5b;
   border: 2px $palette-blue solid;
 }
 
+label {
+  margin: 0;
+}
+
+.form-control {
+  background-color: $palette-lightgray;
+  color: #757c84;
+  border: none;
+  box-shadow: none;
+}
+
 .row {
   margin: 0 !important;
 }
@@ -62,4 +73,10 @@ $palette-error: #e35c5b;
 
 .error {
   color: $palette-error;
+}
+
+@mixin flex-center() {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
