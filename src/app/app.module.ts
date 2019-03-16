@@ -12,6 +12,8 @@ import { TokenInterceptor } from './token.interceptor';
 import { HeaderComponent } from './header/header.component';
 import { CardComponent } from './card/card.component';
 import { SampleCreatorComponent } from './sample-creator/sample-creator.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { IgxSliderModule } from 'igniteui-angular';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,9 @@ import { SampleCreatorComponent } from './sample-creator/sample-creator.componen
     HttpClientModule,
     FontAwesomeModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    IgxSliderModule
   ],
   providers: [
     CookieService,

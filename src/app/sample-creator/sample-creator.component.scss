@@ -21,6 +21,14 @@
       @include  flex-center;
       flex-direction: column;
     }
+
+    .playback-controls {
+      width: 100%;
+
+      .music-slider {
+        width: 100%;
+      }
+    }
   }
 
   .controls-container {
@@ -40,27 +48,26 @@
       }
     }
 
-    .recording-controls, .editing-controls {
-      @include  flex-center;
-      flex-direction: column;
+    .edit-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
       width: 100%;
+      padding: 12px;
+      margin: 4px 0;
 
-      .edit-container {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        flex-wrap: wrap;
-        width: 100%;
-        padding: 12px;
-        margin: 4px 0;
+      &:not(:last-child) {
+        border-bottom: 2px $palette-darkgray solid;
+      }
 
-        &:not(:last-child) {
-          border-bottom: 2px $palette-darkgray solid;
-        }
+      .btn {
+        margin-top: 4px;
+        width: 80%;
 
-        .btn {
-          margin-top: 4px;
-          width: 80%;
+        &.btn-inline {
+          width: fit-content;
+          margin-top: 0;
         }
       }
     }

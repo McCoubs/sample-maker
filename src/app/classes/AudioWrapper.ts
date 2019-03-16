@@ -14,8 +14,10 @@ export class AudioWrapper {
   gainNode: GainNode;
   pannerNode: PannerNode;
   filterNode: BiquadFilterNode = null;
+  processorNode: ScriptProcessorNode = null;
   // used to keep track of the head of the audio pipeline
   connectNode: AudioNode;
+  processorCallbacks: Array<Function> = [];
 
   // currently unused nodes
   oscillatorNode: OscillatorNode;
@@ -64,6 +66,24 @@ export class AudioWrapper {
     this.analyserNode = this.audioContext.createAnalyser();
     this.analyserNode.connect(this.connectNode);
     this.connectNode = this.analyserNode;
+  }
+
+  createProcessorNode(callback) {
+    // add callback to be used on processing
+    this.processorCallbacks.push(callback);
+    // create new node if none
+    if (!this.processorNode) {
+      // create processor node
+      this.processorNode = this.audioContext.createScriptProcessor(4096, 2, 2);
+      // process all call backs
+      this.processorNode.onaudioprocess = (e) => {
+        this.processorCallbacks.forEach((processorCallback) => processorCallback(e));
+      };
+
+      // connect processor to output
+      this.sourceNode.connect(this.processorNode);
+      this.processorNode.connect(this.audioContext.destination);
+    }
   }
 
   /**
@@ -185,14 +205,14 @@ export class AudioWrapper {
   /**
    * Initializes first time audio play
    */
-  startAudio(): void {
+  startAudio(time = 0) {
     if (this.sourceNode === null && !isNullOrUndefined(this.buffer)) {
       // create new audio source
       this.sourceNode = this.audioContext.createBufferSource();
       this.sourceNode.connect(this.connectNode);
-      // set buffer and start playback
+      // set buffer and start audio
       this.sourceNode.buffer = this.buffer;
-      this.sourceNode.start(0);
+      this.sourceNode.start(0, time);
       this.audioContext.resume();
     }
   }

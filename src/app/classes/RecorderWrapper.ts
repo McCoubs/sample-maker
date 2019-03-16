@@ -18,9 +18,9 @@ export class RecorderWrapper {
     this.node.onaudioprocess = (e) => {
       if (this.recording) {
         // create 2 arrays to store the incoming channel data
-        let left = new Float32Array(8192);
+        let left = new Float32Array(this.bufferLen);
         left.set(e.inputBuffer.getChannelData(0));
-        let right = new Float32Array(8192);
+        let right = new Float32Array(this.bufferLen);
         right.set(e.inputBuffer.getChannelData(1));
         // record the channel data
         this.recordedLeftBuffers.push(left);

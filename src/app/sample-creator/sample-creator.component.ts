@@ -1,8 +1,11 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { AudioWrapper } from '../classes/AudioWrapper';
 import { RecorderWrapper } from '../classes/RecorderWrapper';
 import { SampleService } from '../sample.service';
 import { saveAs } from 'file-saver';
+import {IgxSliderComponent, ISliderValueChangeEventArgs, SliderType} from 'igniteui-angular';
+
+class AudioRange {constructor(public lower: number, public upper: number) {}}
 
 @Component({
   selector: 'app-sample-creator',
@@ -14,8 +17,16 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
   audioWrapper: AudioWrapper = null;
   recorder: RecorderWrapper = null;
   recordedAudio: AudioWrapper = null;
+  public sliderType = SliderType;
+  audioRange: AudioRange;
+  audioLoaded: Boolean = false;
+  currentTime = 0;
+  interacting: Boolean = false;
 
-  constructor(private sampleService: SampleService) {}
+  @ViewChild('audioTracker')
+  private tracker: IgxSliderComponent;
+
+  constructor(private sampleService: SampleService, private ref: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.audioWrapper = new AudioWrapper();
@@ -25,14 +36,26 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
 
   onFileUpload(file) {
     this.audioWrapper.decodeFile(file, () => {
-      alert('ready for interaction');
+      const duration = this.audioWrapper.buffer.duration;
+      this.audioRange = new AudioRange(Math.floor(duration / 10), Math.floor(duration * 0.9));
+      this.audioLoaded = true;
+      this.ref.detectChanges();
     });
   }
 
   ///////// PLAYBACK CONTROL METHODS /////////
   play() {
+    this.tracker.registerOnTouched(() => {
+      this.interacting = true;
+    });
     this.audioWrapper.startAudio();
     this.recorder = new RecorderWrapper(this.audioWrapper.sourceNode);
+    this.audioWrapper.createProcessorNode((e) => {
+      if (!this.interacting) {
+        this.currentTime = e.playbackTime;
+        this.ref.detectChanges();
+      }
+    });
   }
 
   pause() {
@@ -41,6 +64,13 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
 
   resume() {
     this.audioWrapper.resumeAudio();
+  }
+
+  updateCurrentTime(event: ISliderValueChangeEventArgs) {
+    this.currentTime = +event.value;
+    this.audioWrapper.stopAudio();
+    this.audioWrapper.startAudio(this.currentTime);
+    this.interacting = false;
   }
 
   ///////// EDITING CONTROL METHODS /////////
@@ -54,6 +84,10 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
 
   applyFadeIn(percent: number) {
     this.audioWrapper.fadeAudioIn(percent);
+  }
+
+  applyFadeOut(percent: number) {
+    this.audioWrapper.fadeAudioOut(percent);
   }
 
   pan(value) {
@@ -79,12 +113,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
   }
 
   playRecording() {
-    // start if not started, else resume
-    if (this.recordedAudio.sourceNode) {
-      this.recordedAudio.resumeAudio();
-    } else {
-      this.recordedAudio.startAudio();
-    }
+    this.recordedAudio.startAudio();
   }
 
   pauseRecording() {
