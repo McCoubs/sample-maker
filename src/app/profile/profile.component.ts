@@ -22,11 +22,13 @@ export class ProfileComponent implements OnInit {
 
   // selectedUser will be passed in when clicking user link, currentUser for now
   selectedUser: User;
+  subscribed: Boolean = false;
   isMyProfile: Boolean = false;
   selectedTab = 0;
   userSamples: Array<Sample> = [];
-  subscribers: Array<User> = [];
-  subscriptions: Array<User> = [];
+  // TODO: these are currently just arrays of IDs
+  subscribers: Array<String> = [];
+  subscriptions: Array<String> = [];
   currentUser = this.userService.getCurrentUser();
 
   constructor(
@@ -64,10 +66,10 @@ export class ProfileComponent implements OnInit {
     return false;
   }
 
-  getSubscribers(): Array<User> {
+  getSubscribers(): Array<String> {
     this.userService.getUserSubscribers(this.selectedUser._id).subscribe(
         (subscribers) => {
-          return (subscribers.map((subscriber) => new User(subscriber)));
+          return (subscribers.map((subscriber) => String(subscriber)));
         },
         (error) => {
           console.log(error);
@@ -76,10 +78,10 @@ export class ProfileComponent implements OnInit {
     return [];
   }
 
-  getSubscriptions(): Array<User> {
+  getSubscriptions(): Array<String> {
     this.userService.getUserSubscriptions(this.selectedUser._id).subscribe(
         (subscriptions) => {
-          return (subscriptions.map((subscription) => new User(subscription)));
+          return (subscriptions.map((subscription) => String(subscription)));
         },
         (error) => {
           console.log(error);

@@ -48,18 +48,18 @@ module.exports = function UserRouting(app) {
     if (!req.params.id) {
       return res.status(400).json(errorGenerator(null, 400, 'Invalid request, ID not provided'));
     } else {
-      Sample.find({author: req.params.id}).toArray((err, samples) =>{
+      Sample.find({author: req.params.id}, (err, samples) =>{
         if (err) return res.status(500).json(errorGenerator(err,500, 'Could not find samples for user: ' + req.params.id));
         res.json(samples);
       });
     }
   });
 
+  // TODO: subscribe and unsubscribe
   app.post('/api/subscribe',jwtAuth, (req, res) => {
     // Subscription.insertOne({follower: id1, followee: id2});
     if (!req.params.id) {
       return res.status(400).json(errorGenerator(null, 400, 'Invalid request, ID not provided'));
-    } else {
     }
   });
 
@@ -67,7 +67,6 @@ module.exports = function UserRouting(app) {
     // Subscription.deleteOne({follower: id1, followee: id2});
     if (!req.params.id) {
       return res.status(400).json(errorGenerator(null, 400, 'Invalid request, ID not provided'));
-    } else {
     }
   })
 
@@ -75,7 +74,7 @@ module.exports = function UserRouting(app) {
     if (!req.params.id) {
       return res.status(400).json(errorGenerator(null, 400, 'Invalid request, ID not provided'));
     } else {
-      Subscription.find({followee: req.params.id}).toArray((err, subscribers) =>{
+      Subscription.find({followee: req.params.id}, (err, subscribers) =>{
         if (err) return res.status(500).json(errorGenerator(err,500, 'Could not find subscribers for user: ' + req.params.id));
         res.json(subscribers);
       });
@@ -86,7 +85,7 @@ module.exports = function UserRouting(app) {
     if (!req.params.id) {
       return res.status(400).json(errorGenerator(null, 400, 'Invalid request, ID not provided'));
     } else {
-      Subscription.find({follower: req.params.id}).toArray((err, subscriptions) =>{
+      Subscription.find({follower: req.params.id}, (err, subscriptions) =>{
         if (err) return res.status(500).json(errorGenerator(err,500, 'Could not find subscriptions for user: ' + req.params.id));
         res.json(subscriptions);
       });
