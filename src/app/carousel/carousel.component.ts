@@ -42,6 +42,7 @@ export class CarouselComponent implements OnInit {
     this.currentSamples++;
     this._displayCache = this.sampleCache[this.currentSamples];
     
+    // if the next isn't already loaded
     this.sampleService.getSamples(5, (this.currentSamples + 1) * 5).subscribe(
       (samples) => {
         if(samples.length > 0){

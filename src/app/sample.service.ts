@@ -15,7 +15,6 @@ export class SampleService {
     // add sample to form data
     const formData: FormData = new FormData();
     formData.append('sample', sample, sample.name);
-
     // for every data key, add to form data
     Object.keys(data).forEach((key) => {
       formData.append(key, data[key]);
