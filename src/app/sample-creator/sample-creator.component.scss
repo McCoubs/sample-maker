@@ -5,6 +5,28 @@
   min-height: calc(100vh - 70px);
   @include flex-center;
 
+  .no-audio-container {
+    @include flex-center;
+    font-size: 32px;
+    text-align: center;
+    color: $palette-blue;
+    min-height: inherit;
+    flex-direction: column;
+    width: 100%;
+
+    input {
+      max-width: 50%;
+      font-size: 24px;
+      color: #000000;
+      margin-top: 12px;
+    }
+
+    .loading-icon {
+      font-size: 40px;
+      margin-top: 12px;
+    }
+  }
+
   .form-control, .form-control-range {
     border: 1px solid $palette-blue;
     background-color: #ffffff;
@@ -16,8 +38,9 @@
   .sample-container {
     min-height: inherit;
     @include flex-center;
+    flex-direction: column;
 
-    .playback-controls, .recording-controls, .editing-controls {
+    .playback-controls, .recording-controls {
       @include  flex-center;
       flex-direction: column;
     }
@@ -70,6 +93,14 @@
           margin-top: 0;
         }
       }
+    }
+  }
+
+  .sample-container, .controls-container {
+
+    .title {
+      font-size: 24px;
+      color: $palette-blue;
     }
   }
 }

@@ -1,6 +1,7 @@
 import { isNullOrUndefined } from 'util';
 declare var AudioContext, webkitAudioContext, mozAudioContext: any;
 import { AudioContextEnum } from './AudioContextEnum';
+import { saveAs } from 'file-saver';
 import audioBufferToWav from 'audiobuffer-to-wav';
 
 /**
@@ -190,6 +191,10 @@ export class AudioWrapper {
     this.buffer = newBuffer;
   }
 
+  setVolume(volume: number) {
+    this.gainNode.gain.value = volume;
+  }
+
   setPan(range: number): void {
     // calculates 3D pan for panner
     let zDeg = range + 90;
@@ -241,5 +246,9 @@ export class AudioWrapper {
 
   setPlayBackRate(rate: number): void {
     this.sourceNode.playbackRate.value = rate;
+  }
+
+  downloadAudio(name: string) {
+    saveAs(this.convertToFile(name));
   }
 }

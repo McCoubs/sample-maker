@@ -2,8 +2,8 @@ import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChi
 import { AudioWrapper } from '../classes/AudioWrapper';
 import { RecorderWrapper } from '../classes/RecorderWrapper';
 import { SampleService } from '../sample.service';
-import { saveAs } from 'file-saver';
 import { IgxSliderComponent, ISliderValueChangeEventArgs, SliderType } from 'igniteui-angular';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 class AudioRange {constructor(public lower: number, public upper: number) {}}
 
@@ -22,6 +22,8 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
   audioLoaded: Boolean = false;
   currentTime = 0;
   interacting: Boolean = false;
+  loading: Boolean = false;
+  faSpinner = faSpinner;
 
   @ViewChild('audioTracker')
   private tracker: IgxSliderComponent;
@@ -35,26 +37,31 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {}
 
   onFileUpload(file) {
+    this.loading = true;
     this.audioWrapper.decodeFile(file, () => {
       const duration = this.audioWrapper.buffer.duration;
       this.audioRange = new AudioRange(Math.floor(duration / 10), Math.floor(duration * 0.9));
       this.audioLoaded = true;
+      this.loading = false;
       this.ref.detectChanges();
     });
   }
 
   ///////// PLAYBACK CONTROL METHODS /////////
   play() {
-    this.tracker.registerOnTouched(() => {
-      this.interacting = true;
-    });
+    // start playing and create recorder
     this.audioWrapper.startAudio();
     this.recorder = new RecorderWrapper(this.audioWrapper.sourceNode);
+    // start listener node
     this.audioWrapper.createProcessorNode((e) => {
       if (!this.interacting) {
         this.currentTime = e.playbackTime;
         this.ref.detectChanges();
       }
+    });
+    // disable counting when touching to avoid stutter
+    this.tracker.registerOnTouched(() => {
+      this.interacting = true;
     });
   }
 
@@ -75,7 +82,15 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
 
   ///////// EDITING CONTROL METHODS /////////
   applyFilter(type: string, frequency: number, gain: number) {
-    this.audioWrapper.applyFilter(type, frequency, gain);
+    if (type && frequency && gain) {
+      this.audioWrapper.applyFilter(type, frequency, gain);
+      this.ref.detectChanges();
+    }
+  }
+
+  removeFilter() {
+    this.audioWrapper.removeFilter();
+    this.ref.detectChanges();
   }
 
   setPlaybackRate(rate: number) {
@@ -90,8 +105,12 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     this.audioWrapper.fadeAudioOut(percent);
   }
 
-  pan(value) {
+  setPan(value) {
     this.audioWrapper.setPan(value);
+  }
+
+  changeVolume(volume) {
+    this.audioWrapper.setVolume(volume);
   }
 
   ///////// RECORDING CONTROL METHODS /////////
@@ -145,6 +164,6 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
   }
 
   downloadRecording(name: string) {
-    saveAs(this.recordedAudio.convertToFile(name));
+    this.recordedAudio.downloadAudio(name);
   }
 }

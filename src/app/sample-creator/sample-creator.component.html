@@ -1,7 +1,16 @@
 <div class="sample-creator-component row">
-  <div class="sample-container col-12 col-md-8">
-    <input type="file" #fileInput (change)="onFileUpload(fileInput.files[0])" />
-    <div *ngIf="audioLoaded" class="playback-controls container">
+  <ng-template #playbackAudioNotLoaded>
+    <div class="sample-container col-12 col-md-8">
+      <div class="no-audio-container">
+        Please Upload Audio To Create
+        <input type="file" #fileInput (change)="onFileUpload(fileInput.files[0])" />
+        <fa-icon *ngIf="loading" class="loading-icon" [icon]="faSpinner" [spin]="2"></fa-icon>
+      </div>
+    </div>
+  </ng-template>
+  <div *ngIf="audioLoaded; else playbackAudioNotLoaded" class="sample-container col-12 col-md-8">
+    <div class="playback-controls container">
+      <span class="title">Playback Controls</span>
       <button (click)="play()">play</button>
       <button (click)="pause()">pause</button>
       <button (click)="resume()">resume</button>
@@ -17,11 +26,16 @@
       <button (click)="downloadRecording('tester')">download</button>
     </div>
   </div>
-  <div class="controls-container col-12 col-md-4">
+  <div *ngIf="audioLoaded; else controlsAudioNotLoaded" class="controls-container col-12 col-md-4">
     <span class="title">Editing Controls</span>
     <div class="edit-container">
+      <label for="volumeInput">Volume:</label>
+      <input #volumeInput id="volumeInput" class="form-control-range" type="range" value="1" max="2" min="0" step="0.1" (change)="changeVolume(+volumeInput.value)">
+      <span>{{ volumeInput.value }}</span>
+    </div>
+    <div class="edit-container">
       <label for="pannerInput">Panner:</label>
-      <input #pannerInput id="pannerInput" class="form-control-range" type="range" value="0" max="1" min="-1" step="0.1" (change)="pan(+pannerInput.value)">
+      <input #pannerInput id="pannerInput" class="form-control-range" type="range" value="0" max="1" min="-1" step="0.1" (change)="setPan(+pannerInput.value)">
       <span>{{ pannerInput.value }}</span>
     </div>
     <div class="edit-container">
@@ -37,7 +51,7 @@
       <input #fadeOutPercent placeholder="percent..." class="form-control" type="number" min="1" step="1" max="20" id="fadeOutPercent">
       <button class="btn btn-primary btn-inline" (click)="applyFadeOut(+fadeOutPercent.value)">Apply Fade Out</button>
     </div>
-    <div class="edit-container">
+    <div *ngIf="!audioWrapper?.filterNode; else filterApplied" class="edit-container">
       <select #filterSelect class="form-control">
         <option value="">filter...</option>
         <option value="lowpass">lowpass</option>
@@ -57,5 +71,18 @@
       </div>
       <button class="btn btn-primary" (click)="applyFilter(filterSelect.value, +filterFreq.value, +filterGain.value)">Apply Filter</button>
     </div>
+    <ng-template #filterApplied>
+      <div class="edit-container">
+        <button class="btn btn-primary" (click)="removeFilter()">Remove Filter</button>
+      </div>
+    </ng-template>
   </div>
+  <ng-template #controlsAudioNotLoaded>
+    <div class="controls-container col-12 col-md-4">
+      <div class="no-audio-container">
+        Please Upload Audio To Create
+        <fa-icon *ngIf="loading" class="loading-icon" [icon]="faSpinner" [spin]="2"></fa-icon>
+      </div>
+    </div>
+  </ng-template>
 </div>
