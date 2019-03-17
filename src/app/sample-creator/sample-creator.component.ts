@@ -2,8 +2,9 @@ import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChi
 import { AudioWrapper } from '../classes/AudioWrapper';
 import { RecorderWrapper } from '../classes/RecorderWrapper';
 import { SampleService } from '../sample.service';
-import { saveAs } from 'file-saver';
 import { IgxSliderComponent, ISliderValueChangeEventArgs, SliderType } from 'igniteui-angular';
+import { faSpinner, faVolumeMute, faVolumeUp, faMicrophone } from '@fortawesome/free-solid-svg-icons';
+import { AudioContextEnum } from '../classes/AudioContextEnum';
 
 class AudioRange {constructor(public lower: number, public upper: number) {}}
 
@@ -14,17 +15,26 @@ class AudioRange {constructor(public lower: number, public upper: number) {}}
 })
 export class SampleCreatorComponent implements OnInit, AfterViewInit {
 
+  // functionality vars
   audioWrapper: AudioWrapper = null;
   recorder: RecorderWrapper = null;
   recordedAudio: AudioWrapper = null;
-  public sliderType = SliderType;
+  sliderType = SliderType;
   audioRange: AudioRange;
+  uploadedFile: File;
+  // interaction vars
   audioLoaded: Boolean = false;
-  currentTime = 0;
   interacting: Boolean = false;
-
+  loading: Boolean = false;
+  isPlaying: Boolean = false;
+  currentTime = 0;
   @ViewChild('audioTracker')
   private tracker: IgxSliderComponent;
+  // font-awesome vars
+  faSpinner = faSpinner;
+  faVolumeMute = faVolumeMute;
+  faVolumeUp = faVolumeUp;
+  faMicrophone = faMicrophone;
 
   constructor(private sampleService: SampleService, private ref: ChangeDetectorRef) {}
 
@@ -34,39 +44,52 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {}
 
-  onFileUpload(file) {
+  onFileUpload(file: File): void {
+    this.loading = true;
+    this.uploadedFile = file;
+    // decode input file and start setup
     this.audioWrapper.decodeFile(file, () => {
       const duration = this.audioWrapper.buffer.duration;
       this.audioRange = new AudioRange(Math.floor(duration / 10), Math.floor(duration * 0.9));
       this.audioLoaded = true;
+      this.loading = false;
       this.ref.detectChanges();
     });
   }
 
   ///////// PLAYBACK CONTROL METHODS /////////
-  play() {
-    this.tracker.registerOnTouched(() => {
-      this.interacting = true;
-    });
+  setupPlay() {
+    // start playing and create recorder
     this.audioWrapper.startAudio();
     this.recorder = new RecorderWrapper(this.audioWrapper.sourceNode);
+    // start listener node
     this.audioWrapper.createProcessorNode((e) => {
       if (!this.interacting) {
         this.currentTime = e.playbackTime;
         this.ref.detectChanges();
       }
     });
+    // disable counting when touching to avoid stutter
+    this.tracker.registerOnTouched(() => {
+      this.interacting = true;
+    });
   }
 
-  pause() {
-    this.audioWrapper.pauseAudio();
-  }
-
-  resume() {
-    this.audioWrapper.resumeAudio();
+  togglePlaying() {
+    // call correct method
+    if (!this.recorder) {
+      this.setupPlay();
+    } else if (this.audioWrapper.audioContext.state === AudioContextEnum.RunningState) {
+      this.audioWrapper.pauseAudio();
+    } else {
+      this.audioWrapper.resumeAudio();
+    }
+    this.isPlaying = !this.isPlaying;
+    this.ref.detectChanges();
   }
 
   updateCurrentTime(event: ISliderValueChangeEventArgs) {
+    // method to help with tracker
     this.currentTime = +event.value;
     this.audioWrapper.stopAudio();
     this.audioWrapper.startAudio(this.currentTime);
@@ -75,7 +98,15 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
 
   ///////// EDITING CONTROL METHODS /////////
   applyFilter(type: string, frequency: number, gain: number) {
-    this.audioWrapper.applyFilter(type, frequency, gain);
+    if (type && frequency && gain) {
+      this.audioWrapper.applyFilter(type, frequency, gain);
+      this.ref.detectChanges();
+    }
+  }
+
+  removeFilter() {
+    this.audioWrapper.removeFilter();
+    this.ref.detectChanges();
   }
 
   setPlaybackRate(rate: number) {
@@ -90,11 +121,23 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     this.audioWrapper.fadeAudioOut(percent);
   }
 
-  pan(value) {
+  setPan(value) {
     this.audioWrapper.setPan(value);
   }
 
+  changeVolume(volume) {
+    this.audioWrapper.setVolume(volume);
+  }
+
   ///////// RECORDING CONTROL METHODS /////////
+  toggleRecording() {
+    if (this.recorder.recording) {
+      this.stopRecording();
+    } else {
+      this.record();
+    }
+  }
+
   record() {
     // reset temp recording
     if (this.recordedAudio) {
@@ -113,6 +156,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
   }
 
   playRecording() {
+    this.recordedAudio.stopAudio();
     this.recordedAudio.startAudio();
   }
 
@@ -124,26 +168,34 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     this.recorder.reset();
     this.recordedAudio.stopAudio();
     this.recordedAudio = null;
+    this.ref.detectChanges();
   }
 
   saveRecording(name: string) {
-    // this code saves into db
+    // get default
+    if (!name || name === '') {
+      name = this.uploadedFile.name;
+    }
+    // remove ending if provided
+    name = name.split('.')[0];
+    // save recording
     const file = this.recordedAudio.convertToFile(name);
     this.sampleService.createSample(file, {}).subscribe(
         (data) => {
           console.log(data);
-          /*this.sampleService.downloadSample(data._id).subscribe(
-              (arrayBuffer) => {
-                const test = new AudioWrapper();
-                test.decodeArrayBuffer(arrayBuffer, () => test.startAudio());
-              },
-              (error) => console.log(error));*/
+          alert('new sample: ' + name + ' successfully saved');
         },
         (error) => console.log(error)
     );
   }
 
   downloadRecording(name: string) {
-    saveAs(this.recordedAudio.convertToFile(name));
+    // get default
+    if (!name || name === '') {
+      name = this.uploadedFile.name;
+    }
+    // remove ending if provided
+    name = name.split('.')[0];
+    this.recordedAudio.downloadAudio(name);
   }
 }

@@ -15,6 +15,7 @@ import { SampleCreatorComponent } from './sample-creator/sample-creator.componen
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IgxSliderModule } from 'igniteui-angular';
 import { CarouselComponent } from './carousel/carousel.component';
+import { CreditsComponent } from './credits/credits.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { CarouselComponent } from './carousel/carousel.component';
     HeaderComponent,
     CardComponent,
     SampleCreatorComponent,
-    CarouselComponent
+    CarouselComponent,
+    CreditsComponent
   ],
   imports: [
     BrowserModule,
