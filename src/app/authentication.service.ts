@@ -39,6 +39,7 @@ export class AuthenticationService {
 
   public register(user: TokenPayload): Observable<any> {
     // hit register api with given user
+    this.getLoggedInStatus.emit(true);
     return this.http.post(this.endpointService.generateUrl('register'), user);
   }
 
