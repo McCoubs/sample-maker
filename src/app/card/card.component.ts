@@ -28,42 +28,16 @@ export class CardComponent implements OnInit {
   }
 
   play() {
-    // if(!this.playing){
-    //   this.sampleService.downloadSample(this._sample.file_id).subscribe(
-    //     (sample) => {
-    //       this.audioTrack = new Audio();
-    //       this.audioTrack.src = sample;
-    //       this.audioTrack.load();
-    //       this.audioTrack.play();
-    //       this.playing = true;
-    //     },
-    //     (error) => {
-    //       console.error("could not download sample");
-    //     }
-    //   );
-    // } else {
-    //   this.audioTrack.stop();
-    //   this.playing = false;
-    // }
-  }
-
-  download() {
     this.sampleService.downloadSample(this._sample._id).subscribe(
       (arrayBuffer) => {
-        debugger;
         const test = new AudioWrapper();
         test.decodeArrayBuffer(arrayBuffer, () => {test.startAudio()});
       },
       (error) => console.log(error)
     );
-    // console.log(this._sample);
-    // this.sampleService.downloadSample(this._sample._id).subscribe(
-    //   (sample) => {
-    //     this.audioTrack = sample;
-    //   },
-    //   (error) => {
-    //     console.error("could not get file");
-    //   }
-    // );
+  }
+
+  download() {
+    // uhoh
   }
 }

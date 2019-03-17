@@ -134,7 +134,6 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
           console.log(data);
           /*this.sampleService.downloadSample(data._id).subscribe(
               (arrayBuffer) => {
-                debugger;
                 const test = new AudioWrapper();
                 test.decodeArrayBuffer(arrayBuffer, () => test.startAudio());
               },
