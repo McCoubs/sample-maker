@@ -8,6 +8,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CookieService } from 'ngx-cookie-service';
+import { ProfileComponent } from './profile/profile.component';
 import { TokenInterceptor } from './token.interceptor';
 import { HeaderComponent } from './header/header.component';
 import { CardComponent } from './card/card.component';
@@ -22,6 +23,7 @@ import { CreditsComponent } from './credits/credits.component';
     AppComponent,
     LoginComponent,
     DashboardComponent,
+    ProfileComponent,
     HeaderComponent,
     CardComponent,
     SampleCreatorComponent,

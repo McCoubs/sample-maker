@@ -1,0 +1,56 @@
+<div class="profile-component container">
+    <div>
+        <img class="profile-pic" src="{{profilePic}}">
+    </div>
+    <div class="profile-details">
+        <fa-icon class="input-icon" [icon]="faSignature"></fa-icon>
+        <label class="detail-label">{{selectedUser.name}}</label><br>
+        <fa-icon class="input-icon" [icon]="faEnvelope"></fa-icon>
+        <label class="detail-label">{{selectedUser.email}}</label>
+    </div>
+    <div id="sub-unsub"*ngIf="!isMyProfile; else editButton">
+        <div *ngIf="!subscribed; else unsubButton">
+            <button id="subscribe-button" class="btn btn-secondary" type="button" (click)="sub()">
+                Subscribe
+            </button>
+        </div>
+        <ng-template #unsubButton>
+            <button class="btn btn-secondary" type="button" (click)="unsub()">
+                Unsubscribe
+            </button>
+        </ng-template>
+    </div>
+    <ng-template #editButton>
+        <button class="btn btn-secondary" type="button" (click)="edit()">
+            Edit Profile
+        </button>
+    </ng-template>
+    <div class="tab-container">
+        <div class="profile-tabs">
+            <button class="btn btn-primary" type="button" (click)="onSelect('Samples')">
+                <span class="tab-header">Samples</span> <br>
+            </button>
+            <button class="btn btn-primary" type="button" (click)="onSelect('Subscriptions')">
+                <span class="tab-header">Subscriptions</span>
+            </button>
+            <button class="btn btn-primary" type="button" (click)="onSelect('Subscribers')">
+                <span class="tab-header">Subscribers</span> <br>
+            </button>
+        </div>
+        <div class="profile-content" *ngIf="selectedTab === 0">
+            <div *ngFor="let sample of userSamples">
+                <app-card [sample]=sample></app-card>
+            </div>
+            <div *ngIf="hasNoSamples() || !userSamples">
+                No samples to display.
+            </div>
+        </div>
+        <div class="profile-content" *ngIf="selectedTab === 1">
+            <p>Content 2</p>
+        </div>
+        <div class="profile-content" *ngIf="selectedTab === 2">
+            <p>Content 3</p>
+        </div>
+    </div>
+</div>
+

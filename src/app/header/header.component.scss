@@ -12,6 +12,10 @@
     align-items: center;
     position: sticky;
     top: 0;
+    .navigation {
+        text-decoration: none;
+        color: white;
+    }
     @media only screen and (min-width: map_get($grid-breakpoints, 'md')) {
         height: 70px;
         font-size: 16px;

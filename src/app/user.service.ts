@@ -1,19 +1,23 @@
-import { Injectable } from '@angular/core';
+import {EventEmitter, Injectable, Output} from '@angular/core';
 import { UserData } from './interfaces/authentication';
 import { environment } from '../environments/environment';
 import { User } from './classes/user';
 import { isNullOrUndefined } from 'util';
 import { CookieService } from 'ngx-cookie-service';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { EndpointService } from './endpoint.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+  @Output() emitCurrentUser: EventEmitter<User> = new EventEmitter();
 
   private currentUser: User;
   private token: string;
 
-  constructor(private cookieService: CookieService) {}
+  constructor(private cookieService: CookieService, private http: HttpClient, private endpointService: EndpointService) {}
 
   public parseJWTToken(token: string): UserData {
       const payload = token.split('.')[1];
@@ -23,6 +27,7 @@ export class UserService {
   public setCurrentUser(data: UserData): void {
     // Set current user
     this.currentUser = new User(data);
+    this.emitCurrentUser.emit(this.currentUser);
     this.setCookie('currentUser', JSON.stringify(this.currentUser));
   }
 
@@ -37,6 +42,7 @@ export class UserService {
       const localUser = this.cookieService.check('currentUser') ? JSON.parse(this.cookieService.get('currentUser')) : null;
       if (!isNullOrUndefined(localUser)) {
         this.currentUser = new User(localUser);
+        this.emitCurrentUser.emit(this.currentUser);
       }
     }
     return this.currentUser;
@@ -56,6 +62,22 @@ export class UserService {
     this.cookieService.set('currentUser', null);
     this.setCookie('currentUser', null);
     this.setCookie('jwt-token', null);
+  }
+
+  public getUser(id: string | number): Observable<any> {
+    return this.http.get(this.endpointService.generateUrl('user', id));
+  }
+
+  public getUserSamples(id: string | number): Observable<any> {
+    return this.http.get(this.endpointService.generateUrl('user_samples', id));
+  }
+
+  public getUserSubscribers(id: string | number): Observable<any> {
+    return this.http.get(this.endpointService.generateUrl('user_subscribers', id));
+  }
+
+  public getUserSubscriptions(id: string | number): Observable<any> {
+    return this.http.get(this.endpointService.generateUrl('user_subscriptions', id));
   }
 
   private setCookie(cookie: string, value) {

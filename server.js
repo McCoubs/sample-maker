@@ -7,6 +7,7 @@ let fileUpload = require('express-fileupload');
 // importing mongoose models
 require('./src/api/models/users');
 require('./src/api/models/samples');
+require('./src/api/models/subscriptions');
 
 // setup app components
 let app = express();

@@ -13,8 +13,13 @@ export class EndpointService {
     register: '/api/register',
     users: '/api/users',
     user: '/api/users/:id',
+    user_samples: '/api/user/:id/samples',
+    user_subscribers: 'api/user/:id/subscribers',
+    user_subscriptions: 'api/user/:id/subscriptions',
     samples: '/api/samples',
     sample: '/api/samples/:id',
+    subscribe: '/api/subscribe',
+    unsubscribe: '/api/unsubscribe',
     sample_download: '/api/samples/:id/audio'
   };
 
