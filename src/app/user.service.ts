@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {EventEmitter, Injectable, Output} from '@angular/core';
 import { UserData } from './interfaces/authentication';
 import { environment } from '../environments/environment';
 import { User } from './classes/user';
@@ -12,6 +12,7 @@ import {EndpointService} from './endpoint.service';
   providedIn: 'root'
 })
 export class UserService {
+  @Output() emitCurrentUser: EventEmitter<User> = new EventEmitter();
 
   private currentUser: User;
   private token: string;
@@ -26,6 +27,7 @@ export class UserService {
   public setCurrentUser(data: UserData): void {
     // Set current user
     this.currentUser = new User(data);
+    this.emitCurrentUser.emit(this.currentUser);
     this.setCookie('currentUser', JSON.stringify(this.currentUser));
   }
 
@@ -40,6 +42,7 @@ export class UserService {
       const localUser = this.cookieService.check('currentUser') ? JSON.parse(this.cookieService.get('currentUser')) : null;
       if (!isNullOrUndefined(localUser)) {
         this.currentUser = new User(localUser);
+        this.emitCurrentUser.emit(this.currentUser);
       }
     }
     return this.currentUser;

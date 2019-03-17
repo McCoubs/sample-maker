@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import { UserService } from '../user.service';
 import { AuthenticationService } from '../authentication.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TokenResponse } from '../interfaces/authentication';
 import { faEnvelope, faLock, faSignature, faExclamation } from '@fortawesome/free-solid-svg-icons';
 import { debounceTime } from 'rxjs/operators';
+import {User} from '../classes/user';
 
 @Component({
   selector: 'app-login-page',
