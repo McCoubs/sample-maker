@@ -154,6 +154,7 @@ export class AudioWrapper {
       }
     }
     this.buffer = newBuffer;
+    this.startAudio();
   }
 
   /**
@@ -189,6 +190,7 @@ export class AudioWrapper {
       }
     }
     this.buffer = newBuffer;
+    this.startAudio();
   }
 
   setVolume(volume: number) {

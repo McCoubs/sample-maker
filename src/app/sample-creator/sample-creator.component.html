@@ -3,27 +3,33 @@
     <div class="sample-container col-12 col-md-8">
       <div class="no-audio-container">
         Please Upload Audio To Create
-        <input type="file" #fileInput (change)="onFileUpload(fileInput.files[0])" />
+        <input type="file" #fileInput (change)="onFileUpload(fileInput.files[0])" accept="audio/*"/>
         <fa-icon *ngIf="loading" class="loading-icon" [icon]="faSpinner" [spin]="2"></fa-icon>
       </div>
     </div>
   </ng-template>
   <div *ngIf="audioLoaded; else playbackAudioNotLoaded" class="sample-container col-12 col-md-8">
+    <span class="title"><b style="color: #000000;">Uploaded File: </b>{{ uploadedFile.name }}</span>
     <div class="playback-controls container">
       <span class="title">Playback Controls</span>
-      <button (click)="play()">play</button>
-      <button (click)="pause()">pause</button>
-      <button (click)="resume()">resume</button>
+      <button [ngClass]="{ 'btn-primary': !isPlaying, 'btn-secondary': isPlaying }" class="btn playback-button" (click)="togglePlaying()"><img class="icon" src="{{ isPlaying ? 'assets/icons/pause-button.svg' : 'assets/icons/play-button.svg' }}"></button>
+      <span class="slider-label">Audio Slider</span>
       <igx-slider #audioTracker class="music-slider" [step]="0.1" [minValue]="0" [maxValue]="audioWrapper.buffer.duration | number: '3.0-1'" [value]="currentTime" (onValueChange)="updateCurrentTime($event)"></igx-slider>
+      <span class="slider-label">Editing Slider</span>
       <igx-slider class="music-slider" [type]="sliderType.RANGE" [step]="0.1" [minValue]="0" [maxValue]="audioWrapper.buffer.duration | number: '3.0-1'" [(ngModel)]="audioRange"></igx-slider>
     </div>
-    <div class="recording-controls container">
-      <span class="title">Recording Controls</span>
-      <button (click)="record()">record</button>
-      <button (click)="stopRecording()">stop recording</button>
-      <button (click)="playRecording()">listen to recording</button>
-      <button (click)="saveRecording('tester')">save</button>
-      <button (click)="downloadRecording('tester')">download</button>
+    <div *ngIf="!!recorder" class="recording-controls container">
+      <div class="diff-container">
+        <button [ngClass]="{ 'btn-primary': !recorder?.recording, 'btn-secondary': recorder?.recording }" class="btn playback-button" (click)="toggleRecording()">{{ recorder?.recording ? 'Stop Recording' : 'Start Recording' }}</button>
+        <fa-icon [ngClass]="{ 'blink': recorder?.recording }" class="microphone-icon" [icon]="faMicrophone"></fa-icon>
+        <button *ngIf="!!recordedAudio" class="btn btn-primary" (click)="playRecording()">Playback recording</button>
+        <button class="btn btn-negative" (click)="resetRecording()">Reset recording</button>
+      </div>
+      <div class="diff-container">
+        <input #nameInput type="text" placeholder="recording name..." class="form-control">
+        <button class="btn btn-primary" (click)="saveRecording(nameInput.value)">Save recording</button>
+        <button class="btn btn-primary" (click)="downloadRecording(nameInput.value)">Download recording</button>
+      </div>
     </div>
   </div>
   <div *ngIf="audioLoaded; else controlsAudioNotLoaded" class="controls-container col-12 col-md-4">
@@ -32,6 +38,7 @@
       <label for="volumeInput">Volume:</label>
       <input #volumeInput id="volumeInput" class="form-control-range" type="range" value="1" max="2" min="0" step="0.1" (change)="changeVolume(+volumeInput.value)">
       <span>{{ volumeInput.value }}</span>
+      <fa-icon class="icon" [icon]="+volumeInput.value === 0 ? faVolumeMute : faVolumeUp"></fa-icon>
     </div>
     <div class="edit-container">
       <label for="pannerInput">Panner:</label>
