@@ -1,0 +1,7 @@
+<div class="carousel-container">
+  <button *ngIf="currentSamples > 0" class="prevSet" (click)="loadLast()">Previous</button>
+  <div *ngFor="let sample of _displayCache">
+    <app-card class="card-component" [sample]=sample></app-card>
+  </div>
+  <button *ngIf="showNext" class="nextSet" (click)="loadNext()">Next</button>
+</div>

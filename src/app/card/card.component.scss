@@ -1,3 +1,5 @@
+@import '~src/global-styles';
+
 .card-component {
     height: 300px;
     width: 250px;
@@ -6,6 +8,10 @@
     text-align: center;
     display: flex;
     flex-direction: column;
+    margin: 10px 0;
+    @media only screen and (min-width: map_get($grid-breakpoints, 'md')) {
+    margin: 0 10px;
+    }
 }
 
 .card-image {

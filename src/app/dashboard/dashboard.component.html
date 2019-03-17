@@ -1,7 +1,13 @@
 <div class="dashboard">
-  <div *ngFor="let sample of sampleCache[currentSamples]">
-    <app-card [sample]=sample></app-card>
+  <div>
+    <input type="text" placeholder="Search" #searchbar>
+    <button class="search-button" (click)="search(searchbar.value)"></button>
+    <button class="cancel-search" (click)="reset()"></button>
   </div>
-  <input #fileTester type="file" name="fileUpload"/>
-  <button (click)="press(fileTester.files[0])"> butt dasfasdfsa dfsdf dsf</button>
+  <div class="newest-title">NEWEST SAMPLES</div>
+  <app-carousel [inputCache]="sampleCache"></app-carousel>
+  
+  <!--input #fileTester type="file" name="fileUpload"/>
+  <button (click)="press(fileTester.files[0])"> butt dasfasdfsa dfsdf dsf</button-->
+  
 </div>
