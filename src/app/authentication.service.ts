@@ -1,4 +1,4 @@
-import {EventEmitter, Injectable, Output} from '@angular/core';
+import { EventEmitter, Injectable, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
@@ -6,7 +6,7 @@ import { TokenPayload } from './interfaces/authentication';
 import { UserService } from './user.service';
 import { isNullOrUndefined } from 'util';
 import { EndpointService } from './endpoint.service';
-import {User} from './classes/user';
+import { User } from './classes/user';
 
 @Injectable({
   providedIn: 'root'

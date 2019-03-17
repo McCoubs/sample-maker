@@ -4,9 +4,9 @@ import { environment } from '../environments/environment';
 import { User } from './classes/user';
 import { isNullOrUndefined } from 'util';
 import { CookieService } from 'ngx-cookie-service';
-import {Observable} from 'rxjs';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {EndpointService} from './endpoint.service';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { EndpointService } from './endpoint.service';
 
 @Injectable({
   providedIn: 'root'

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { AuthenticationService } from '../authentication.service';
-import {User} from '../classes/user';
+import { User } from '../classes/user';
 
 @Component({
   selector: 'app-header',
@@ -35,16 +35,9 @@ export class HeaderComponent implements OnInit {
     this.isLoggedIn = this.authService.isLoggedIn();
   }
 
-  navigate(url) {
-    this.returnUrl = this.route.snapshot.queryParams[url] || '/dashboard';
-    this.router.navigateByUrl(url);
-  }
-
   signOut() {
-    this.userService.clearStorage();
     this.currentUser = null;
     this.isLoggedIn = false;
     this.authService.logout();
-    this.ngOnInit();
   }
 }

@@ -12,6 +12,7 @@ module.exports = function UserRouting(app) {
     user.name = req.body.name;
     user.email = req.body.email;
     user.setPassword(req.body.password);
+
     // attempt to save new user; on error => error else => return token
     user.save(function(err) {
       if (err) return res.status(500).json(errorGenerator(err, 500, 'Error creating new user with email: ' + req.body.email));

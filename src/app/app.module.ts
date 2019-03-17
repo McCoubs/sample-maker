@@ -31,9 +31,9 @@ import { CreditsComponent } from './credits/credits.component';
     CreditsComponent
   ],
   imports: [
-    AppRoutingModule,
     BrowserModule,
-      HttpClientModule,
+    AppRoutingModule,
+    HttpClientModule,
     FontAwesomeModule,
     FormsModule,
     ReactiveFormsModule,

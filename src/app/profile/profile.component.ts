@@ -2,11 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../authentication.service';
 import { UserService } from '../user.service';
 import { faEnvelope, faSignature } from '@fortawesome/free-solid-svg-icons';
-import {ActivatedRoute} from '@angular/router';
-import {User} from '../classes/user';
-import {Sample} from '../classes/sample';
-// import { MOCKUSER } from 'src/app/mock-user';
-
+import { ActivatedRoute } from '@angular/router';
+import { User } from '../classes/user';
+import { Sample } from '../classes/sample';
 
 @Component({
   selector: 'app-profile',
