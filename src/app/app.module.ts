@@ -14,6 +14,7 @@ import { CardComponent } from './card/card.component';
 import { SampleCreatorComponent } from './sample-creator/sample-creator.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IgxSliderModule } from 'igniteui-angular';
+import { CreditsComponent } from './credits/credits.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { IgxSliderModule } from 'igniteui-angular';
     DashboardComponent,
     HeaderComponent,
     CardComponent,
-    SampleCreatorComponent
+    SampleCreatorComponent,
+    CreditsComponent
   ],
   imports: [
     BrowserModule,
