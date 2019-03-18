@@ -195,7 +195,6 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
       name = this.uploadedFile.name;
     }
     // remove ending if provided
-    name = name.split('.')[0];
     this.recordedAudio.downloadAudio(name);
   }
 }

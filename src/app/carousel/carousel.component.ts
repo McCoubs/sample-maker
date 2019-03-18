@@ -12,19 +12,24 @@ export class CarouselComponent implements OnInit {
   currentSamples = 0;
   showNext = false;
   _displayCache;
+  searchParams = {};
   @Input()
   set inputCache(inputCache: Array<Sample>) {
     this._displayCache = inputCache;
     this.sampleCache = [];
     this.sampleCache.push(this._displayCache);
   };
+  @Input()
+  set search(params) {
+    this.searchParams = params;
+  }
 
   constructor(private sampleService: SampleService) {
 
   }
 
   ngOnInit() {
-
+    console.log(this.searchParams);
     this.sampleService.getSamples(5, (this.currentSamples + 1) * 5).subscribe(
       (samples) => {
         if(samples.length > 0){

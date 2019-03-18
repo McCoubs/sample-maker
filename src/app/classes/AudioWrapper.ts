@@ -251,6 +251,7 @@ export class AudioWrapper {
   }
 
   downloadAudio(name: string) {
+    name = name.split('.')[0];
     saveAs(this.convertToFile(name));
   }
 }
