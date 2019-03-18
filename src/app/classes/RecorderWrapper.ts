@@ -2,47 +2,68 @@ export class RecorderWrapper {
 
   recording: Boolean = false;
   bufferLen: number;
-  node: ScriptProcessorNode;
+  node: ScriptProcessorNode = null;
+  source: AudioBufferSourceNode = null;
   context: BaseAudioContext;
   recordedLength = 0;
   recordedLeftBuffers: Array<Float32Array> = [];
   recordedRightBuffers: Array<Float32Array> = [];
 
-  constructor(source: AudioNode, bufferLen?: number) {
+  constructor(source: AudioBufferSourceNode, bufferLen?: number) {
     // create processor node
     this.bufferLen = bufferLen || 8192;
+    this.createProcessor(source);
+  }
+
+  createProcessor(source: AudioBufferSourceNode): void {
+    // destroy old processors on call
+    if (this.node || this.source) {
+      this.destroyProcessor();
+    }
+    // set required vars
     this.context = source.context;
+    this.source = source;
     this.node = this.context.createScriptProcessor(this.bufferLen, 2, 2);
-
     // listen and push channel data
-    this.node.onaudioprocess = (e) => {
-      if (this.recording) {
-        // create 2 arrays to store the incoming channel data
-        let left = new Float32Array(this.bufferLen);
-        left.set(e.inputBuffer.getChannelData(0));
-        let right = new Float32Array(this.bufferLen);
-        right.set(e.inputBuffer.getChannelData(1));
-        // record the channel data
-        this.recordedLeftBuffers.push(left);
-        this.recordedRightBuffers.push(right);
-        this.recordedLength += left.length;
-      }
-    };
-
+    this.node.addEventListener('audioprocess', this.listenHelper.bind(this));
     // connect processor to output
-    source.connect(this.node);
+    this.source.connect(this.node);
     this.node.connect(this.context.destination);
   }
 
-  record() {
+  destroyProcessor(): void {
+    // stop the listener
+    this.node.removeEventListener('audioprocess', this.listenHelper.bind(this));
+    // disconnect and reset nodes
+    this.source.disconnect(this.node);
+    this.node.disconnect();
+    this.node = null;
+    this.source = null;
+  }
+
+  private listenHelper(e): void {
+    if (this.recording) {
+      // create 2 arrays to store the incoming channel data
+      let left = new Float32Array(this.bufferLen);
+      left.set(e.inputBuffer.getChannelData(0));
+      let right = new Float32Array(this.bufferLen);
+      right.set(e.inputBuffer.getChannelData(1));
+      // record the channel data
+      this.recordedLeftBuffers.push(left);
+      this.recordedRightBuffers.push(right);
+      this.recordedLength += left.length;
+    }
+  }
+
+  record(): void {
     this.recording = true;
   }
 
-  stop() {
+  stop(): void {
     this.recording = false;
   }
 
-  reset() {
+  reset(): void {
     this.recordedLength = 0;
     this.recordedLeftBuffers = [];
     this.recordedRightBuffers = [];

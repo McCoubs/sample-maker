@@ -40,21 +40,29 @@
     align-items: center;
     flex-direction: column;
 
-    .playback-controls, .recording-controls {
+    .playback-controls, .recording-controls, .saving-controls {
       @include  flex-center;
       flex-direction: column;
       width: 90%;
       margin: 8px 0;
+
+      .diff-container {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 8px 0;
+        flex-wrap: wrap;
+      }
     }
 
     .playback-controls {
 
       .music-slider {
-        width: 100%;
+        width: 40%;
       }
 
       .playback-button {
-        margin-bottom: 12px;
 
         .icon {
           width: 32px;
@@ -67,7 +75,7 @@
       }
     }
 
-    .recording-controls {
+    .recording-controls, .saving-controls {
 
       .microphone-icon {
         margin: 0 12px;
@@ -84,11 +92,6 @@
       }
 
       .diff-container {
-        display: flex;
-        align-items: center;
-        justify-content: space-evenly;
-        padding: 8px 0;
-        flex-wrap: wrap;
 
         input {
           max-width: 80%;
