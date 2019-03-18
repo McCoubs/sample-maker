@@ -19,6 +19,7 @@ export class AudioWrapper {
   // used to keep track of the head of the audio pipeline
   connectNode: AudioNode;
   processorCallbacks: Array<Function> = [];
+  loaded: Boolean = false;
 
   // currently unused nodes
   oscillatorNode: OscillatorNode;
@@ -141,20 +142,20 @@ export class AudioWrapper {
     for (let channel = 0; channel < channelsCount; channel++) {
       // get channel data
       const oldBufferChannelData = buffer.getChannelData(channel);
-      const nowBuffer = newBuffer.getChannelData(channel);
+      const currentBuffer = newBuffer.getChannelData(channel);
 
       for (let i = 0; i < originalFrames; i++) {
         // apply naive linear fade in
         if (i < fadedFramesCount) {
-          nowBuffer[i] = oldBufferChannelData[i] * (i / fadedFramesCount);
+          currentBuffer[i] = oldBufferChannelData[i] * (i / fadedFramesCount);
         // else copy old data into buffer
         } else {
-          nowBuffer[i] = oldBufferChannelData[i];
+          currentBuffer[i] = oldBufferChannelData[i];
         }
       }
     }
     this.buffer = newBuffer;
-    this.startAudio();
+    this.loadAudio();
   }
 
   /**
@@ -176,21 +177,21 @@ export class AudioWrapper {
     for (let channel = 0; channel < channelsCount; channel++) {
       // get channel data
       const oldBufferChannelData = buffer.getChannelData(channel);
-      const nowBuffer = newBuffer.getChannelData(channel);
+      const currentBuffer = newBuffer.getChannelData(channel);
 
       for (let i = 0; i < originalFrames; i++) {
         // apply naive linear fade out
         if (i >= originalFrames - fadedFramesCount) {
           const distance = i - (originalFrames - fadedFramesCount);
-          nowBuffer[i] = oldBufferChannelData[i] * ((fadedFramesCount - distance) / fadedFramesCount);
+          currentBuffer[i] = oldBufferChannelData[i] * ((fadedFramesCount - distance) / fadedFramesCount);
         // else copy old data into buffer
         } else {
-          nowBuffer[i] = oldBufferChannelData[i];
+          currentBuffer[i] = oldBufferChannelData[i];
         }
       }
     }
     this.buffer = newBuffer;
-    this.startAudio();
+    this.loadAudio();
   }
 
   setVolume(volume: number) {
@@ -210,17 +211,32 @@ export class AudioWrapper {
   }
 
   /**
-   * Initializes first time audio play
+   * start fresh audio at time
    */
   startAudio(time = 0) {
-    if (this.sourceNode === null && !isNullOrUndefined(this.buffer)) {
+    // load if not loaded
+    if (!this.loaded) {
+      this.loadAudio();
+    }
+    // start if initialized properly
+    if (this.loaded && !isNullOrUndefined(this.sourceNode) && !isNullOrUndefined(this.buffer)) {
+      this.sourceNode.start(0, time);
+      this.audioContext.resume();
+      this.loaded = false;
+    }
+  }
+
+  /**
+   * Initializes first time audio play internals
+   */
+  loadAudio() {
+    if (!isNullOrUndefined(this.buffer)) {
       // create new audio source
       this.sourceNode = this.audioContext.createBufferSource();
       this.sourceNode.connect(this.connectNode);
       // set buffer and start audio
       this.sourceNode.buffer = this.buffer;
-      this.sourceNode.start(0, time);
-      this.audioContext.resume();
+      this.loaded = true;
     }
   }
 
@@ -228,9 +244,10 @@ export class AudioWrapper {
    * Kills audio play entirely
    */
   stopAudio(): void {
-    if (this.sourceNode) {
+    if (this.sourceNode && !this.loaded) {
       this.sourceNode.stop();
       this.sourceNode = null;
+      this.loaded = false;
     }
   }
 
@@ -248,6 +265,85 @@ export class AudioWrapper {
 
   setPlayBackRate(rate: number): void {
     this.sourceNode.playbackRate.value = rate;
+  }
+
+  cut(start: number, end: number): Object {
+    this.stopAudio();
+
+    // get required info
+    const oldFramesCount = this.buffer.length;
+    const channelsCount = this.buffer.numberOfChannels;
+    const cutLength = end - start;
+
+    const sampleRate = this.audioContext.sampleRate;
+    // start and end of cut
+    const startFrame = Math.floor(start * sampleRate);
+    const endFrame = Math.floor(end * sampleRate);
+    // length of cut in frames
+    const cutFramesCount = Math.floor(cutLength * sampleRate);
+    // length of result buffer after cut
+    const newFramesCount = Math.floor(oldFramesCount - cutFramesCount);
+
+    // create new buffers of calculated length
+    const newBuffer = this.audioContext.createBuffer(channelsCount, newFramesCount, sampleRate);
+    const cutBuffer = this.audioContext.createBuffer(channelsCount, cutFramesCount, sampleRate);
+
+    // for all channel data
+    for (let channel = 0; channel < channelsCount; channel++) {
+      // old channel data
+      const oldBufferChannelData = this.buffer.getChannelData(channel);
+      // new channel data
+      const currentBuffer = newBuffer.getChannelData(channel);
+      // set the cut channel buffer
+      cutBuffer.getChannelData(channel).set(oldBufferChannelData.slice(startFrame, endFrame));
+
+      // for all frames
+      for (let i = 0; i < oldFramesCount; i++) {
+        // store pre-cut frames
+        if (i < startFrame) {
+          currentBuffer[i] = oldBufferChannelData[i];
+        // store post-cut frames
+        } else if (i >= endFrame) {
+          currentBuffer[i - cutFramesCount] = oldBufferChannelData[i];
+        }
+      }
+    }
+
+    // set new buffer and return cut/new
+    this.buffer = newBuffer;
+    return {
+      newBuffer,
+      cutBuffer,
+    };
+  }
+
+  leave(start, end): Object {
+    this.stopAudio();
+
+    // get required info
+    const oldBuffer = this.buffer;
+    const channelsCount = this.buffer.numberOfChannels;
+
+    const sampleRate = this.audioContext.sampleRate;
+    // start and end of leave
+    const startFrame = Math.floor(start * sampleRate);
+    const endFrame = Math.floor(end * sampleRate);
+
+    // create new buffer of calculated length
+    const newBuffer = this.audioContext.createBuffer(channelsCount, endFrame - startFrame, sampleRate);
+
+    // for all channel data
+    for (let channel = 0; channel < channelsCount; channel++) {
+      // set the leave channel buffer
+      newBuffer.getChannelData(channel).set(this.buffer.getChannelData(channel).slice(startFrame, endFrame));
+    }
+
+    // set new buffer and return cut/new
+    this.buffer = newBuffer;
+    return {
+      newBuffer,
+      oldBuffer,
+    };
   }
 
   downloadAudio(name: string) {
