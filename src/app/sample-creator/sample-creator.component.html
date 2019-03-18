@@ -11,20 +11,31 @@
   <div *ngIf="audioLoaded; else playbackAudioNotLoaded" class="sample-container col-12 col-md-8">
     <span class="title"><b style="color: #000000;">Uploaded File: </b>{{ uploadedFile.name }}</span>
     <div class="playback-controls container">
-      <span class="title">Playback Controls</span>
-      <button [ngClass]="{ 'btn-primary': !isPlaying, 'btn-secondary': isPlaying }" class="btn playback-button" (click)="togglePlaying()"><img class="icon" src="{{ isPlaying ? 'assets/icons/pause-button.svg' : 'assets/icons/play-button.svg' }}"></button>
-      <span class="slider-label">Audio Slider</span>
-      <igx-slider #audioTracker class="music-slider" [step]="0.1" [minValue]="0" [maxValue]="audioWrapper.buffer.duration | number: '3.0-1'" [value]="currentTime" (onValueChange)="updateCurrentTime($event)"></igx-slider>
-      <span class="slider-label">Editing Slider</span>
-      <igx-slider class="music-slider" [type]="sliderType.RANGE" [step]="0.1" [minValue]="0" [maxValue]="audioWrapper.buffer.duration | number: '3.0-1'" [(ngModel)]="audioRange"></igx-slider>
+      <div class="diff-container">
+        <span class="title">Playback Controls</span>
+        <button [ngClass]="{ 'btn-primary': !isPlaying, 'btn-secondary': isPlaying }" class="btn playback-button" (click)="togglePlaying()"><img class="icon" src="{{ isPlaying ? 'assets/icons/pause-button.svg' : 'assets/icons/play-button.svg' }}"></button>
+        <button class="btn btn-negative" (click)="restartPlay()">Restart audio</button>
+      </div>
+      <div class="diff-container">
+        <span class="slider-label">Audio Slider</span>
+        <span class="slider-label">Editing Slider</span>
+      </div>
+      <div class="diff-container">
+        <igx-slider #audioTracker class="music-slider" [step]="0.1" [minValue]="0" [maxValue]="audioWrapper.buffer.duration | number: '3.0-1'" [value]="currentTime"></igx-slider>
+        <igx-slider #editingSlider class="music-slider" [type]="sliderType.RANGE" [step]="0.1" [minValue]="0" [maxValue]="audioWrapper.buffer.duration | number: '3.0-1'" [(ngModel)]="audioRange"></igx-slider>
+      </div>
     </div>
     <div *ngIf="!!recorder" class="recording-controls container">
+      <span class="title">Recording Controls</span>
       <div class="diff-container">
         <button [ngClass]="{ 'btn-primary': !recorder?.recording, 'btn-secondary': recorder?.recording }" class="btn playback-button" (click)="toggleRecording()">{{ recorder?.recording ? 'Stop Recording' : 'Start Recording' }}</button>
         <fa-icon [ngClass]="{ 'blink': recorder?.recording }" class="microphone-icon" [icon]="faMicrophone"></fa-icon>
         <button *ngIf="!!recordedAudio" class="btn btn-primary" (click)="playRecording()">Playback recording</button>
         <button class="btn btn-negative" (click)="resetRecording()">Reset recording</button>
       </div>
+    </div>
+    <div *ngIf="!!recordedAudio" class="saving-controls container">
+      <span class="title">Saving Controls</span>
       <div class="diff-container">
         <input #nameInput type="text" placeholder="recording name..." class="form-control">
         <button class="btn btn-primary" (click)="saveRecording(nameInput.value)">Save recording</button>
@@ -77,6 +88,10 @@
         <span>{{ filterGain.value }}</span>
       </div>
       <button class="btn btn-primary" (click)="applyFilter(filterSelect.value, +filterFreq.value, +filterGain.value)">Apply Filter</button>
+    </div>
+    <div class="edit-container">
+      <button class="btn btn-primary" (click)="mutateAudio('leave')">Leave selected audio</button>
+      <button class="btn btn-primary" (click)="mutateAudio('cut')">Cut selected audio</button>
     </div>
     <ng-template #filterApplied>
       <div class="edit-container">
