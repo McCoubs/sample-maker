@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot } from '@angular/router';
 
 // Services
-import { AuthenticationService } from './authentication.service';
+import { AuthenticationService } from '../global-services/authentication.service';
 
 
 @Injectable({

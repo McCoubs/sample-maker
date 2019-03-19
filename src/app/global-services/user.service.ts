@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { UserData } from './interfaces/authentication';
-import { environment } from '../environments/environment';
-import { User } from './classes/user';
+import { UserData } from '../interfaces/authentication';
+import { environment } from '../../environments/environment';
+import { User } from '../classes/user';
 import { isNullOrUndefined } from 'util';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';

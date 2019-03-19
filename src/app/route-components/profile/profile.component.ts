@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from '../authentication.service';
-import { UserService } from '../user.service';
+import { AuthenticationService } from '../../global-services/authentication.service';
+import { UserService } from '../../global-services/user.service';
 import { faEnvelope, faSignature } from '@fortawesome/free-solid-svg-icons';
 import { ActivatedRoute } from '@angular/router';
-import { User } from '../classes/user';
-import { Sample } from '../classes/sample';
+import { User } from '../../classes/user';
+import { Sample } from '../../classes/sample';
 
 @Component({
   selector: 'app-profile',
