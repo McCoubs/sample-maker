@@ -10,6 +10,7 @@ import { Sample } from '../classes/sample';
 
 export class DashboardComponent implements OnInit {
   sampleCache: Array<string>;
+  searchParams = [];
 
   constructor(private sampleService: SampleService) {
 
@@ -35,17 +36,7 @@ export class DashboardComponent implements OnInit {
   }
 
   search(input) {
-    // this.sampleService.getSamples(5, 0, ['anime']).subscribe(
-    //   (samples) => {
-    //     console.log(samples);
-    //     if(samples.length > 0){
-    //       this.sampleCache.push(samples.map((sample) => new Sample(sample)));
-    //     } else {this.showNext = false;}
-    //   },
-    //   (error) => {
-    //     console.log("whio[eps");
-    //   }
-    // );
+    this.searchParams = this.searchParams.concat([input]);
   }
 
   reset() {

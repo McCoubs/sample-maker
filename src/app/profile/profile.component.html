@@ -4,9 +4,9 @@
     </div>
     <div class="profile-details">
         <fa-icon class="input-icon" [icon]="faSignature"></fa-icon>
-        <label class="detail-label">{{selectedUser.name}}</label><br>
+        <label class="detail-label">{{selectedUser?.name}}</label><br>
         <fa-icon class="input-icon" [icon]="faEnvelope"></fa-icon>
-        <label class="detail-label">{{selectedUser.email}}</label>
+        <label class="detail-label">{{selectedUser?.email}}</label>
     </div>
     <div id="sub-unsub"*ngIf="!isMyProfile; else editButton">
         <div *ngIf="!subscribed; else unsubButton">

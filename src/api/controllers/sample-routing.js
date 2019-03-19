@@ -24,7 +24,7 @@ module.exports = function SampleRouting(app, conn) {
     // on successful write
     writestream.on('close', function (file) {
       // create a sample with given data TODO: add genres, tags, etc....
-      Sample.create({ name: req.body.name || file.filename, author: req.user._id, file_id: file._id }, (err, sample) => {
+      Sample.create({ name: req.body.name || file.filename, author: req.user._id, file_id: file._id, tags: req.body.tags }, (err, sample) => {
         // on error need to delete file and respond with error
         if (err || !sample) {
           gfs.remove({ _id: file._id }, function (err) {
@@ -72,7 +72,6 @@ module.exports = function SampleRouting(app, conn) {
     let skip = parseInt(req.query.skip) || 0;
     let searchParams = {};
     if(req.query.tags) searchParams.tags = req.query.tags;
-    console.log(searchParams);
     Sample.find(searchParams).sort({createdAt: -1}).skip(skip).limit(limit).exec((err, samples) => {
       // return error on error
       if (err || !samples) return res.status(500).json(errorGenerator(err, 500, 'Server ERROR: could not get samples'));

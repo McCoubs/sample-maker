@@ -46,11 +46,11 @@ export class ProfileComponent implements OnInit {
   }
 
   sub(): void {
-    this.subscribers = this.getSubscribers();
+    //this.subscribers = this.getSubscribers();
   }
 
   unsub(): void {
-    this.subscribers = this.getSubscribers();
+    //this.subscribers = this.getSubscribers();
   }
 
   edit(): void {
@@ -64,29 +64,29 @@ export class ProfileComponent implements OnInit {
     return false;
   }
 
-  getSubscribers(): Array<String> {
-    this.userService.getUserSubscribers(this.selectedUser._id).subscribe(
-        (subscribers) => {
-          return (subscribers.map((subscriber) => String(subscriber)));
-        },
-        (error) => {
-          console.log(error);
-        }
-    );
-    return [];
-  }
+  // getSubscribers(): Array<String> {
+  //   this.userService.getUserSubscribers(this.selectedUser._id).subscribe(
+  //       (subscribers) => {
+  //         return (subscribers.map((subscriber) => String(subscriber)));
+  //       },
+  //       (error) => {
+  //         console.log(error);
+  //       }
+  //   );
+  //   return [];
+  // }
 
-  getSubscriptions(): Array<String> {
-    this.userService.getUserSubscriptions(this.selectedUser._id).subscribe(
-        (subscriptions) => {
-          return (subscriptions.map((subscription) => String(subscription)));
-        },
-        (error) => {
-          console.log(error);
-        }
-    );
-    return [];
-  }
+  // getSubscriptions(): Array<String> {
+  //   this.userService.getUserSubscriptions(this.selectedUser._id).subscribe(
+  //       (subscriptions) => {
+  //         return (subscriptions.map((subscription) => String(subscription)));
+  //       },
+  //       (error) => {
+  //         console.log(error);
+  //       }
+  //   );
+  //   return [];
+  // }
 
   ngOnInit() {
     this.userService.getUser(this.route.snapshot.paramMap.get('id')).subscribe(
@@ -100,8 +100,8 @@ export class ProfileComponent implements OnInit {
                 console.log(error);
               }
           );
-          this.subscribers = this.getSubscribers();
-          this.subscriptions = this.getSubscriptions();
+          // this.subscribers = this.getSubscribers();
+          // this.subscriptions = this.getSubscriptions();
         },
         (error) => {
           console.log(error);
