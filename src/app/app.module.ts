@@ -17,6 +17,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IgxSliderModule } from 'igniteui-angular';
 import { CarouselComponent } from './carousel/carousel.component';
 import { CreditsComponent } from './credits/credits.component';
+import { HttpErrorInterceptor } from './http-error.interceptor';
+import { NotifierModule } from 'angular-notifier';
+import { notifierOptions } from './config/notifier';
 
 @NgModule({
   declarations: [
@@ -38,13 +41,19 @@ import { CreditsComponent } from './credits/credits.component';
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    IgxSliderModule
+    IgxSliderModule,
+    NotifierModule.withConfig(notifierOptions)
   ],
   providers: [
     CookieService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
       multi: true
     }
   ],
