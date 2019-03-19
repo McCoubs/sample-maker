@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../user.service';
 import { AuthenticationService } from '../authentication.service';
 import { User } from '../classes/user';
@@ -10,34 +10,31 @@ import { User } from '../classes/user';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-  returnUrl;
-  currentUser: User = this.userService.getCurrentUser();
+
+  currentUser: User;
   isLoggedIn: Boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
     private authService: AuthenticationService,
-    private router: Router
   ) {
-    authService.getLoggedInStatus.subscribe(status => this.changeStatus(status));
-    userService.emitCurrentUser.subscribe(curUser => this.setCurrentUser(curUser));
+    this.authService.loggedInChange.subscribe((status: boolean) => this.changeStatus(status));
   }
 
-  changeStatus(status: boolean): void {
-    this.isLoggedIn = status;
-  }
-
-  setCurrentUser(curUser: User): void {
-    this.currentUser = curUser;
-  }
   ngOnInit() {
     this.currentUser = this.userService.getCurrentUser();
     this.isLoggedIn = this.authService.isLoggedIn();
   }
 
   signOut() {
-    this.currentUser = null;
-    this.isLoggedIn = false;
     this.authService.logout();
+  }
+
+  private changeStatus(status: boolean): void {
+    this.isLoggedIn = status;
+    if (this.isLoggedIn) {
+      this.currentUser = this.userService.getCurrentUser();
+    }
   }
 }

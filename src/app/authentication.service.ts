@@ -2,17 +2,17 @@ import { EventEmitter, Injectable, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { TokenPayload } from './interfaces/authentication';
+import {TokenPayload, TokenResponse} from './interfaces/authentication';
 import { UserService } from './user.service';
 import { isNullOrUndefined } from 'util';
 import { EndpointService } from './endpoint.service';
-import { User } from './classes/user';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  @Output() getLoggedInStatus: EventEmitter<boolean> = new EventEmitter();
+  @Output() loggedInChange: EventEmitter<boolean> = new EventEmitter();
 
   constructor(private http: HttpClient,
               private router: Router,
@@ -34,23 +34,32 @@ export class AuthenticationService {
     // clear storage and navigate to home
     this.userService.clearStorage();
     this.router.navigateByUrl('/login');
-    this.getLoggedInStatus.emit(false);
+    this.loggedInChange.emit(false);
   }
 
   public register(user: TokenPayload): Observable<any> {
     // hit register api with given user
-    this.getLoggedInStatus.emit(true);
-    return this.http.post(this.endpointService.generateUrl('register'), user);
+    return this.http.post(this.endpointService.generateUrl('register'), user).pipe(
+        map((data: TokenResponse) => this.pipeHelper(data))
+    );
   }
 
   public login(user: TokenPayload): Observable<any> {
     // hit login api with given user info
-    this.getLoggedInStatus.emit(true);
-    return this.http.post(this.endpointService.generateUrl('login'), user);
+    return this.http.post(this.endpointService.generateUrl('login'), user).pipe(
+        map((data: TokenResponse) => this.pipeHelper(data))
+    );
   }
 
   public profile(): Observable<any> {
     const user = this.userService.getCurrentUser();
     return this.http.get(this.endpointService.generateUrl('user', user._id));
+  }
+
+  private pipeHelper(data: TokenResponse): TokenResponse {
+    this.userService.setCurrentUser(this.userService.parseJWTToken(data.token));
+    this.userService.setJWTToken(data.token);
+    this.loggedInChange.emit(true);
+    return data;
   }
 }

@@ -25,8 +25,8 @@ const routes: Routes = [
 
   {
     path: 'sample-creator',
-    component: SampleCreatorComponent
-    // TODO: canActivate: [AuthGuard]
+    component: SampleCreatorComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: '',
