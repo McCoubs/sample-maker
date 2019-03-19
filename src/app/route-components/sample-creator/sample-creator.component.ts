@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ApplicationRef, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { AudioWrapper } from '../../classes/AudioWrapper';
 import { RecorderWrapper } from '../../classes/RecorderWrapper';
 import { SampleService } from '../../global-services/sample.service';
@@ -37,7 +37,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
   faVolumeUp = faVolumeUp;
   faMicrophone = faMicrophone;
 
-  constructor(private sampleService: SampleService, private notifierService: NotifierService, private ref: ChangeDetectorRef) {}
+  constructor(private sampleService: SampleService, private notifierService: NotifierService, private ref: ChangeDetectorRef, private app: ApplicationRef) {}
 
   ngOnInit() {
     this.audioWrapper = new AudioWrapper();
@@ -205,6 +205,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     this.sampleService.createSample(file, {}).subscribe(
         (sample) => {
           this.notifierService.notify('success', 'New sample: ' + sample.name + ' successfully saved');
+          this.app.tick();
         },
         (error) => console.log(error)
     );
