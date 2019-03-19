@@ -5,7 +5,7 @@
     <button class="cancel-search" (click)="reset()"></button>
   </div>
   <div class="newest-title">NEWEST SAMPLES</div>
-  <app-carousel [inputCache]="sampleCache"></app-carousel>
+  <app-carousel [inputCache]="sampleCache" [search]="searchParams"></app-carousel>
   
   <input #fileTester type="file" name="fileUpload"/>
   <button (click)="press(fileTester.files[0])"> butt dasfasdfsa dfsdf dsf</button>

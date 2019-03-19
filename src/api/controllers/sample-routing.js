@@ -24,7 +24,7 @@ module.exports = function SampleRouting(app, conn) {
     // on successful write
     writestream.on('close', function (file) {
       // create a sample with given data TODO: add genres, tags, etc....
-      Sample.create({ name: req.body.name || file.filename, author: req.user._id, file_id: file._id }, (err, sample) => {
+      Sample.create({ name: req.body.name || file.filename, author: req.user._id, file_id: file._id, tags: req.body.tags }, (err, sample) => {
         // on error need to delete file and respond with error
         if (err || !sample) {
           gfs.remove({ _id: file._id }, function (err) {

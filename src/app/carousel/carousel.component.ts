@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { Sample } from '../classes/sample';
 import { SampleService } from '../sample.service';
 
@@ -12,7 +12,7 @@ export class CarouselComponent implements OnInit {
   currentSamples = 0;
   showNext = false;
   _displayCache;
-  searchParams = {};
+  searchParams = [];
   @Input()
   set inputCache(inputCache: Array<Sample>) {
     this._displayCache = inputCache;
@@ -28,9 +28,27 @@ export class CarouselComponent implements OnInit {
 
   }
 
+  ngOnChanges() {
+    if(this.searchParams && this.searchParams.length > 0) {
+      this.sampleCache = [];
+      this.currentSamples = 0;
+      this.sampleService.getSamples(5, 0, this.searchParams).subscribe(
+        (samples) => {
+          console.log(samples);
+          if(samples.length > 0){
+            this.sampleCache.push(samples.map((sample) => new Sample(sample)));
+            this.showNext = true;
+          }
+        },
+        (error) => {
+          console.log("whio[eps");
+        }
+      );
+    }
+  }
+
   ngOnInit() {
-    console.log(this.searchParams);
-    this.sampleService.getSamples(5, (this.currentSamples + 1) * 5).subscribe(
+    this.sampleService.getSamples(5, (this.currentSamples + 1) * 5, this.searchParams).subscribe(
       (samples) => {
         if(samples.length > 0){
           this.sampleCache.push(samples.map((sample) => new Sample(sample)));
@@ -48,7 +66,7 @@ export class CarouselComponent implements OnInit {
     this._displayCache = this.sampleCache[this.currentSamples];
     
     // if the next isn't already loaded
-    this.sampleService.getSamples(5, (this.currentSamples + 1) * 5).subscribe(
+    this.sampleService.getSamples(5, (this.currentSamples + 1) * 5, this.searchParams).subscribe(
       (samples) => {
         if(samples.length > 0){
           this.sampleCache.push(samples.map((sample) => new Sample(sample)));
