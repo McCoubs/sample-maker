@@ -1,10 +1,11 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { AudioWrapper } from '../classes/AudioWrapper';
 import { RecorderWrapper } from '../classes/RecorderWrapper';
 import { SampleService } from '../sample.service';
 import { IgxSliderComponent, ISliderValueChangeEventArgs, SliderType } from 'igniteui-angular';
 import { faSpinner, faVolumeMute, faVolumeUp, faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import { AudioContextEnum } from '../classes/AudioContextEnum';
+import { NotifierService } from 'angular-notifier';
 
 class AudioRange {constructor(public lower: number, public upper: number) {}}
 
@@ -36,7 +37,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
   faVolumeUp = faVolumeUp;
   faMicrophone = faMicrophone;
 
-  constructor(private sampleService: SampleService, private ref: ChangeDetectorRef) {}
+  constructor(private sampleService: SampleService, private notifierService: NotifierService, private ref: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.audioWrapper = new AudioWrapper();
@@ -199,14 +200,11 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     if (!name || name === '') {
       name = this.uploadedFile.name;
     }
-    // remove ending if provided
-    name = name.split('.')[0];
     // save recording
     const file = this.recordedAudio.convertToFile(name);
     this.sampleService.createSample(file, {}).subscribe(
-        (data) => {
-          console.log(data);
-          alert('new sample: ' + name + ' successfully saved');
+        (sample) => {
+          this.notifierService.notify('success', 'New sample: ' + sample.name + ' successfully saved');
         },
         (error) => console.log(error)
     );
@@ -217,8 +215,6 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     if (!name || name === '') {
       name = this.uploadedFile.name;
     }
-    // remove ending if provided
-    name = name.split('.')[0];
     this.recordedAudio.downloadAudio(name);
   }
 }

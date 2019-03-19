@@ -57,6 +57,8 @@ export class AudioWrapper {
   }
 
   convertToFile(name: string): File {
+    // remove ending if provided
+    name = name.split('.')[0];
     return new File([audioBufferToWav(this.buffer, {})], name + '.wav', {type: 'audio/wav'});
   }
 
