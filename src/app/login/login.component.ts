@@ -64,9 +64,7 @@ export class LoginComponent implements OnInit {
       // login with given credentials
       this.authService.login(this.form.value).subscribe(
           (data: TokenResponse) => {
-            // on success, set current user and direct to desired page
-            this.userService.setCurrentUser(this.userService.parseJWTToken(data.token));
-            this.userService.setJWTToken(data.token);
+            // on success, redirect to desired page
             this.router.navigateByUrl(this.returnUrl);
             this.loading = false;
           },
@@ -87,9 +85,7 @@ export class LoginComponent implements OnInit {
       // login with given credentials
       this.authService.register(this.form.value).subscribe(
           (data: TokenResponse) => {
-            // on success, set current user and direct to desired page
-            this.userService.setCurrentUser(this.userService.parseJWTToken(data.token));
-            this.userService.setJWTToken(data.token);
+            // on success, redirect to desired page
             this.router.navigateByUrl(this.returnUrl);
             this.loading = false;
           },

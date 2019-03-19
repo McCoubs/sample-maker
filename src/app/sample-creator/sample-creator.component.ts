@@ -1,10 +1,11 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { AudioWrapper } from '../classes/AudioWrapper';
 import { RecorderWrapper } from '../classes/RecorderWrapper';
 import { SampleService } from '../sample.service';
 import { IgxSliderComponent, ISliderValueChangeEventArgs, SliderType } from 'igniteui-angular';
 import { faSpinner, faVolumeMute, faVolumeUp, faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import { AudioContextEnum } from '../classes/AudioContextEnum';
+import { NotifierService } from 'angular-notifier';
 
 class AudioRange {constructor(public lower: number, public upper: number) {}}
 
@@ -36,7 +37,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
   faVolumeUp = faVolumeUp;
   faMicrophone = faMicrophone;
 
-  constructor(private sampleService: SampleService, private ref: ChangeDetectorRef) {}
+  constructor(private sampleService: SampleService, private notifierService: NotifierService, private ref: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.audioWrapper = new AudioWrapper();
@@ -49,36 +50,35 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     this.uploadedFile = file;
     // decode input file and start setup
     this.audioWrapper.decodeFile(file, () => {
+      // load audio and recorder
+      this.audioWrapper.loadAudio();
+      this.recorder = new RecorderWrapper(this.audioWrapper.sourceNode);
+      // start listener node
+      this.audioWrapper.createProcessorNode((e) => {
+        if (!this.interacting || !this.isPlaying) {
+          this.currentTime = e.playbackTime;
+          this.ref.detectChanges();
+        }
+      });
+      // initialize vars
       const duration = this.audioWrapper.buffer.duration;
       this.audioRange = new AudioRange(Math.floor(duration / 10), Math.floor(duration * 0.9));
       this.audioLoaded = true;
       this.loading = false;
       this.ref.detectChanges();
+
+      // disable counting when touching to avoid stutter
+      this.tracker.registerOnTouched(() => {
+        this.interacting = true;
+      });
     });
   }
 
   ///////// PLAYBACK CONTROL METHODS /////////
-  setupPlay() {
-    // start playing and create recorder
-    this.audioWrapper.startAudio();
-    this.recorder = new RecorderWrapper(this.audioWrapper.sourceNode);
-    // start listener node
-    this.audioWrapper.createProcessorNode((e) => {
-      if (!this.interacting) {
-        this.currentTime = e.playbackTime;
-        this.ref.detectChanges();
-      }
-    });
-    // disable counting when touching to avoid stutter
-    this.tracker.registerOnTouched(() => {
-      this.interacting = true;
-    });
-  }
-
-  togglePlaying() {
+  togglePlaying(): void {
     // call correct method
-    if (!this.recorder) {
-      this.setupPlay();
+    if (this.audioWrapper.loaded) {
+      this.audioWrapper.startAudio();
     } else if (this.audioWrapper.audioContext.state === AudioContextEnum.RunningState) {
       this.audioWrapper.pauseAudio();
     } else {
@@ -88,7 +88,16 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     this.ref.detectChanges();
   }
 
-  updateCurrentTime(event: ISliderValueChangeEventArgs) {
+  restartPlay(): void {
+    // restart play
+    this.audioWrapper.stopAudio();
+    this.audioWrapper.startAudio();
+    this.isPlaying = true;
+    // re-intialize recorder
+    this.recorder.createProcessor(this.audioWrapper.sourceNode);
+  }
+
+  updateCurrentTime(event: ISliderValueChangeEventArgs): void {
     // method to help with tracker
     this.currentTime = +event.value;
     this.audioWrapper.stopAudio();
@@ -97,48 +106,67 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
   }
 
   ///////// EDITING CONTROL METHODS /////////
-  applyFilter(type: string, frequency: number, gain: number) {
+  applyFilter(type: string, frequency: number, gain: number): void {
     if (type && frequency && gain) {
       this.audioWrapper.applyFilter(type, frequency, gain);
       this.ref.detectChanges();
     }
   }
 
-  removeFilter() {
+  removeFilter(): void {
     this.audioWrapper.removeFilter();
     this.ref.detectChanges();
   }
 
-  setPlaybackRate(rate: number) {
+  setPlaybackRate(rate: number): void {
     this.audioWrapper.setPlayBackRate(rate);
   }
 
-  applyFadeIn(percent: number) {
+  applyFadeIn(percent: number): void {
     this.audioWrapper.fadeAudioIn(percent);
+    this.audioWrapper.startAudio();
   }
 
-  applyFadeOut(percent: number) {
+  applyFadeOut(percent: number): void {
     this.audioWrapper.fadeAudioOut(percent);
+    this.audioWrapper.startAudio();
   }
 
-  setPan(value) {
+  setPan(value): void {
     this.audioWrapper.setPan(value);
   }
 
-  changeVolume(volume) {
+  changeVolume(volume): void {
     this.audioWrapper.setVolume(volume);
   }
 
+  mutateAudio(type: 'cut' | 'leave' | 'paste'): void {
+    this.isPlaying = false;
+    if (type === 'cut') {
+      this.audioWrapper.cut(this.audioRange.lower, this.audioRange.upper);
+    } else if (type === 'leave') {
+      this.audioWrapper.leave(this.audioRange.lower, this.audioRange.upper);
+    }
+    // re-initialize recorder
+    this.audioWrapper.loadAudio();
+    this.recorder.createProcessor(this.audioWrapper.sourceNode);
+    // re-initialize slider vars
+    const duration = this.audioWrapper.buffer.duration;
+    this.audioRange = new AudioRange(Math.floor(duration / 10), Math.floor(duration * 0.9));
+    this.ref.detectChanges();
+  }
+
   ///////// RECORDING CONTROL METHODS /////////
-  toggleRecording() {
+  toggleRecording(): void {
     if (this.recorder.recording) {
       this.stopRecording();
     } else {
       this.record();
     }
+    this.ref.detectChanges();
   }
 
-  record() {
+  record(): void {
     // reset temp recording
     if (this.recordedAudio) {
       this.recordedAudio.stopAudio();
@@ -148,53 +176,45 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     this.recorder.record();
   }
 
-  stopRecording() {
+  stopRecording(): void {
     this.recorder.stop();
     // save current recorded setPlaybackRate
     this.recordedAudio = new AudioWrapper();
     this.recordedAudio.buffer = this.recorder.getBuffer();
   }
 
-  playRecording() {
+  playRecording(): void {
     this.recordedAudio.stopAudio();
     this.recordedAudio.startAudio();
   }
 
-  pauseRecording() {
-    this.recordedAudio.pauseAudio();
-  }
-
-  resetRecording() {
+  resetRecording(): void {
     this.recorder.reset();
     this.recordedAudio.stopAudio();
     this.recordedAudio = null;
     this.ref.detectChanges();
   }
 
-  saveRecording(name: string) {
+  saveRecording(name: string): void {
     // get default
     if (!name || name === '') {
       name = this.uploadedFile.name;
     }
-    // remove ending if provided
-    name = name.split('.')[0];
     // save recording
     const file = this.recordedAudio.convertToFile(name);
     this.sampleService.createSample(file, {}).subscribe(
-        (data) => {
-          console.log(data);
-          alert('new sample: ' + name + ' successfully saved');
+        (sample) => {
+          this.notifierService.notify('success', 'New sample: ' + sample.name + ' successfully saved');
         },
         (error) => console.log(error)
     );
   }
 
-  downloadRecording(name: string) {
+  downloadRecording(name: string): void {
     // get default
     if (!name || name === '') {
       name = this.uploadedFile.name;
     }
-    // remove ending if provided
     this.recordedAudio.downloadAudio(name);
   }
 }
