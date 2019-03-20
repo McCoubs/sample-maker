@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
-import { Sample } from '../classes/sample';
-import { SampleService } from '../sample.service';
+import { Component, OnInit, Input } from '@angular/core';
+import { Sample } from '../../classes/sample';
+import { SampleService } from '../../global-services/sample.service';
 
 @Component({
   selector: 'app-carousel',

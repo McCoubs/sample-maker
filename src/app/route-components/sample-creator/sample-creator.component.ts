@@ -1,10 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { AudioWrapper } from '../classes/AudioWrapper';
-import { RecorderWrapper } from '../classes/RecorderWrapper';
-import { SampleService } from '../sample.service';
+import { AfterViewInit, ApplicationRef, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { AudioWrapper } from '../../classes/AudioWrapper';
+import { RecorderWrapper } from '../../classes/RecorderWrapper';
+import { SampleService } from '../../global-services/sample.service';
 import { IgxSliderComponent, ISliderValueChangeEventArgs, SliderType } from 'igniteui-angular';
 import { faSpinner, faVolumeMute, faVolumeUp, faMicrophone } from '@fortawesome/free-solid-svg-icons';
-import { AudioContextEnum } from '../classes/AudioContextEnum';
+import { AudioContextEnum } from '../../classes/AudioContextEnum';
 import { NotifierService } from 'angular-notifier';
 
 class AudioRange {constructor(public lower: number, public upper: number) {}}
@@ -37,7 +37,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
   faVolumeUp = faVolumeUp;
   faMicrophone = faMicrophone;
 
-  constructor(private sampleService: SampleService, private notifierService: NotifierService, private ref: ChangeDetectorRef) {}
+  constructor(private sampleService: SampleService, private notifierService: NotifierService, private ref: ChangeDetectorRef, private app: ApplicationRef) {}
 
   ngOnInit() {
     this.audioWrapper = new AudioWrapper();
@@ -205,6 +205,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     this.sampleService.createSample(file, {}).subscribe(
         (sample) => {
           this.notifierService.notify('success', 'New sample: ' + sample.name + ' successfully saved');
+          this.app.tick();
         },
         (error) => console.log(error)
     );

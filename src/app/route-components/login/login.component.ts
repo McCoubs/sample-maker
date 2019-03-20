@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../user.service';
-import { AuthenticationService } from '../authentication.service';
+import { UserService } from '../../global-services/user.service';
+import { AuthenticationService } from '../../global-services/authentication.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TokenResponse } from '../interfaces/authentication';
+import { TokenResponse } from '../../interfaces/authentication';
 import { faEnvelope, faLock, faSignature, faExclamation } from '@fortawesome/free-solid-svg-icons';
 import { debounceTime } from 'rxjs/operators';
 

@@ -1,8 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Sample } from '../classes/sample';
-import { SampleService } from '../sample.service';
-import { AudioWrapper } from '../classes/AudioWrapper';
-import { UserService } from '../user.service';
+import { Sample } from '../../classes/sample';
+import { SampleService } from '../../global-services/sample.service';
+import { AudioWrapper } from '../../classes/AudioWrapper';
+import { UserService } from '../../global-services/user.service';
 
 @Component({
   selector: 'app-card',
