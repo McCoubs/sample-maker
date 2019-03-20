@@ -7,16 +7,21 @@ let { errorGenerator, jwtAuth } = require('../helpers');
 module.exports = function UserRouting(app) {
 
   app.post('/api/register', (req, res) => {
-    let user = new User();
-    // set new user info
-    user.name = req.body.name;
-    user.email = req.body.email;
-    user.setPassword(req.body.password);
-
-    // attempt to save new user; on error => error else => return token
-    user.save(function(err) {
+    User.findOne({email: req.body.email}, (err, foundUser) => {
       if (err) return res.status(500).json(errorGenerator(err, 500, 'Error creating new user with email: ' + req.body.email));
-      res.json({'token' : user.generateJwt()});
+      if (foundUser) return res.status(400).json(errorGenerator(err, 400, 'A user already exists with that email'));
+
+      let user = new User();
+      // set new user info
+      user.name = req.body.name;
+      user.email = req.body.email;
+      user.setPassword(req.body.password);
+
+      // attempt to save new user; on error => error else => return token
+      user.save(function(err) {
+        if (err) return res.status(500).json(errorGenerator(err, 500, 'Error creating new user with email: ' + req.body.email));
+        res.json({'token' : user.generateJwt()});
+      });
     });
   });
 

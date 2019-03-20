@@ -55,7 +55,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
       this.recorder = new RecorderWrapper(this.audioWrapper.sourceNode);
       // start listener node
       this.audioWrapper.createProcessorNode((e) => {
-        if (!this.interacting || !this.isPlaying) {
+        if (this.isPlaying && !this.interacting) {
           this.currentTime = e.playbackTime;
           this.ref.detectChanges();
         }
