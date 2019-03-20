@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { LoginComponent } from './login/login.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { ProfileComponent} from './profile/profile.component';
-import { AuthGuard} from './auth.guard';
-import { SampleCreatorComponent } from './sample-creator/sample-creator.component';
+import { LoginComponent } from './route-components/login/login.component';
+import { DashboardComponent } from './route-components/dashboard/dashboard.component';
+import { ProfileComponent} from './route-components/profile/profile.component';
+import { AuthGuard} from './guards/auth.guard';
+import { SampleCreatorComponent } from './route-components/sample-creator/sample-creator.component';
 
 const routes: Routes = [
   {

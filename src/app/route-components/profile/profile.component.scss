@@ -1,0 +1,67 @@
+@import '../../../global-styles';
+
+.profile-component {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 40px;
+  width: 100%;
+
+  @media only screen and (min-width: map_get($grid-breakpoints, 'md')) {
+    width: 80%;
+  }
+  @media only screen and (min-width: map_get($grid-breakpoints, 'lg')) {
+    width: 60%;
+  }
+
+  .tab-container {
+    width: 100%;
+    background-color: $palette-blue;
+    .profile-tabs {
+      display: flex;
+      justify-content: center;
+      flex-basis: 100%;
+      width: 100%;
+      .btn {
+        border-radius: 0%;
+      }
+    }
+    .profile-content {
+      background-color: white;
+      justify-content: center;
+      padding: 10px;
+    }
+  }
+
+  .tab-header {
+    font-weight: bold;
+  }
+
+
+  .profile-pic {
+    border-radius: 50%;
+    height:125px;
+    width:125px;
+    margin-right: 15px;
+    padding: 8px 0;
+  }
+
+  .profile-details {
+    flex-basis: 72%;
+    font-size: 20px;
+    position: relative;
+  }
+
+  .input-icon {
+    height: 30px;
+    width: 30px;
+    color: $palette-blue;
+    bottom: 15px;
+    margin-right: 10px;
+    font-size: 20px;
+  }
+}
+
+
+

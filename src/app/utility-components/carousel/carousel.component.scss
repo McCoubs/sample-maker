@@ -1,0 +1,11 @@
+@import '../../../global-styles';
+
+.carousel-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    @media only screen and (min-width: map_get($grid-breakpoints, 'md')) {
+        flex-direction: row;
+    }
+
+}

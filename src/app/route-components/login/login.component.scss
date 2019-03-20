@@ -1,0 +1,71 @@
+@import '../../../global-styles';
+
+.login-component {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 80px;
+  width: 100%;
+
+  @media only screen and (min-width: map_get($grid-breakpoints, 'md')) {
+    width: 80%;
+  }
+  @media only screen and (min-width: map_get($grid-breakpoints, 'lg')) {
+    width: 60%;
+  }
+
+  .action-container {
+    width: 100%;
+
+    .notifications-container {
+      color: $palette-error;
+      width: fit-content;
+      font-size: 20px;
+      padding: 12px 0 4px 0;
+    }
+
+    .action-form {
+      padding: 8px 0;
+      position: relative;
+
+      .input-container {
+        position: relative;
+
+        .form-label {
+          font-size: 16px;
+          font-weight: bold;
+          color: $palette-blue;
+        }
+
+        .form-control {
+          margin-bottom: 8px;
+          display: inline-block;
+          width: 85%;
+          padding-left: 32px;
+        }
+
+        .input-icon {
+          height: 24px;
+          width: 24px;
+          color: $palette-blue;
+          position: absolute;
+          bottom: 15px;
+          left: 10px;
+          font-size: 16px;
+        }
+      }
+
+      .action-btn {
+        margin: 16px 0;
+        min-width: 40%;
+        font-size: 18px;
+      }
+
+      .swap-btn {
+        position: absolute;
+        bottom: 27px;
+        right: 12px;
+      }
+    }
+  }
+}

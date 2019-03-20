@@ -1,0 +1,33 @@
+@import '~src/global-styles';
+
+.card-component {
+    height: 300px;
+    width: 250px;
+    // took this code from https://www.w3schools.com/css/css3_shadows.asp
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+    @media only screen and (min-width: map_get($grid-breakpoints, 'md')) {
+    margin: 0 10px;
+    }
+}
+
+.card-image {
+    height: 70%;
+    width: 100%;
+    background: #000000;
+}
+
+.info-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-span {
+    max-width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
