@@ -16,7 +16,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         if (!(new RegExp('login|reister').test(error.url))) {
-          const errorMessage = `Error: ${error.error.message}`;
+          const errorMessage = `Error: ${!!error.error ? error.error.message : error.message}`;
           this.notifierService.notify('error', errorMessage);
         }
         return throwError(error);

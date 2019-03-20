@@ -12,20 +12,43 @@ export class CarouselComponent implements OnInit {
   currentSamples = 0;
   showNext = false;
   _displayCache;
+  searchParams = [];
   @Input()
   set inputCache(inputCache: Array<Sample>) {
     this._displayCache = inputCache;
     this.sampleCache = [];
     this.sampleCache.push(this._displayCache);
   };
+  @Input()
+  set search(params) {
+    this.searchParams = params;
+  }
 
   constructor(private sampleService: SampleService) {
 
   }
 
-  ngOnInit() {
+  ngOnChanges() {
+    if(this.searchParams && this.searchParams.length > 0) {
+      this.sampleCache = [];
+      this.currentSamples = 0;
+      this.sampleService.getSamples(5, 0, this.searchParams).subscribe(
+        (samples) => {
+          console.log(samples);
+          if(samples.length > 0){
+            this.sampleCache.push(samples.map((sample) => new Sample(sample)));
+            this.showNext = true;
+          }
+        },
+        (error) => {
+          console.log("whio[eps");
+        }
+      );
+    }
+  }
 
-    this.sampleService.getSamples(5, (this.currentSamples + 1) * 5).subscribe(
+  ngOnInit() {
+    this.sampleService.getSamples(5, (this.currentSamples + 1) * 5, this.searchParams).subscribe(
       (samples) => {
         if(samples.length > 0){
           this.sampleCache.push(samples.map((sample) => new Sample(sample)));
@@ -43,7 +66,7 @@ export class CarouselComponent implements OnInit {
     this._displayCache = this.sampleCache[this.currentSamples];
     
     // if the next isn't already loaded
-    this.sampleService.getSamples(5, (this.currentSamples + 1) * 5).subscribe(
+    this.sampleService.getSamples(5, (this.currentSamples + 1) * 5, this.searchParams).subscribe(
       (samples) => {
         if(samples.length > 0){
           this.sampleCache.push(samples.map((sample) => new Sample(sample)));

@@ -27,7 +27,7 @@ export class SampleService {
     return this.http.get(this.endpointService.generateUrl('sample', id));
   }
 
-  public getSamples(limit?: number, skip?: number, tags?: Array<string>, genres?: Array<string>): Observable<any> {
+  public getSamples(limit?: number, skip?: number, tags?: Array<string>, genres?: Array<string>, author?: string): Observable<any> {
     let params = new HttpParams();
     if (limit) {
       params = params.append('limit', limit.toString());
@@ -41,6 +41,7 @@ export class SampleService {
     if (genres && genres.length > 0) {
       params = params.append('genres', genres.join(','));
     }
+    if (author) params = params.append('author', author);
     return this.http.get(this.endpointService.generateUrl('samples'), {params: params});
   }
 
