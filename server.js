@@ -5,8 +5,6 @@ let forceSecure = require('force-secure-express');
 let fileUpload = require('express-fileupload');
 let session = require('express-session');
 let cookies = require('cookies');
-let https = require('https');
-let fs = require('fs');
 
 // importing mongoose models
 require('./src/api/models/users');
