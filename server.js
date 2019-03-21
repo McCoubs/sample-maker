@@ -3,6 +3,8 @@ let bodyParser = require('body-parser');
 let mongoose = require('mongoose');
 let forceSecure = require('force-secure-express');
 let fileUpload = require('express-fileupload');
+let session = require('express-session');
+let cookies = require('cookies');
 
 // importing mongoose models
 require('./src/api/models/users');
@@ -11,11 +13,23 @@ require('./src/api/models/subscriptions');
 
 // setup app components
 let app = express();
+app.use(session({
+  secret: process.env.JWT_SECRET || 'LOCALSECRETTHISDOESNTMATTER',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: true,
+    sameSite: true,
+    httpOnly: true
+  }
+}));
+app.use(cookies.express([process.env.JWT_SECRET || 'LOCALSECRETTHISDOESNTMATTER']));
 app.use(forceSecure([
   'sample-maker.herokuapp.com'
 ]));
 app.use(bodyParser.json());
 app.use(fileUpload());
+app.enable('trust proxy');
 
 // Create link to Angular build directory
 let distDir = __dirname + '/dist/';
@@ -26,7 +40,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/test', { 
 let connection = mongoose.connection;
 connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 connection.once('open', function callback () {
-  // Initialize the app.
+
   let server = app.listen(process.env.PORT || 3000, function () {
     let port = server.address().port;
     console.log('App now running on port', port);

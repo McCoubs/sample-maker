@@ -51,14 +51,8 @@ export class AuthenticationService {
     );
   }
 
-  public profile(): Observable<any> {
-    const user = this.userService.getCurrentUser();
-    return this.http.get(this.endpointService.generateUrl('user', user._id));
-  }
-
   private pipeHelper(data: TokenResponse): TokenResponse {
-    this.userService.setCurrentUser(this.userService.parseJWTToken(data.token));
-    this.userService.setJWTToken(data.token);
+    this.userService.setCurrentUser(data.token);
     this.loggedInChange.emit(true);
     return data;
   }

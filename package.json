@@ -33,9 +33,11 @@
     "audiobuffer-to-wav": "^1.0.0",
     "body-parser": "^1.18.3",
     "bootstrap": "^4.3.1",
+    "cookies": "^0.7.3",
     "core-js": "^2.5.4",
     "express": "^4.16.4",
     "express-fileupload": "^1.1.2-alpha.1",
+    "express-session": "^1.15.6",
     "file-saver": "^2.0.1",
     "force-secure-express": "^1.0.1",
     "gridfs-stream": "1.1.1",
@@ -60,7 +62,6 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^8.10.42",
     "codelyzer": "~4.5.0",
-    "igniteui-cli": "~4.1.0",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~3.1.1",
@@ -72,6 +73,5 @@
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
     "typescript": "~3.1.6"
-  },
-  "heroku-run-build-script": true
+  }
 }

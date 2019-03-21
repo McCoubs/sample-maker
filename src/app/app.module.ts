@@ -9,7 +9,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CookieService } from 'ngx-cookie-service';
 import { ProfileComponent } from './route-components/profile/profile.component';
-import { TokenInterceptor } from './interceptors/token.interceptor';
 import { HeaderComponent } from './utility-components/header/header.component';
 import { CardComponent } from './utility-components/card/card.component';
 import { SampleCreatorComponent } from './route-components/sample-creator/sample-creator.component';
@@ -46,11 +45,6 @@ import { notifierOptions } from './config/notifier';
   ],
   providers: [
     CookieService,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: TokenInterceptor,
-      multi: true
-    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
