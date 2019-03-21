@@ -46,6 +46,13 @@ module.exports = function UserRouting(app) {
     });
   });
 
+  app.post('/api/logout', jwtAuth, (req, res) => {
+    // empty cookie and respond
+    const inProd = process.env.NODE_ENV === 'production';
+    res.cookies.set('authorization-token', '', { sameSite: true, httpOnly: inProd, secure: inProd });
+    res.json({'success' : true});
+  });
+
   app.get('/api/users/:id', jwtAuth, (req, res) => {
     if (!req.params.id) {
       return res.status(400).json(errorGenerator(null, 400, 'Invalid request, ID not provided'));

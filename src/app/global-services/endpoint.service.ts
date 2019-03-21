@@ -11,6 +11,7 @@ export class EndpointService {
   public endpoints: { [endpoint: string]: string } = {
     login: '/api/login',
     register: '/api/register',
+    logout: '/api/logout',
     users: '/api/users',
     user: '/api/users/:id',
     user_samples: '/api/user/:id/samples',
