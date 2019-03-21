@@ -31,6 +31,7 @@ app.use(forceSecure([
 ]));
 app.use(bodyParser.json());
 app.use(fileUpload());
+app.enable('trust proxy');
 
 // Create link to Angular build directory
 let distDir = __dirname + '/dist/';
