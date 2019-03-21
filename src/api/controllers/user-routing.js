@@ -20,7 +20,10 @@ module.exports = function UserRouting(app) {
       // attempt to save new user; on error => error else => return token
       user.save(function(err) {
         if (err) return res.status(500).json(errorGenerator(err, 500, 'Error creating new user with email: ' + req.body.email));
-        res.json({'token' : user.generateJwt()});
+        // add token to cookies and respond with token
+        const generatedJWT = user.generateJwt();
+        res.cookies.set('authorization-token', 'Bearer ' + generatedJWT, { sameSite: true, httpOnly: true, secure: true });
+        res.json({'token' : generatedJWT});
       });
     });
   });
@@ -34,11 +37,14 @@ module.exports = function UserRouting(app) {
       if (!user.validPassword(req.body.password)) {
         return res.status(401).json(errorGenerator(err, 401, 'Failed to login. Email and/or password are incorrect'));
       }
-      res.json({'token' : user.generateJwt()});
+      // add token to cookies and respond with token
+      const generatedJWT = user.generateJwt();
+      res.cookies.set('authorization-token', 'Bearer ' + generatedJWT, { sameSite: true, httpOnly: true, secure: true });
+      res.json({'token' : generatedJWT});
     });
   });
 
-  app.get('/api/users/:id', (req, res) => {
+  app.get('/api/users/:id', jwtAuth, (req, res) => {
     if (!req.params.id) {
       return res.status(400).json(errorGenerator(null, 400, 'Invalid request, ID not provided'));
     } else {
@@ -74,7 +80,7 @@ module.exports = function UserRouting(app) {
     if (!req.params.id) {
       return res.status(400).json(errorGenerator(null, 400, 'Invalid request, ID not provided'));
     }
-  })
+  });
 
   app.get('/api/user/:id/subscribers',jwtAuth, (req, res) => {
     if (!req.params.id) {

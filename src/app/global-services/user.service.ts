@@ -14,24 +14,22 @@ import { EndpointService } from './endpoint.service';
 export class UserService {
 
   private currentUser: User;
-  private token: string;
 
   constructor(private cookieService: CookieService, private http: HttpClient, private endpointService: EndpointService) {}
 
-  public parseJWTToken(token: string): UserData {
+  private setCookie(cookie: string, value) {
+    this.cookieService.set(cookie, value, undefined, undefined, undefined, environment.secureFlag, 'Strict');
+  }
+
+  private parseJWTToken(token: string): UserData {
       const payload = token.split('.')[1];
       return JSON.parse(window.atob(payload));
   }
 
-  public setCurrentUser(data: UserData): void {
+  public setCurrentUser(token: string): void {
     // Set current user
-    this.currentUser = new User(data);
+    this.currentUser = new User(this.parseJWTToken(token));
     this.setCookie('currentUser', JSON.stringify(this.currentUser));
-  }
-
-  public setJWTToken(token: string): void {
-    this.token = token;
-    this.setCookie('jwt-token', token);
   }
 
   public getCurrentUser(): User {
@@ -45,20 +43,10 @@ export class UserService {
     return this.currentUser;
   }
 
-  public getJWTToken(): string {
-    if (isNullOrUndefined(this.token)) {
-      this.token = this.cookieService.check('jwt-token') ? this.cookieService.get('jwt-token') : null;
-    }
-    return this.token;
-  }
-
   public clearStorage(): void {
     // empty vars and storage
-    this.token = null;
     this.currentUser = null;
-    this.cookieService.set('currentUser', null);
     this.setCookie('currentUser', null);
-    this.setCookie('jwt-token', null);
   }
 
   public getUser(id: string | number): Observable<any> {
@@ -75,9 +63,5 @@ export class UserService {
 
   public getUserSubscriptions(id: string | number): Observable<any> {
     return this.http.get(this.endpointService.generateUrl('user_subscriptions', id));
-  }
-
-  private setCookie(cookie: string, value) {
-    this.cookieService.set(cookie, value, undefined, undefined, undefined, environment.secureFlag, 'Strict');
   }
 }

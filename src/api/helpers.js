@@ -26,8 +26,9 @@ let jwtAuth = function(req, res, next) {
 
 let getJWTHelper = function(req) {
   // get auth header
-  if (!req.headers.authorization) return false;
-  let authHeader = req.headers.authorization.split(' ');
+  const rawToken = req.cookies.get('authorization-token');
+  if (!rawToken) return false;
+  let authHeader = rawToken.split(' ');
   // check format of credentials
   if (authHeader.length === 2 && /^Bearer$/i.test(authHeader[0])) {
     // return token
