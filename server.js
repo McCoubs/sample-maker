@@ -42,18 +42,7 @@ let connection = mongoose.connection;
 connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 connection.once('open', function callback () {
 
-  let config = {};
-  if (process.env.NODE_ENV !== 'production') {
-    let privateKey = fs.readFileSync( './local-certs/server.key' );
-    let certificate = fs.readFileSync( './local-certs/server.crt' );
-    config = {
-      key: privateKey,
-      cert: certificate
-    };
-  }
-
-  // initialize app
-  let server = https.createServer(config, app).listen(process.env.PORT || 3000, function (err) {
+  let server = app.listen(process.env.PORT || 3000, function () {
     let port = server.address().port;
     console.log('App now running on port', port);
   });

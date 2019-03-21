@@ -22,7 +22,8 @@ module.exports = function UserRouting(app) {
         if (err) return res.status(500).json(errorGenerator(err, 500, 'Error creating new user with email: ' + req.body.email));
         // add token to cookies and respond with token
         const generatedJWT = user.generateJwt();
-        res.cookies.set('authorization-token', 'Bearer ' + generatedJWT, { sameSite: true, httpOnly: true, secure: true });
+        const inProd = process.env.NODE_ENV === 'production';
+        res.cookies.set('authorization-token', 'Bearer ' + generatedJWT, { sameSite: true, httpOnly: inProd, secure: inProd });
         res.json({'token' : generatedJWT});
       });
     });
@@ -39,7 +40,8 @@ module.exports = function UserRouting(app) {
       }
       // add token to cookies and respond with token
       const generatedJWT = user.generateJwt();
-      res.cookies.set('authorization-token', 'Bearer ' + generatedJWT, { sameSite: true, httpOnly: true, secure: true });
+      const inProd = process.env.NODE_ENV === 'production';
+      res.cookies.set('authorization-token', 'Bearer ' + generatedJWT, { sameSite: true, httpOnly: inProd, secure: inProd });
       res.json({'token' : generatedJWT});
     });
   });
