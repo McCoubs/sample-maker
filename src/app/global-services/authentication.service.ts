@@ -24,7 +24,7 @@ export class AuthenticationService {
     // get current user and check expiry token
     const user = this.userService.getCurrentUser();
     if (!isNullOrUndefined(user)) {
-      return user.exp > Date.now() / 1000;
+      return user.exp > (Date.now() / 1000);
     } else {
       return false;
     }
