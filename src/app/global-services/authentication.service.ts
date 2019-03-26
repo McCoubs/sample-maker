@@ -24,7 +24,7 @@ export class AuthenticationService {
     // get current user and check expiry token
     const user = this.userService.getCurrentUser();
     if (!isNullOrUndefined(user)) {
-      return user.exp > Date.now() / 1000;
+      return user.exp > (Date.now() / 1000);
     } else {
       return false;
     }
@@ -32,9 +32,13 @@ export class AuthenticationService {
 
   public logout(): void {
     // clear storage and navigate to home
-    this.userService.clearStorage();
-    this.router.navigateByUrl('/login');
-    this.loggedInChange.emit(false);
+    this.http.post(this.endpointService.generateUrl('logout'), {}).subscribe(
+        (data) => {
+          this.userService.clearStorage();
+          this.router.navigateByUrl('/login');
+          this.loggedInChange.emit(false);
+        }
+    );
   }
 
   public register(user: TokenPayload): Observable<any> {
