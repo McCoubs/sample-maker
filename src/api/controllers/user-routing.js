@@ -4,6 +4,8 @@ let Sample = mongoose.model('Sample');
 let Subscription = mongoose.model('Subscription');
 let { jwtAuth, errorGenerator } = require('../helpers');
 
+const inProd = process.env.NODE_ENV === 'production';
+
 module.exports = function UserRouting(app) {
 
   app.post('/api/register', (req, res) => {
@@ -22,7 +24,6 @@ module.exports = function UserRouting(app) {
         if (err) return errorGenerator(res, err, 500, 'Error creating new user with email: ' + req.body.email);
         // add token to cookies and respond with token
         const generatedJWT = user.generateJwt();
-        const inProd = process.env.NODE_ENV === 'production';
         res.cookies.set('authorization-token', 'Bearer ' + generatedJWT, { sameSite: true, httpOnly: inProd, secure: inProd });
         res.json({'token' : generatedJWT});
       });
@@ -40,7 +41,6 @@ module.exports = function UserRouting(app) {
       }
       // add token to cookies and respond with token
       const generatedJWT = user.generateJwt();
-      const inProd = process.env.NODE_ENV === 'production';
       res.cookies.set('authorization-token', 'Bearer ' + generatedJWT, { sameSite: true, httpOnly: inProd, secure: inProd });
       res.json({'token' : generatedJWT});
     });
@@ -48,7 +48,6 @@ module.exports = function UserRouting(app) {
 
   app.post('/api/logout', jwtAuth, (req, res) => {
     // empty cookie and respond
-    const inProd = process.env.NODE_ENV === 'production';
     res.cookies.set('authorization-token', '', { sameSite: true, httpOnly: inProd, secure: inProd });
     res.json({'success' : true});
   });

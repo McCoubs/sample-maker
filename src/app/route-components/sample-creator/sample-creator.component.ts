@@ -1,4 +1,4 @@
-import { AfterViewInit, ApplicationRef, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ApplicationRef, ChangeDetectorRef, Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { AudioWrapper } from '../../classes/AudioWrapper';
 import { RecorderWrapper } from '../../classes/RecorderWrapper';
 import { SampleService } from '../../global-services/sample.service';
@@ -14,7 +14,7 @@ class AudioRange {constructor(public lower: number, public upper: number) {}}
   templateUrl: './sample-creator.component.html',
   styleUrls: ['./sample-creator.component.scss']
 })
-export class SampleCreatorComponent implements OnInit, AfterViewInit {
+export class SampleCreatorComponent implements OnInit, OnDestroy {
 
   // functionality vars
   audioWrapper: AudioWrapper = null;
@@ -43,7 +43,11 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     this.audioWrapper = new AudioWrapper();
   }
 
-  ngAfterViewInit(): void {}
+  ngOnDestroy(): void {
+    // stop playing on death
+    this.audioWrapper.stopAudio();
+    this.recordedAudio.stopAudio();
+  }
 
   onFileUpload(file: File): void {
     this.loading = true;
@@ -52,14 +56,14 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     this.audioWrapper.decodeFile(file, () => {
       // load audio and recorder
       this.audioWrapper.loadAudio();
-      this.recorder = new RecorderWrapper(this.audioWrapper.sourceNode);
+      this.recorder = new RecorderWrapper(this.audioWrapper.sourceNode, this.audioWrapper);
       // start listener node
       this.audioWrapper.createProcessorNode((e) => {
         if (this.isPlaying && !this.interacting) {
           this.currentTime = e.playbackTime;
           this.ref.detectChanges();
         }
-      });
+      }, 'playtime');
       // initialize vars
       const duration = this.audioWrapper.buffer.duration;
       this.audioRange = new AudioRange(Math.floor(duration / 10), Math.floor(duration * 0.9));
@@ -93,8 +97,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     this.audioWrapper.stopAudio();
     this.audioWrapper.startAudio();
     this.isPlaying = true;
-    // re-intialize recorder
-    this.recorder.createProcessor(this.audioWrapper.sourceNode);
+    this.ref.detectChanges();
   }
 
   updateCurrentTime(event: ISliderValueChangeEventArgs): void {
@@ -120,24 +123,27 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
 
   setPlaybackRate(rate: number): void {
     this.audioWrapper.setPlayBackRate(rate);
+    this.ref.detectChanges();
   }
 
   applyFadeIn(percent: number): void {
     this.audioWrapper.fadeAudioIn(percent);
-    this.audioWrapper.startAudio();
+    this.restartPlay();
   }
 
   applyFadeOut(percent: number): void {
     this.audioWrapper.fadeAudioOut(percent);
-    this.audioWrapper.startAudio();
+    this.restartPlay();
   }
 
   setPan(value): void {
     this.audioWrapper.setPan(value);
+    this.ref.detectChanges();
   }
 
   changeVolume(volume): void {
     this.audioWrapper.setVolume(volume);
+    this.ref.detectChanges();
   }
 
   mutateAudio(type: 'cut' | 'leave' | 'paste'): void {
@@ -147,9 +153,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
     } else if (type === 'leave') {
       this.audioWrapper.leave(this.audioRange.lower, this.audioRange.upper);
     }
-    // re-initialize recorder
     this.audioWrapper.loadAudio();
-    this.recorder.createProcessor(this.audioWrapper.sourceNode);
     // re-initialize slider vars
     const duration = this.audioWrapper.buffer.duration;
     this.audioRange = new AudioRange(Math.floor(duration / 10), Math.floor(duration * 0.9));
@@ -206,8 +210,7 @@ export class SampleCreatorComponent implements OnInit, AfterViewInit {
         (sample) => {
           this.notifierService.notify('success', 'New sample: ' + sample.name + ' successfully saved');
           this.app.tick();
-        },
-        (error) => console.log(error)
+        }
     );
   }
 

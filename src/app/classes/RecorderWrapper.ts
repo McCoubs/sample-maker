@@ -1,3 +1,5 @@
+import { AudioWrapper } from './AudioWrapper';
+
 export class RecorderWrapper {
 
   recording: Boolean = false;
@@ -9,36 +11,13 @@ export class RecorderWrapper {
   recordedLeftBuffers: Array<Float32Array> = [];
   recordedRightBuffers: Array<Float32Array> = [];
 
-  constructor(source: AudioBufferSourceNode, bufferLen?: number) {
-    // create processor node
-    this.bufferLen = bufferLen || 8192;
-    this.createProcessor(source);
-  }
-
-  createProcessor(source: AudioBufferSourceNode): void {
-    // destroy old processors on call
-    if (this.node || this.source) {
-      this.destroyProcessor();
-    }
+  constructor(source: AudioBufferSourceNode, audioWrapper: AudioWrapper) {
+    this.bufferLen = 8192;
     // set required vars
     this.context = source.context;
     this.source = source;
-    this.node = this.context.createScriptProcessor(this.bufferLen, 2, 2);
-    // listen and push channel data
-    this.node.addEventListener('audioprocess', this.listenHelper.bind(this));
-    // connect processor to output
-    this.source.connect(this.node);
-    this.node.connect(this.context.destination);
-  }
-
-  destroyProcessor(): void {
-    // stop the listener
-    this.node.removeEventListener('audioprocess', this.listenHelper.bind(this));
-    // disconnect and reset nodes
-    this.source.disconnect(this.node);
-    this.node.disconnect();
-    this.node = null;
-    this.source = null;
+    // create a processor node on source
+    audioWrapper.createProcessorNode(this.listenHelper.bind(this), 'recorder');
   }
 
   private listenHelper(e): void {

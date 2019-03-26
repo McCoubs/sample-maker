@@ -18,7 +18,7 @@ export class AudioWrapper {
   processorNode: ScriptProcessorNode = null;
   // used to keep track of the head of the audio pipeline
   connectNode: AudioNode;
-  processorCallbacks: Array<Function> = [];
+  processorCallbacks: Map<String, Function> = new Map();
   loaded: Boolean = false;
 
   // currently unused nodes
@@ -33,8 +33,11 @@ export class AudioWrapper {
     // create basic audio api nodes
     this.gainNode = this.audioContext.createGain();
     this.pannerNode = this.audioContext.createPanner();
+    this.createProcessorNode();
 
     // connect base nodes
+    this.processorNode.connect(this.audioContext.destination);
+    this.gainNode.connect(this.processorNode);
     this.gainNode.connect(this.audioContext.destination);
     this.pannerNode.connect(this.gainNode);
 
@@ -72,21 +75,21 @@ export class AudioWrapper {
     this.connectNode = this.analyserNode;
   }
 
-  createProcessorNode(callback) {
-    // add callback to be used on processing
-    this.processorCallbacks.push(callback);
+  createProcessorNode(callback?: Function, name?: string) {
+    if (callback && name) {
+      // add callback to be used on processing
+      this.processorCallbacks.set(name, callback);
+    }
     // create new node if none
     if (!this.processorNode) {
       // create processor node
-      this.processorNode = this.audioContext.createScriptProcessor(4096, 2, 2);
+      this.processorNode = this.audioContext.createScriptProcessor(8192, 2, 2);
       // process all call backs
-      this.processorNode.onaudioprocess = (e) => {
-        this.processorCallbacks.forEach((processorCallback) => processorCallback(e));
-      };
-
-      // connect processor to output
-      this.sourceNode.connect(this.processorNode);
-      this.processorNode.connect(this.audioContext.destination);
+      this.processorNode.addEventListener('audioprocess', (e) => {
+        for (const [key, processerCallback] of this.processorCallbacks.entries()) {
+          processerCallback(e);
+        }
+      });
     }
   }
 
@@ -105,7 +108,9 @@ export class AudioWrapper {
 
     // connect filter into audio pipeline
     this.filterNode.connect(this.connectNode);
+    this.sourceNode.disconnect(this.connectNode);
     this.connectNode = this.filterNode;
+    this.sourceNode.connect(this.connectNode);
 
     this.resumeAudio();
   }
@@ -118,8 +123,10 @@ export class AudioWrapper {
 
     // if there is a current filter, remove it and reset head of audio pipeline
     if (this.filterNode !== null) {
+      this.sourceNode.disconnect(this.filterNode);
       this.filterNode.disconnect();
       this.connectNode = this.pannerNode;
+      this.sourceNode.connect(this.connectNode);
       this.filterNode = null;
     }
     this.resumeAudio();
@@ -209,7 +216,9 @@ export class AudioWrapper {
 
     const x = Math.sin(range * (Math.PI / 180));
     const z = Math.sin(zDeg * (Math.PI / 180));
-    this.pannerNode.setPosition(x, 0, z);
+    this.pannerNode.positionX.value = x;
+    this.pannerNode.positionY.value = 0;
+    this.pannerNode.positionZ.value = z;
   }
 
   /**
@@ -247,6 +256,7 @@ export class AudioWrapper {
    */
   stopAudio(): void {
     if (this.sourceNode && !this.loaded) {
+      this.sourceNode.disconnect();
       this.sourceNode.stop();
       this.sourceNode = null;
       this.loaded = false;
