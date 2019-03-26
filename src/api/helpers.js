@@ -1,23 +1,26 @@
 let jwt = require('jsonwebtoken');
 
-// helper to generate errors json
-let errorGenerator = function(err, status, message = '') {
-  return {
+// helper to generate errors response
+let errorGenerator = function(res, err, status, message = '') {
+  // create error obj
+  let errorJson = {
     'message': message,
     'error': err !== undefined && err !== null ? err.name + ': ' + err.message : '',
     'status': status
-  }
+  };
+  // mutate and return the response
+  return res.status(status).json(errorJson);
 };
 
 let jwtAuth = function(req, res, next) {
   // retrieve token and return error on not found
   let token = getJWTHelper(req);
-  if (!token) return res.status(401).json(errorGenerator(null, 401, 'authorization token invalid schema'));
+  if (!token) return localErrorHelper(res, null, 'authorization token invalid schema');
 
   // verify validity of token
   jwt.verify(token, process.env.JWT_SECRET || 'LOCALSECRETTHISDOESNTMATTER', (err, decodedToken) => {
     // return error if invalid
-    if (err || !decodedToken) return res.status(401).json(errorGenerator(err, 401, 'you do not have permission for this action, please login'));
+    if (err || !decodedToken) return localErrorHelper(res, err, 'you do not have permission for this action, please login');
     // pass payload along
     req.user = decodedToken;
     next();
@@ -36,6 +39,14 @@ let getJWTHelper = function(req) {
   } else {
     return false;
   }
+};
+
+// local method to help clean errors
+let localErrorHelper = function (res, err, message) {
+  // clear the auth cookie and response with error
+  const inProd = process.env.NODE_ENV === 'production';
+  res.cookies.set('authorization-token', '', { sameSite: true, httpOnly: inProd, secure: inProd });
+  return errorGenerator(res, err, 401, message);
 };
 
 module.exports = {

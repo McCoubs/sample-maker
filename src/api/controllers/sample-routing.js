@@ -2,7 +2,7 @@ let mongoose = require('mongoose');
 let Sample = mongoose.model('Sample');
 let stream = require('stream');
 let Grid = require('gridfs-stream');
-let { errorGenerator, jwtAuth } = require('../helpers');
+let { jwtAuth, errorGenerator } = require('../helpers');
 // crap monkey patch for mongoose error
 eval(`Grid.prototype.findOne = ${Grid.prototype.findOne.toString().replace('nextObject', 'next')}`);
 
@@ -28,8 +28,7 @@ module.exports = function SampleRouting(app, conn) {
         // on error need to delete file and respond with error
         if (err || !sample) {
           gfs.remove({ _id: file._id }, function (err) {
-            if (err) return res.status(500).json(errorGenerator(err, 500, 'Error creating sample'));
-            return res.status(500).json(errorGenerator(err, 500, 'Error creating sample'));
+            return errorGenerator(res, err, 500, 'Error creating sample');
           });
         }
         // else respond with created sample
@@ -37,8 +36,8 @@ module.exports = function SampleRouting(app, conn) {
       });
     });
     // on write error
-    writestream.on('error', function() {
-      return res.status(500).json(errorGenerator(null, 500, 'Error storing sample'));
+    writestream.on('error', () => {
+      return errorGenerator(res, null, 500, 'Error storing sample');
     });
   });
 
@@ -47,7 +46,7 @@ module.exports = function SampleRouting(app, conn) {
     // attempt to find sample
     Sample.findOne({ _id: req.params.id }, (err, sample) => {
       // on error, generate error
-      if (err || !sample) return res.status(500).json(errorGenerator(err, 500, 'no sample found with id: ' + req.params.id));
+      if (err || !sample) return errorGenerator(res, err, 500, 'no sample found with id: ' + req.params.id);
       res.json(sample);
     });
   });
@@ -57,7 +56,7 @@ module.exports = function SampleRouting(app, conn) {
     // find sample
     Sample.findOne({ _id: req.params.id }, (err, sample) => {
       // if no sample, respond with error
-      if (err || !sample) return res.status(500).json(errorGenerator(err, 500, 'no sample found with id: ' + req.params.id));
+      if (err || !sample) return errorGenerator(res, err, 500, 'no sample found with id: ' + req.params.id);
 
       // create and pipe file to response
       let readstream = gfs.createReadStream({ _id: sample.file_id });
@@ -65,16 +64,15 @@ module.exports = function SampleRouting(app, conn) {
     });
   });
 
-  // Route for getting all the samples TODO: make routes for search and shit
+  // Route for getting all the samples
   app.get('/api/samples', jwtAuth, (req, res) => {
-    // get all samples
     let limit = parseInt(req.query.limit) || 0;
     let skip = parseInt(req.query.skip) || 0;
     let searchParams = {};
-    if(req.query.tags) searchParams.tags = req.query.tags;
+    if (req.query.tags) searchParams.tags = req.query.tags;
     Sample.find(searchParams).sort({createdAt: -1}).skip(skip).limit(limit).exec((err, samples) => {
       // return error on error
-      if (err || !samples) return res.status(500).json(errorGenerator(err, 500, 'Server ERROR: could not get samples'));
+      if (err || !samples) return errorGenerator(res, err, 500, 'Server ERROR: could not get samples');
       res.json(samples);
     });
   });
