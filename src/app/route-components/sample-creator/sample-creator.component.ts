@@ -45,8 +45,8 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     // stop playing on death
-    this.audioWrapper.stopAudio();
-    this.recordedAudio.stopAudio();
+    if (this.audioWrapper) this.audioWrapper.stopAudio();
+    if (this.recordedAudio) this.recordedAudio.stopAudio();
   }
 
   onFileUpload(file: File): void {
