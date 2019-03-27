@@ -64,6 +64,7 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
           this.ref.detectChanges();
         }
       }, 'playtime');
+
       // initialize vars
       const duration = this.audioWrapper.buffer.duration;
       this.audioRange = new AudioRange(Math.floor(duration / 10), Math.floor(duration * 0.9));
