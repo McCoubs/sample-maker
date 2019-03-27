@@ -38,9 +38,7 @@
             </button>
         </div>
         <div class="profile-content" *ngIf="selectedTab === 0">
-            <div *ngFor="let sample of userSamples">
-                <app-card [sample]=sample></app-card>
-            </div>
+            <app-carousel [inputCache]="userSamples" [search]="userId"></app-carousel>
             <div *ngIf="hasNoSamples() || !userSamples">
                 No samples to display.
             </div>

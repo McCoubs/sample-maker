@@ -29,12 +29,13 @@ export class CarouselComponent implements OnInit {
   }
 
   ngOnChanges() {
-    if(this.searchParams && this.searchParams.length > 0) {
+    if(this.searchParams && this.searchParams.length > 0 && this._displayCache) {
+      this.showNext = false;
       this.sampleCache = [];
+      this.sampleCache[0] = this._displayCache;
       this.currentSamples = 0;
-      this.sampleService.getSamples(5, 0, this.searchParams).subscribe(
+      this.sampleService.getSamples(5, 5, this.searchParams).subscribe(
         (samples) => {
-          console.log(samples);
           if(samples.length > 0){
             this.sampleCache.push(samples.map((sample) => new Sample(sample)));
             this.showNext = true;
