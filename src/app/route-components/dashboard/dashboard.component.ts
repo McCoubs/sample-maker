@@ -23,7 +23,7 @@ export class DashboardComponent implements OnInit {
         this.sampleCache = samples.map((sample) => new Sample(sample));
       },
       (error) => {
-        console.log("whio[eps");
+        console.log(error);
       }
     );
   }
@@ -36,7 +36,15 @@ export class DashboardComponent implements OnInit {
   }
 
   search(input) {
-    this.searchParams = this.searchParams.concat([input]);
+    this.sampleService.getSamples(5, 0, [input]).subscribe(
+      (samples) => {
+        this.sampleCache = samples.map((sample) => new Sample(sample));
+        this.searchParams = this.searchParams.concat([input]);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   reset() {

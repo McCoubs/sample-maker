@@ -1,6 +1,8 @@
 <div class="card-component">
   <div class="card-image">
-    <button (click)="play()">PLAY</button>
+    <div class="play-button" (click)="play()">
+      <img class="icon" src="{{playing?'assets/icons/pause-button.svg':'assets/icons/play-button.svg'}}">
+    </div>
     <button *ngIf="audioTrack" (click)="download()">DOWNLOAD</button>
   </div>
   <div class="info-section">

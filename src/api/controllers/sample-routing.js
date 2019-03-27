@@ -68,8 +68,11 @@ module.exports = function SampleRouting(app, conn) {
   app.get('/api/samples', jwtAuth, (req, res) => {
     let limit = parseInt(req.query.limit) || 0;
     let skip = parseInt(req.query.skip) || 0;
-    let searchParams = {};
-    if (req.query.tags) searchParams.tags = req.query.tags;
+    let paramArray = [];
+    if (req.query.tags) paramArray.push({tags: req.query.tags});
+    if (req.query.genres) paramArray.push({genres: req.query.genres});
+    if (req.query.author && mongoose.Types.ObjectId.isValid(req.query.author)) paramArray.push({author: req.query.author});
+    let searchParams = (paramArray.length > 0)?{$or: paramArray}:{};
     Sample.find(searchParams).sort({createdAt: -1}).skip(skip).limit(limit).exec((err, samples) => {
       // return error on error
       if (err || !samples) return errorGenerator(res, err, 500, 'Server ERROR: could not get samples');

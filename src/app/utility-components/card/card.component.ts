@@ -36,23 +36,28 @@ export class CardComponent implements OnInit {
   }
 
   play() {
-    if(!this.audioTrack) this.getTrack("play");
-    this.audioTrack.startAudio();
+    if(!this.audioTrack) this.getTrack();
+    else if(!this.playing){
+      this.playing = true;
+      this.audioTrack.startAudio();
+    } else {
+      this.playing = false;
+      this.audioTrack.stopAudio();
+    }
   }
 
   download() {
-    if(!this.audioTrack) this.getTrack("download");
     this.audioTrack.downloadAudio(this._sample.name);
   }
 
-  getTrack(option) {
+  getTrack() {
     this.sampleService.downloadSample(this._sample._id).subscribe(
       (arrayBuffer) => {
         this.audioTrack = new AudioWrapper();
         this.audioTrack.decodeArrayBuffer(arrayBuffer, () => {
-          if(option === "play")this.audioTrack.startAudio();
+          this.playing = true;
+          this.audioTrack.startAudio();
         });
-        if(option === "download")this.audioTrack.downloadAudio();
       },
       (error) => console.log(error)
     );
