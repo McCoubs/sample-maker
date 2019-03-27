@@ -29,7 +29,7 @@ export class ProfileComponent implements OnInit {
   subscribers: Array<String> = [];
   subscriptions: Array<String> = [];
   currentUser = this.userService.getCurrentUser();
-  userId=[];
+  userId = [];
 
   constructor(
       private authService: AuthenticationService,
@@ -61,10 +61,7 @@ export class ProfileComponent implements OnInit {
   }
 
   hasNoSamples(): Boolean {
-    if (this.userSamples.length === 0) {
-      return true;
-    }
-    return false;
+    return this.userSamples.length === 0;
   }
 
   // getSubscribers(): Array<String> {

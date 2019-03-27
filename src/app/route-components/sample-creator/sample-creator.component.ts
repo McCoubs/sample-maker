@@ -45,8 +45,8 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     // stop playing on death
-    this.audioWrapper.stopAudio();
-    this.recordedAudio.stopAudio();
+    if (this.audioWrapper) this.audioWrapper.stopAudio();
+    if (this.recordedAudio) this.recordedAudio.stopAudio();
   }
 
   onFileUpload(file: File): void {
@@ -64,6 +64,7 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
           this.ref.detectChanges();
         }
       }, 'playtime');
+
       // initialize vars
       const duration = this.audioWrapper.buffer.duration;
       this.audioRange = new AudioRange(Math.floor(duration / 10), Math.floor(duration * 0.9));

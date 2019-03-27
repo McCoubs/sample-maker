@@ -36,8 +36,8 @@ export class CardComponent implements OnInit {
   }
 
   play() {
-    if(!this.audioTrack) this.getTrack();
-    else if(!this.playing){
+    if (!this.audioTrack) this.getTrack();
+    else if (!this.playing) {
       this.playing = true;
       this.audioTrack.startAudio();
     } else {
