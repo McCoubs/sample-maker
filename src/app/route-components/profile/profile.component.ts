@@ -49,11 +49,11 @@ export class ProfileComponent implements OnInit {
   }
 
   sub(): void {
-    //this.subscribers = this.getSubscribers();
+    this.userService.sub(this.userService.getCurrentUser()._id, this.selectedUser._id).subscribe((value) => this.subscribed = true);
   }
 
   unsub(): void {
-    //this.subscribers = this.getSubscribers();
+    this.userService.unsub(this.userService.getCurrentUser()._id, this.selectedUser._id).subscribe((value) => this.subscribed = false);
   }
 
   edit(): void {

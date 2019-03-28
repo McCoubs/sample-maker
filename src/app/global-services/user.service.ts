@@ -49,6 +49,13 @@ export class UserService {
     this.setCookie('currentUser', null);
   }
 
+  public sub(id: string | number, id2: string | number): Observable<any> {
+    return this.http.post(this.endpointService.generateUrl('user_subscriber', id, id2), {});
+  }
+
+  public unsub(id: string | number, id2: string | number): Observable<any> {
+    return this.http.delete(this.endpointService.generateUrl('user_subscriber', id, id2));
+  }
   public getUser(id: string | number): Observable<any> {
     return this.http.get(this.endpointService.generateUrl('user', id));
   }

@@ -12,6 +12,7 @@ import { UserService } from '../../global-services/user.service';
 export class CardComponent implements OnInit {
   _name;
   _author;
+  _authorid;
   _sample;
   playing;
   audioTrack;
@@ -28,6 +29,7 @@ export class CardComponent implements OnInit {
     this.userService.getUser(this._sample.author).subscribe(
       (user) => {
         this._author = user.name;
+        this._authorid = user._id;
       },
       (error) => {
         console.error(error);
