@@ -13,47 +13,45 @@
   position: sticky;
   top: 0;
 
-  .navigation {
-    text-decoration: none;
-    color: white;
-  }
   @media only screen and (min-width: map_get($grid-breakpoints, 'md')) {
     height: 70px;
     font-size: 16px;
   }
 
+  .nav-options {
+    display: flex;
+    height: 100%;
+  }
+
+  .navigation {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 500;
+    margin: 12px;
+    padding: 0 8px;
+    position: relative;
+    text-decoration: none;
+    color: white;
+
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      width: 0;
+      bottom: 0;
+      left: 0;
+      border-bottom: 3px solid #ffffff;
+      -webkit-transition: 0.5s ease;
+      transition: 0.5s ease;
+    }
+
+    &:not(.logo):hover:after {
+      width: 100%;
+    }
+  }
+
   .sign-out {
     height: 60%;
   }
-}
-
-.navigation {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  font-weight: 500;
-  margin: 12px;
-  padding: 0 8px;
-  position: relative;
-
-  &:after {
-    content: '';
-    display: block;
-    position: absolute;
-    width: 0;
-    bottom: 0;
-    left: 0;
-    border-bottom: 3px solid #ffffff;
-    -webkit-transition: 0.5s ease;
-    transition: 0.5s ease;
-  }
-
-  &:not(.logo):hover:after {
-    width: 100%;
-  }
-}
-
-.nav-options {
-  display: flex;
-  height: 100%;
 }

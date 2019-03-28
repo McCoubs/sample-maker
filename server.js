@@ -5,6 +5,7 @@ let forceSecure = require('force-secure-express');
 let fileUpload = require('express-fileupload');
 let session = require('express-session');
 let cookies = require('cookies');
+let expressValidator = require('express-validator');
 
 // importing mongoose models
 require('./src/api/models/users');
@@ -24,12 +25,11 @@ app.use(session({
   }
 }));
 app.use(cookies.express([process.env.JWT_SECRET || 'LOCALSECRETTHISDOESNTMATTER']));
-app.use(forceSecure([
-  'sample-maker.herokuapp.com'
-]));
+app.use(forceSecure(['sample-maker.herokuapp.com']));
 app.use(bodyParser.json());
 app.use(fileUpload());
 app.enable('trust proxy');
+app.use(expressValidator());
 
 // Create link to Angular build directory
 let distDir = __dirname + '/dist/';
