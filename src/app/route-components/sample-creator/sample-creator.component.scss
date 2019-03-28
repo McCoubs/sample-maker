@@ -131,8 +131,7 @@
       align-items: center;
       flex-wrap: wrap;
       width: 100%;
-      padding: 12px;
-      margin: 4px 0;
+      padding: 16px 12px;
 
       &:not(:last-child) {
         border-bottom: 2px $palette-darkgray solid;
@@ -145,6 +144,25 @@
         &.btn-inline {
           width: fit-content;
           margin-top: 0;
+        }
+      }
+
+      .remove-filter {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row;
+        width: 90%;
+        margin-bottom: 6px;
+
+        .btn {
+          margin: 0;
+          max-width: 64px;
+        }
+
+        .remove-icon {
+          height: 32px;
+          width: 32px;
         }
       }
     }

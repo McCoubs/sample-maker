@@ -3,9 +3,10 @@ import { AudioWrapper } from '../../classes/AudioWrapper';
 import { RecorderWrapper } from '../../classes/RecorderWrapper';
 import { SampleService } from '../../global-services/sample.service';
 import { IgxSliderComponent, ISliderValueChangeEventArgs, SliderType } from 'igniteui-angular';
-import { faSpinner, faVolumeMute, faVolumeUp, faMicrophone } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner, faVolumeMute, faVolumeUp, faMicrophone, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { AudioContextEnum } from '../../classes/AudioContextEnum';
 import { NotifierService } from 'angular-notifier';
+import { timer } from 'rxjs';
 
 class AudioRange {constructor(public lower: number, public upper: number) {}}
 
@@ -36,6 +37,7 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
   faVolumeMute = faVolumeMute;
   faVolumeUp = faVolumeUp;
   faMicrophone = faMicrophone;
+  faTimesCircle = faTimesCircle;
 
   constructor(private sampleService: SampleService, private notifierService: NotifierService, private ref: ChangeDetectorRef, private app: ApplicationRef) {}
 
@@ -57,13 +59,6 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
       // load audio and recorder
       this.audioWrapper.loadAudio();
       this.recorder = new RecorderWrapper(this.audioWrapper.sourceNode, this.audioWrapper);
-      // start listener node
-      this.audioWrapper.createProcessorNode((e) => {
-        if (this.isPlaying && !this.interacting) {
-          this.currentTime = e.playbackTime;
-          this.ref.detectChanges();
-        }
-      }, 'playtime');
 
       // initialize vars
       const duration = this.audioWrapper.buffer.duration;
@@ -72,6 +67,15 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
       this.loading = false;
       this.ref.detectChanges();
 
+      // init timer for playback
+      timer(0, 1000).subscribe((
+          (time) => {
+            if (this.isPlaying && !this.interacting) {
+              this.currentTime += 1;
+              this.ref.detectChanges();
+            }
+          }
+      ));
       // disable counting when touching to avoid stutter
       this.tracker.registerOnTouched(() => {
         this.interacting = true;
@@ -97,28 +101,33 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
     // restart play
     this.audioWrapper.stopAudio();
     this.audioWrapper.startAudio();
+    this.currentTime = 0;
     this.isPlaying = true;
     this.ref.detectChanges();
   }
 
+  // method for changing play time
   updateCurrentTime(event: ISliderValueChangeEventArgs): void {
-    // method to help with tracker
+    // set time to value
     this.currentTime = +event.value;
+    // restart the audio
     this.audioWrapper.stopAudio();
     this.audioWrapper.startAudio(this.currentTime);
-    this.interacting = false;
+    this.isPlaying = true;
+    // set interaction to stop
+    timer(1000).subscribe((time) => this.interacting = false);
   }
 
   ///////// EDITING CONTROL METHODS /////////
   applyFilter(type: string, frequency: number, gain: number): void {
     if (type && frequency && gain) {
-      this.audioWrapper.applyFilter(type, frequency, gain);
+      this.audioWrapper.addFilter(type, frequency, gain);
       this.ref.detectChanges();
     }
   }
 
-  removeFilter(): void {
-    this.audioWrapper.removeFilter();
+  removeFilter(index): void {
+    this.audioWrapper.removeFilter(index);
     this.ref.detectChanges();
   }
 
@@ -149,6 +158,7 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
 
   mutateAudio(type: 'cut' | 'leave' | 'paste'): void {
     this.isPlaying = false;
+    this.currentTime = 0;
     if (type === 'cut') {
       this.audioWrapper.cut(this.audioRange.lower, this.audioRange.upper);
     } else if (type === 'leave') {
@@ -195,8 +205,10 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
 
   resetRecording(): void {
     this.recorder.reset();
-    this.recordedAudio.stopAudio();
-    this.recordedAudio = null;
+    if (this.recordedAudio) {
+      this.recordedAudio.stopAudio();
+      this.recordedAudio = null;
+    }
     this.ref.detectChanges();
   }
 

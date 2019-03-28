@@ -9,21 +9,20 @@ import audioBufferToWav from 'audiobuffer-to-wav';
  */
 export class AudioWrapper {
 
+  // general purpose web-audio-api vars
   audioContext: AudioContext;
   buffer: AudioBuffer;
   sourceNode: AudioBufferSourceNode = null;
   gainNode: GainNode;
   pannerNode: PannerNode;
-  filterNode: BiquadFilterNode = null;
   processorNode: ScriptProcessorNode = null;
   // used to keep track of the head of the audio pipeline
   connectNode: AudioNode;
-  processorCallbacks: Map<String, Function> = new Map();
+  // keep track of callbacks attached to processor node
+  processorCallbacks: Map<String, Function> = new Map<string, Function>();
   loaded: Boolean = false;
-
-  // currently unused nodes
-  oscillatorNode: OscillatorNode;
-  analyserNode: AnalyserNode;
+  // list of applied filters
+  filterNodes: Array<BiquadFilterNode> = [];
 
   constructor(buffer?: AudioBuffer) {
     // set audio context
@@ -33,11 +32,8 @@ export class AudioWrapper {
     // create basic audio api nodes
     this.gainNode = this.audioContext.createGain();
     this.pannerNode = this.audioContext.createPanner();
-    this.createProcessorNode();
 
     // connect base nodes
-    this.processorNode.connect(this.audioContext.destination);
-    this.gainNode.connect(this.processorNode);
     this.gainNode.connect(this.audioContext.destination);
     this.pannerNode.connect(this.gainNode);
 
@@ -65,16 +61,6 @@ export class AudioWrapper {
     return new File([audioBufferToWav(this.buffer, {})], name + '.wav', {type: 'audio/wav'});
   }
 
-  /**
-   * Adds analyzer node for visualization
-   */
-  createAnalyzer() {
-    // create and connect analyzer
-    this.analyserNode = this.audioContext.createAnalyser();
-    this.analyserNode.connect(this.connectNode);
-    this.connectNode = this.analyserNode;
-  }
-
   createProcessorNode(callback?: Function, name?: string) {
     if (callback && name) {
       // add callback to be used on processing
@@ -90,27 +76,31 @@ export class AudioWrapper {
           processerCallback(e);
         }
       });
+      // connect processor to output
+      this.processorNode.connect(this.audioContext.destination);
+      this.gainNode.connect(this.processorNode);
     }
   }
 
   /**
-   * adds a filter to audio pipeline
+   *  adds a filter to audio pipeline
    *  example filters: 'highpass', 2000, 0; 'lowpass', 1500, 0
    */
-  applyFilter(type, freq, gain) {
+  addFilter(type, freq, gain) {
     this.pauseAudio();
-    this.filterNode = this.audioContext.createBiquadFilter();
+    const filterNode = this.audioContext.createBiquadFilter();
 
     // apply filter variables
-    this.filterNode.type = type;
-    this.filterNode.frequency.value = freq;
-    this.filterNode.gain.value = gain;
+    filterNode.type = type;
+    filterNode.frequency.value = freq;
+    filterNode.gain.value = gain;
 
     // connect filter into audio pipeline
-    this.filterNode.connect(this.connectNode);
     this.sourceNode.disconnect(this.connectNode);
-    this.connectNode = this.filterNode;
+    filterNode.connect(this.connectNode);
+    this.connectNode = filterNode;
     this.sourceNode.connect(this.connectNode);
+    this.filterNodes.push(filterNode);
 
     this.resumeAudio();
   }
@@ -118,17 +108,25 @@ export class AudioWrapper {
   /**
    * Removes the current filter from pipeline
    */
-  removeFilter() {
+  removeFilter(index: number) {
     this.pauseAudio();
+    const count = this.filterNodes.length;
 
-    // if there is a current filter, remove it and reset head of audio pipeline
-    if (this.filterNode !== null) {
-      this.sourceNode.disconnect(this.filterNode);
-      this.filterNode.disconnect();
-      this.connectNode = this.pannerNode;
-      this.sourceNode.connect(this.connectNode);
-      this.filterNode = null;
+    // if there are current filters and index is proper
+    if (count > 0 && index >= 0 && index < count) {
+      const target = this.filterNodes[index];
+      // get previous and next node in pipeline
+      const next = index === 0 ? this.pannerNode : this.filterNodes[index - 1];
+      const prev = index === count - 1 ? this.sourceNode : this.filterNodes[index + 1];
+      // remove target from pipeline and mend gap
+      prev.disconnect(target);
+      target.disconnect();
+      prev.connect(next);
+      // remove target
+      this.filterNodes.splice(index, 1);
     }
+    // set the connect node
+    this.connectNode = (count - 1) === 0 ? this.pannerNode : this.filterNodes[count - 2];
     this.resumeAudio();
   }
 
