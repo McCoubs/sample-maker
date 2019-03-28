@@ -58,10 +58,7 @@ export class ProfileComponent implements OnInit {
   }
 
   hasNoSamples(): Boolean {
-    if (this.userSamples.length === 0) {
-      return true;
-    }
-    return false;
+    return this.userSamples.length === 0;
   }
 
   // getSubscribers(): Array<String> {
