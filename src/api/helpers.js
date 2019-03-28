@@ -1,4 +1,5 @@
 let jwt = require('jsonwebtoken');
+let { body, param, validationResult } = require('express-validator/check');
 
 // helper to generate errors response
 let errorGenerator = function(res, err, status, message = '') {
@@ -12,6 +13,7 @@ let errorGenerator = function(res, err, status, message = '') {
   return res.status(status).json(errorJson);
 };
 
+// helper validates auth-cookie exists and is valid for actions
 let jwtAuth = function(req, res, next) {
   // retrieve token and return error on not found
   let token = getJWTHelper(req);
@@ -41,6 +43,34 @@ let getJWTHelper = function(req) {
   }
 };
 
+/**
+ * Helper function validates generic input from body
+ * @param input name of input to validate
+ * @returns chained validation functions
+ */
+let validateBody = function(input) {
+  return body(input).exists().not().isEmpty().trim().escape();
+};
+
+/**
+ * Helper function validates generic input from param
+ * @param input name of input to validate
+ * @returns chained validation functions
+ */
+let validateParam = function(input) {
+  return param(input).exists().not().isEmpty().trim().escape();
+};
+
+// helper checks if express-validator found any issues
+let validRequest = function(req, res, next) {
+  // check req for input errors
+  if (!validationResult(req).isEmpty()) {
+    console.log(validationResult(req).array());
+    return errorGenerator(res, null, 400, 'One or more inputs provided were improperly provided');
+  }
+  next();
+};
+
 // local method to help clean errors
 let localErrorHelper = function (res, err, message) {
   // clear the auth cookie and response with error
@@ -51,5 +81,8 @@ let localErrorHelper = function (res, err, message) {
 
 module.exports = {
   errorGenerator,
-  jwtAuth
+  jwtAuth,
+  validateBody,
+  validateParam,
+  validRequest
 };

@@ -5,6 +5,7 @@ import { faEnvelope, faSignature } from '@fortawesome/free-solid-svg-icons';
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../../classes/user';
 import { Sample } from '../../classes/sample';
+import { SampleService } from '../../global-services/sample.service';
 
 @Component({
   selector: 'app-profile',
@@ -28,10 +29,12 @@ export class ProfileComponent implements OnInit {
   subscribers: Array<String> = [];
   subscriptions: Array<String> = [];
   currentUser = this.userService.getCurrentUser();
+  userId = [];
 
   constructor(
       private authService: AuthenticationService,
       private userService: UserService,
+      private sampleService: SampleService,
       private route: ActivatedRoute
   ) { }
 
@@ -86,24 +89,32 @@ export class ProfileComponent implements OnInit {
   // }
 
   ngOnInit() {
-    this.userService.getUser(this.route.snapshot.paramMap.get('id')).subscribe(
-        (user) => {
-          this.selectedUser = new User(user);
-          this.isMyProfile = this.selectedUser._id === this.currentUser._id;
-          this.userService.getUserSamples(this.selectedUser._id).subscribe(
-              (samples) => {
-                this.userSamples = (samples.map((sample) => new Sample(sample)));
-              }, (error) => {
-                console.log(error);
-              }
-          );
-          // this.subscribers = this.getSubscribers();
-          // this.subscriptions = this.getSubscriptions();
-        },
-        (error) => {
-          console.log(error);
-        }
-    );
+    // on route change
+    this.route.paramMap.subscribe((params) => {
+      // reset vars
+      this.selectedTab = 0;
+      this.userSamples = [];
+      this.isMyProfile = false;
+      this.selectedUser = null;
+      // get user with id from the route
+      this.userService.getUser(params.get('id')).subscribe(
+          (user) => {
+            // set profile user and samples
+            this.selectedUser = new User(user);
+            this.isMyProfile = this.selectedUser._id === this.currentUser._id;
+            this.sampleService.getSamples(5, 0, [this.selectedUser._id]).subscribe(
+                (samples) => {
+                  this.userSamples = samples.map((sample) => new Sample(sample));
+                  this.userId = [this.selectedUser._id];
+                }
+            );
+            // this.subscribers = this.getSubscribers();
+            // this.subscriptions = this.getSubscriptions();
+          },
+          (error) => {
+            console.log(error);
+          }
+      );
+    });
   }
-
 }

@@ -8,7 +8,7 @@
         <fa-icon class="input-icon" [icon]="faEnvelope"></fa-icon>
         <label class="detail-label">{{selectedUser?.email}}</label>
     </div>
-    <div id="sub-unsub"*ngIf="!isMyProfile; else editButton">
+    <div id="sub-unsub" *ngIf="!isMyProfile">
         <div *ngIf="!subscribed; else unsubButton">
             <button id="subscribe-button" class="btn btn-secondary" type="button" (click)="sub()">
                 Subscribe
@@ -20,11 +20,11 @@
             </button>
         </ng-template>
     </div>
-    <ng-template #editButton>
+    <!--<ng-template #editButton>
         <button class="btn btn-secondary" type="button" (click)="edit()">
             Edit Profile
         </button>
-    </ng-template>
+    </ng-template>-->
     <div class="tab-container">
         <div class="profile-tabs">
             <button class="btn btn-primary" type="button" (click)="onSelect('Samples')">
@@ -38,10 +38,8 @@
             </button>
         </div>
         <div class="profile-content" *ngIf="selectedTab === 0">
-            <div *ngFor="let sample of userSamples">
-                <app-card [sample]=sample></app-card>
-            </div>
-            <div *ngIf="hasNoSamples() || !userSamples">
+            <app-carousel [inputCache]="userSamples" [search]="userId"></app-carousel>
+            <div *ngIf="!userSamples || hasNoSamples()">
                 No samples to display.
             </div>
         </div>
