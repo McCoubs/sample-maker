@@ -39,7 +39,7 @@ export class DashboardComponent implements OnInit {
     this.sampleService.getSamples(5, 0, [input]).subscribe(
       (samples) => {
         this.sampleCache = samples.map((sample) => new Sample(sample));
-        this.searchParams = this.searchParams.concat([input]);
+        this.searchParams = [input];
       },
       (error) => {
         console.log(error);

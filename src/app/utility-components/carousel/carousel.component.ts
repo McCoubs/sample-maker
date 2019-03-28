@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Sample } from '../../classes/sample';
 import { SampleService } from '../../global-services/sample.service';
 
@@ -7,7 +7,7 @@ import { SampleService } from '../../global-services/sample.service';
   templateUrl: './carousel.component.html',
   styleUrls: ['./carousel.component.scss']
 })
-export class CarouselComponent implements OnInit {
+export class CarouselComponent {
   sampleCache: Array<Array<Sample>>;
   currentSamples = 0;
   showNext = false;
@@ -29,12 +29,12 @@ export class CarouselComponent implements OnInit {
   }
 
   ngOnChanges() {
-    if(this.searchParams && this.searchParams.length > 0 && this._displayCache) {
+    if(this._displayCache && this._displayCache.length > 0) {
       this.showNext = false;
       this.sampleCache = [];
       this.sampleCache[0] = this._displayCache;
       this.currentSamples = 0;
-      this.sampleService.getSamples(5, 5, this.searchParams).subscribe(
+      this.sampleService.getSamples(5, (this.currentSamples + 1) * 5, this.searchParams).subscribe(
         (samples) => {
           if(samples.length > 0){
             this.sampleCache.push(samples.map((sample) => new Sample(sample)));
@@ -46,20 +46,6 @@ export class CarouselComponent implements OnInit {
         }
       );
     }
-  }
-
-  ngOnInit() {
-    this.sampleService.getSamples(5, (this.currentSamples + 1) * 5, this.searchParams).subscribe(
-      (samples) => {
-        if(samples.length > 0){
-          this.sampleCache.push(samples.map((sample) => new Sample(sample)));
-          this.showNext = true;
-        }
-      },
-      (error) => {
-        console.log("whio[eps");
-      }
-    );
   }
 
   loadNext() {

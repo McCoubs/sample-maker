@@ -17,7 +17,16 @@
     margin-bottom: 30px;
 }
 
+.search-area {
+    display: flex;
+    
+}
+
 .search-button {
-    height: 25px;
-    width: 25px;
+    height: 100%;
+    width: 75px;
+}
+
+.search-bar {
+    width: 50%;
 }
