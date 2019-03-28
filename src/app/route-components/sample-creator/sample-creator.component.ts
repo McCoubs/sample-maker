@@ -205,8 +205,10 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
 
   resetRecording(): void {
     this.recorder.reset();
-    this.recordedAudio.stopAudio();
-    this.recordedAudio = null;
+    if (this.recordedAudio) {
+      this.recordedAudio.stopAudio();
+      this.recordedAudio = null;
+    }
     this.ref.detectChanges();
   }
 
