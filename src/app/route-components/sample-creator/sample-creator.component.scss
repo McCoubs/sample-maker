@@ -3,7 +3,8 @@
 .sample-creator-component {
   width: 100%;
   min-height: calc(100vh - 70px);
-  @include flex-center;
+  display: flex;
+  justify-content: center;
 
   .no-audio-container {
     @include flex-center;
