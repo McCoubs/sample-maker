@@ -21,7 +21,7 @@
         <span class="slider-label">Editing Slider</span>
       </div>
       <div class="diff-container">
-        <igx-slider #audioTracker class="music-slider" [step]="0.1" [minValue]="0" [maxValue]="audioWrapper.buffer.duration | number: '3.0-1'" [value]="currentTime"></igx-slider>
+        <igx-slider #audioTracker class="music-slider" [step]="0.1" [minValue]="0" [maxValue]="audioWrapper.buffer.duration | number: '3.0-1'" [value]="currentTime" (onValueChange)="updateCurrentTime($event)"></igx-slider>
         <igx-slider #editingSlider class="music-slider" [type]="sliderType.RANGE" [step]="0.1" [minValue]="0" [maxValue]="audioWrapper.buffer.duration | number: '3.0-1'" [(ngModel)]="audioRange"></igx-slider>
       </div>
     </div>
@@ -81,7 +81,7 @@
         <option value="notch">notch</option>
         <option value="allpass">allpass</option>
       </select>
-      <input #filterFreq placeholder="frequency..." class="form-control" type="number" min="0" step="5" max="2250" id="fadeInFrequency" name="fadeInFrequency">
+      <input #filterFreq placeholder="frequency..." class="form-control" type="number" min="0" step="5" id="fadeInFrequency" name="fadeInFrequency">
       <div style="width: 100%;display: flex;justify-content: space-around;align-items: center;">
         <label for="filterGain" style="">Gain:</label>
         <input #filterGain placeholder="gain..." class="form-control-range" type="range" min="0" max="1" step="0.1" id="filterGain" name="filterGain">

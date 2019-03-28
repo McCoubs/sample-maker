@@ -131,8 +131,7 @@
       align-items: center;
       flex-wrap: wrap;
       width: 100%;
-      padding: 12px;
-      margin: 4px 0;
+      padding: 16px 12px;
 
       &:not(:last-child) {
         border-bottom: 2px $palette-darkgray solid;

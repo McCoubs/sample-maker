@@ -6,6 +6,7 @@ import { IgxSliderComponent, ISliderValueChangeEventArgs, SliderType } from 'ign
 import { faSpinner, faVolumeMute, faVolumeUp, faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import { AudioContextEnum } from '../../classes/AudioContextEnum';
 import { NotifierService } from 'angular-notifier';
+import { timer } from 'rxjs';
 
 class AudioRange {constructor(public lower: number, public upper: number) {}}
 
@@ -57,13 +58,6 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
       // load audio and recorder
       this.audioWrapper.loadAudio();
       this.recorder = new RecorderWrapper(this.audioWrapper.sourceNode, this.audioWrapper);
-      // start listener node
-      this.audioWrapper.createProcessorNode((e) => {
-        if (this.isPlaying && !this.interacting) {
-          this.currentTime = e.playbackTime;
-          this.ref.detectChanges();
-        }
-      }, 'playtime');
 
       // initialize vars
       const duration = this.audioWrapper.buffer.duration;
@@ -72,6 +66,14 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
       this.loading = false;
       this.ref.detectChanges();
 
+      // init timer for playback
+      timer(0, 1000).subscribe((
+          (time) => {
+            if (this.isPlaying && !this.interacting) {
+              this.currentTime += 1;
+            }
+          }
+      ));
       // disable counting when touching to avoid stutter
       this.tracker.registerOnTouched(() => {
         this.interacting = true;
@@ -97,16 +99,21 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
     // restart play
     this.audioWrapper.stopAudio();
     this.audioWrapper.startAudio();
+    this.currentTime = 0;
     this.isPlaying = true;
     this.ref.detectChanges();
   }
 
+  // method for changing play time
   updateCurrentTime(event: ISliderValueChangeEventArgs): void {
-    // method to help with tracker
+    // set time to value
     this.currentTime = +event.value;
+    // restart the audio
     this.audioWrapper.stopAudio();
     this.audioWrapper.startAudio(this.currentTime);
-    this.interacting = false;
+    this.isPlaying = true;
+    // set interaction to stop
+    timer(1000).subscribe((time) => this.interacting = false);
   }
 
   ///////// EDITING CONTROL METHODS /////////
@@ -149,6 +156,7 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
 
   mutateAudio(type: 'cut' | 'leave' | 'paste'): void {
     this.isPlaying = false;
+    this.currentTime = 0;
     if (type === 'cut') {
       this.audioWrapper.cut(this.audioRange.lower, this.audioRange.upper);
     } else if (type === 'leave') {
