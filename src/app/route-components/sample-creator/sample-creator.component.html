@@ -69,7 +69,11 @@
       <input #fadeOutPercent placeholder="percent..." class="form-control" type="number" min="1" step="1" max="20" id="fadeOutPercent">
       <button class="btn btn-primary btn-inline" (click)="applyFadeOut(+fadeOutPercent.value)">Apply Fade Out</button>
     </div>
-    <div *ngIf="!audioWrapper?.filterNode; else filterApplied" class="edit-container">
+    <div class="edit-container">
+      <div class="remove-filter" *ngFor="let filter of audioWrapper.filterNodes; let i = index;">
+        <span><b>Type: </b>{{ filter.type }}</span><span><b>Freq.: </b>{{ filter.frequency.value }}</span>
+        <button class="btn btn-negative" (click)="removeFilter(i)"><fa-icon class="remove-icon" [icon]="faTimesCircle"></fa-icon></button>
+      </div>
       <select #filterSelect class="form-control">
         <option value="">filter...</option>
         <option value="lowpass">lowpass</option>
@@ -93,11 +97,6 @@
       <button class="btn btn-primary" (click)="mutateAudio('leave')">Leave selected audio</button>
       <button class="btn btn-primary" (click)="mutateAudio('cut')">Cut selected audio</button>
     </div>
-    <ng-template #filterApplied>
-      <div class="edit-container">
-        <button class="btn btn-primary" (click)="removeFilter()">Remove Filter</button>
-      </div>
-    </ng-template>
   </div>
   <ng-template #controlsAudioNotLoaded>
     <div class="controls-container col-12 col-md-4">

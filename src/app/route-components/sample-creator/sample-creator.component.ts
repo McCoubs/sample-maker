@@ -3,7 +3,7 @@ import { AudioWrapper } from '../../classes/AudioWrapper';
 import { RecorderWrapper } from '../../classes/RecorderWrapper';
 import { SampleService } from '../../global-services/sample.service';
 import { IgxSliderComponent, ISliderValueChangeEventArgs, SliderType } from 'igniteui-angular';
-import { faSpinner, faVolumeMute, faVolumeUp, faMicrophone } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner, faVolumeMute, faVolumeUp, faMicrophone, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { AudioContextEnum } from '../../classes/AudioContextEnum';
 import { NotifierService } from 'angular-notifier';
 import { timer } from 'rxjs';
@@ -37,6 +37,7 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
   faVolumeMute = faVolumeMute;
   faVolumeUp = faVolumeUp;
   faMicrophone = faMicrophone;
+  faTimesCircle = faTimesCircle;
 
   constructor(private sampleService: SampleService, private notifierService: NotifierService, private ref: ChangeDetectorRef, private app: ApplicationRef) {}
 
@@ -71,6 +72,7 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
           (time) => {
             if (this.isPlaying && !this.interacting) {
               this.currentTime += 1;
+              this.ref.detectChanges();
             }
           }
       ));
@@ -119,13 +121,13 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
   ///////// EDITING CONTROL METHODS /////////
   applyFilter(type: string, frequency: number, gain: number): void {
     if (type && frequency && gain) {
-      this.audioWrapper.applyFilter(type, frequency, gain);
+      this.audioWrapper.addFilter(type, frequency, gain);
       this.ref.detectChanges();
     }
   }
 
-  removeFilter(): void {
-    this.audioWrapper.removeFilter();
+  removeFilter(index): void {
+    this.audioWrapper.removeFilter(index);
     this.ref.detectChanges();
   }
 
