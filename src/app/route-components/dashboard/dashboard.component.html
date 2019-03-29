@@ -1,10 +1,14 @@
 <div class="dashboard">
   <div class="search-area">
-    <input class="search-bar" type="text" placeholder="Search" #searchbar>
-    <button class="search-button" (click)="search(searchbar.value)"></button>
-    <button class="cancel-search" (click)="reset()"></button>
+    <input class="search-bar" type="text" placeholder="Search" #searchbar id="searchBar">
+    <div *ngIf="!searching" class="search-button" (click)="search(searchbar.value)">
+      <img class="icon" src="{{'assets/icons/search.svg'}}">
+    </div>
+    <div *ngIf="searching" class="cancel-search" (click)="reset()">
+        <img class="icon" src="{{'assets/icons/close.svg'}}">
+    </div>
   </div>
-  <div class="newest-title">NEWEST SAMPLES</div>
+  <div class="newest-title">{{searching?"SAMPLES":"NEWEST SAMPLES"}}</div>
   <app-carousel [inputCache]="sampleCache" [search]="searchParams"></app-carousel>
   
   <!--input #fileTester type="file" name="fileUpload"/>

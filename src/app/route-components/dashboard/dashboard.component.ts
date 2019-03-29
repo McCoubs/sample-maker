@@ -11,10 +11,9 @@ import { Sample } from '../../classes/sample';
 export class DashboardComponent implements OnInit {
   sampleCache: Array<string>;
   searchParams = [];
+  searching = false;
 
-  constructor(private sampleService: SampleService) {
-
-  }
+  constructor(private sampleService: SampleService) {}
 
   ngOnInit() {
     this.sampleCache = [];
@@ -28,26 +27,28 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  press(file) {
-    this.sampleService.createSample(file, {'tags':'anime'}).subscribe(
-      (data) => console.log(data),
-      (error) => console.log(error)
-    );
+  search(input) {
+    if(input) {
+      this.searching = true;
+      this.setSearch(input);
+    }
   }
 
-  search(input) {
-    this.sampleService.getSamples(5, 0, [input]).subscribe(
+  reset() {
+    this.searching = false;
+    this.setSearch("");
+    (<HTMLInputElement>document.getElementById("searchBar")).value = "";
+  }
+
+  setSearch(option){
+    this.sampleService.getSamples(5, 0, [option]).subscribe(
       (samples) => {
         this.sampleCache = samples.map((sample) => new Sample(sample));
-        this.searchParams = [input];
+        this.searchParams = [option];
       },
       (error) => {
         console.log(error);
       }
     );
-  }
-
-  reset() {
-    console.log("reset");
   }
 }

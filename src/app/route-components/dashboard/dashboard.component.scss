@@ -18,15 +18,27 @@
 }
 
 .search-area {
-    display: flex;
-    
+    margin-top: 30px;
 }
 
-.search-button {
-    height: 100%;
+.search-area, .search-button, .cancel-search {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+}
+
+.search-button, .cancel-search {
+    cursor: pointer;
     width: 75px;
+    background: $palette-lightgray;
+    border: 1px solid $palette-darkgray;
+    .icon {
+        height: 80%;
+    }
 }
 
 .search-bar {
+    height: 100%;
     width: 50%;
 }
