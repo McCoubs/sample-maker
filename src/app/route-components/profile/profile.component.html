@@ -44,10 +44,10 @@
             </div>
         </div>
         <div class="profile-content" *ngIf="selectedTab === 1">
-            <p>Content 2</p>
+            <app-user-card *ngFor="let user of subscribers" class="user-card-container" [user]=user></app-user-card>
         </div>
         <div class="profile-content" *ngIf="selectedTab === 2">
-            <p>Content 3</p>
+            <app-user-card *ngFor="let user of subscriptions" class="user-card-container" [user]=user></app-user-card>
         </div>
     </div>
 </div>
