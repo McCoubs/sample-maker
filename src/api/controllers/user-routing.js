@@ -2,13 +2,18 @@ let mongoose = require('mongoose');
 let User = mongoose.model('User');
 let Sample = mongoose.model('Sample');
 let Subscription = mongoose.model('Subscription');
-let { jwtAuth, errorGenerator } = require('../helpers');
+let { jwtAuth, errorGenerator, validateBody, validateParam, validRequest } = require('../helpers');
 
 const inProd = process.env.NODE_ENV === 'production';
 
 module.exports = function UserRouting(app) {
 
-  app.post('/api/register', (req, res) => {
+  app.post('/api/register', [
+    validateBody('email').isEmail(),
+    validateBody('password').isLength({min: 6}),
+    validateBody('name').optional(),
+    validRequest
+  ], (req, res) => {
     User.findOne({email: req.body.email}, (err, foundUser) => {
       if (err) return errorGenerator(res, err, 500, 'Error creating new user with email: ' + req.body.email);
       if (foundUser) return errorGenerator(res, null, 400, 'A user already exists with that email');
@@ -30,7 +35,7 @@ module.exports = function UserRouting(app) {
     });
   });
 
-  app.post('/api/login', (req, res) => {
+  app.post('/api/login', [validateBody('email').isEmail(), validateBody('password').isLength({min: 6}), validRequest], (req, res) => {
     // try to find user by email
     User.findOne({ email: req.body.email }, (err, user) => {
       // return error on error or no user
@@ -52,64 +57,41 @@ module.exports = function UserRouting(app) {
     res.json({'success' : true});
   });
 
-  app.get('/api/users/:id', jwtAuth, (req, res) => {
-    if (!req.params.id) {
-      return errorGenerator(res, null, 400, 'Invalid request, ID not provided');
-    } else {
-      // Otherwise continue
-      User.findById(req.params.id).exec((err, user) => {
-        if (err || !user) return errorGenerator(res, err, 500, 'no user found with id: ' + req.params.id);
-        res.status(200).json(user);
-      });
-    }
+  app.get('/api/users/:id', [validateParam('id'), validRequest, jwtAuth], (req, res) => {
+    User.findById(req.params.id).exec((err, user) => {
+      if (err || !user) return errorGenerator(res, err, 500, 'no user found with id: ' + req.params.id);
+      res.json(user);
+    });
   });
 
-  app.get('/api/user/:id/samples',jwtAuth, (req, res) => {
-    if (!req.params.id) {
-      return errorGenerator(res, null, 400, 'Invalid request, ID not provided');
-    } else {
-      Sample.find({ author: req.params.id }, (err, samples) =>{
-        if (err) return errorGenerator(res, err, 500, 'Could not find samples for user: ' + req.params.id);
-        res.json(samples);
-      });
-    }
+  app.get('/api/user/:id/samples', [validateParam('id'), validRequest, jwtAuth], (req, res) => {
+    Sample.find({ author: req.params.id }, (err, samples) => {
+      if (err) return errorGenerator(res, err, 500, 'Could not find samples for user: ' + req.params.id);
+      res.json(samples);
+    });
   });
 
   // TODO: subscribe and unsubscribe
-  app.post('/api/subscribe',jwtAuth, (req, res) => {
+  app.post('/api/subscribe', [validateParam('id'), validRequest, jwtAuth], (req, res) => {
     // Subscription.insertOne({follower: id1, followee: id2});
-    if (!req.params.id) {
-      return errorGenerator(res, null, 400, 'Invalid request, ID not provided');
-    }
   });
 
-  app.post('/api/unsubscribe',jwtAuth, (req, res) => {
+  app.post('/api/unsubscribe', [validateParam('id'), validRequest, jwtAuth], (req, res) => {
     // Subscription.deleteOne({follower: id1, followee: id2});
-    if (!req.params.id) {
-      return errorGenerator(res, null, 400, 'Invalid request, ID not provided');
-    }
   });
 
-  app.get('/api/user/:id/subscribers',jwtAuth, (req, res) => {
-    if (!req.params.id) {
-      return errorGenerator(res, null, 400, 'Invalid request, ID not provided');
-    } else {
-      Subscription.find({followee: req.params.id}, (err, subscribers) =>{
-        if (err) return errorGenerator(res, err, 500, 'Could not find subscribers for user: ' + req.params.id);
-        res.json(subscribers);
-      });
-    }
+  app.get('/api/user/:id/subscribers', [validateParam('id'), validRequest, jwtAuth], (req, res) => {
+    Subscription.find({followee: req.params.id}, (err, subscribers) => {
+      if (err) return errorGenerator(res, err, 500, 'Could not find subscribers for user: ' + req.params.id);
+      res.json(subscribers);
+    });
   });
 
-  app.get('/api/user/:id/subscriptions',jwtAuth, (req, res) => {
-    if (!req.params.id) {
-      return errorGenerator(res, null, 400, 'Invalid request, ID not provided');
-    } else {
-      Subscription.find({follower: req.params.id}, (err, subscriptions) =>{
-        if (err) return errorGenerator(err,500, 'Could not find subscriptions for user: ' + req.params.id);
-        res.json(subscriptions);
-      });
-    }
+  app.get('/api/user/:id/subscriptions', [validateParam('id'), validRequest, jwtAuth], (req, res) => {
+    Subscription.find({follower: req.params.id}, (err, subscriptions) => {
+      if (err) return errorGenerator(err, 500, 'Could not find subscriptions for user: ' + req.params.id);
+      res.json(subscriptions);
+    });
   });
 
   // TODO: implement FE and BE deletion routing

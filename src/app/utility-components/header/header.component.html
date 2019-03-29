@@ -1,6 +1,6 @@
 <div class="header">
   <div class="nav-options">
-    <a class="logo navigation" [routerLink]="['/dashboard']"><span>LOGO/HOME</span></a>
+    <a class="logo navigation" [routerLink]="['/dashboard']"><img src="assets/logo.png"></a>
     <a *ngIf="isLoggedIn && !!currentUser" class="navigation" [routerLink]="['/sample-creator']"><span>CREATE</span></a>
     <a *ngIf="isLoggedIn && !!currentUser" class="navigation" [routerLink]="['/profile', currentUser?._id]"><span>PROFILE</span></a>
   </div>

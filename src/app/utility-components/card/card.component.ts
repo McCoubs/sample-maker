@@ -40,8 +40,13 @@ export class CardComponent implements OnInit, OnDestroy {
   }
 
   play() {
+<<<<<<< HEAD
     if(!this.audioTrack) this.getTrack("play");
     else if(!this.playing){
+=======
+    if (!this.audioTrack) this.getTrack();
+    else if (!this.playing) {
+>>>>>>> origin/development
       this.playing = true;
       this.audioTrack.startAudio();
     } else {
