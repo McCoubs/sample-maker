@@ -26,8 +26,9 @@ export class ProfileComponent implements OnInit {
   selectedTab = 0;
   userSamples: Array<Sample> = [];
   // TODO: these are currently just arrays of IDs
-  subscribers: Array<String> = [];
-  subscriptions: Array<String> = [];
+  subscribers: Array<User> = [];
+  subscriptions: Array<User> = [];
+  isSubbed: Array<User> = [];
   currentUser = this.userService.getCurrentUser();
   userId = [];
 
@@ -41,19 +42,34 @@ export class ProfileComponent implements OnInit {
   onSelect(s: string): void {
     if (s === 'Samples') {
       this.selectedTab = 0;
-    } else if (s === 'Subscriptions') {
+    } else if (s === 'Subscribers') {
       this.selectedTab = 1;
     } else {
       this.selectedTab = 2;
     }
   }
-
   sub(): void {
-    this.userService.sub(this.userService.getCurrentUser()._id, this.selectedUser._id).subscribe((value) => this.subscribed = true);
+    this.userService.sub(this.userService.getCurrentUser()._id, this.selectedUser._id).subscribe(
+        (value) => {
+          this.subscribed = true;
+          this.getSubscribers();
+        },
+        (error) => {
+          console.log(error);
+        }
+    );
   }
 
   unsub(): void {
-    this.userService.unsub(this.userService.getCurrentUser()._id, this.selectedUser._id).subscribe((value) => this.subscribed = false);
+    this.userService.unsub(this.userService.getCurrentUser()._id, this.selectedUser._id).subscribe(
+        (value) => {
+          this.subscribed = false;
+          this.getSubscribers();
+        },
+        (error) => {
+          console.log(error);
+        }
+        );
   }
 
   edit(): void {
@@ -64,29 +80,33 @@ export class ProfileComponent implements OnInit {
     return this.userSamples.length === 0;
   }
 
-  // getSubscribers(): Array<String> {
-  //   this.userService.getUserSubscribers(this.selectedUser._id).subscribe(
-  //       (subscribers) => {
-  //         return (subscribers.map((subscriber) => String(subscriber)));
-  //       },
-  //       (error) => {
-  //         console.log(error);
-  //       }
-  //   );
-  //   return [];
-  // }
+  isSubscribed(): void {
+      this.userService.isSubbed(this.currentUser._id, this.selectedUser._id).subscribe(
+          (query) => {
+              this.isSubbed = query.map((res) => new User(res.follower));
+              this.subscribed = (this.isSubbed.length > 0);
+          },
+          (error) => {
+              console.log(error);
+          }
+      );
+  }
 
-  // getSubscriptions(): Array<String> {
-  //   this.userService.getUserSubscriptions(this.selectedUser._id).subscribe(
-  //       (subscriptions) => {
-  //         return (subscriptions.map((subscription) => String(subscription)));
-  //       },
-  //       (error) => {
-  //         console.log(error);
-  //       }
-  //   );
-  //   return [];
-  // }
+  getSubscribers(): void {
+      this.userService.getUserSubscribers(this.selectedUser._id).subscribe(
+          (subscriptions) => {
+              this.subscribers = subscriptions.map((sub) => new User(sub.follower));
+          }
+      );
+  }
+
+  getSubscriptions(): void {
+      this.userService.getUserSubscriptions(this.selectedUser._id).subscribe(
+          (subs) => {
+              this.subscriptions = subs.map((sub) => new User(sub.followee));
+          }
+      );
+  }
 
   ngOnInit() {
     // on route change
@@ -102,14 +122,17 @@ export class ProfileComponent implements OnInit {
             // set profile user and samples
             this.selectedUser = new User(user);
             this.isMyProfile = this.selectedUser._id === this.currentUser._id;
+            if (!this.isMyProfile) {
+                this.isSubscribed();
+            }
             this.sampleService.getSamples(5, 0, [this.selectedUser._id]).subscribe(
                 (samples) => {
                   this.userSamples = samples.map((sample) => new Sample(sample));
                   this.userId = [this.selectedUser._id];
                 }
             );
-            // this.subscribers = this.getSubscribers();
-            // this.subscriptions = this.getSubscriptions();
+            this.getSubscribers();
+            this.getSubscriptions();
           },
           (error) => {
             console.log(error);

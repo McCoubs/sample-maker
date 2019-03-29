@@ -71,34 +71,22 @@ module.exports = function UserRouting(app) {
     });
   });
 
-  // TODO: subscribe and unsubscribe
-  app.post('/api/subscribe/:id/:id2', [validateParam('id'), validateParam('id2'), validRequest, jwtAuth], (req, res) => {
-    Subscription.insertOne({follower: req.params.id, followee: req.params.id2});
-    console.log(req.params);
-  });
-
-  app.post('/api/unsubscribe/:id/:id2', [validateParam('id'), validRequest, jwtAuth], (req, res) => {
-    Subscription.deleteOne({follower: req.params.id, followee: req.params.id2});
-  });
-
-  app.get('/api/user/:id/subscribers', [validateParam('id'), validRequest, jwtAuth], (req, res) => {
-    Subscription.find({followee: req.params.id}, (err, subscribers) => {
-      if (err) return errorGenerator(res, err, 500, 'Could not find subscribers for user: ' + req.params.id);
-      res.json(subscribers);
-    });
-  });
-
-  // TODO: subscribe and unsubscribe
-  app.post('/api/user/:id/subscribers/:id2', [validateParam('id'), validateParam('id2'), validRequest, jwtAuth], (req, res) => {
-    Subscription.create({follower: req.params.id2, followee: req.params.id}, (err, sub) => {
-      if (err) return errorGenerator(res, err, 500, 'Could not subscribe to user: ' + req.params.id);
+  app.get('/api/user/:id/subscribers/:id2', [validateParam('id'), validateParam('id2'), validRequest, jwtAuth], (req, res) => {
+    Subscription.find({follower: req.params.id, followee: req.params.id2}, {follower: 1}).populate('follower').exec((err, sub) => {
+      if (err) return errorGenerator(res, err, 500, 'Ids do not exist: ' + req.params.id + ' and ' + req.params.id2);
       res.json(sub);
     });
-    console.log(req.params);
+  });
+
+  app.post('/api/user/:id/subscribers/:id2', [validateParam('id'), validateParam('id2'), validRequest, jwtAuth], (req, res) => {
+    Subscription.create({follower: req.params.id, followee: req.params.id2}, (err, sub) => {
+      if (err) return errorGenerator(res, err, 500, 'Could not subscribe to user: ' + req.params.id2);
+      res.json(sub);
+    });
   });
 
   app.delete('/api/user/:id/subscribers/:id2', [validateParam('id'), validateParam('id2'), validRequest, jwtAuth], (req, res) => {
-    Subscription.remove({follower: req.params.id2, followee: req.params.id}, (err, sub) => {
+    Subscription.remove({follower: req.params.id, followee: req.params.id2}, (err, sub) => {
       if (err) return errorGenerator(res, err, 500, 'Could not unsubscribe to user: ' + req.params.id);
       res.json(sub);
     });
@@ -106,9 +94,16 @@ module.exports = function UserRouting(app) {
   });
 
   app.get('/api/user/:id/subscriptions', [validateParam('id'), validRequest, jwtAuth], (req, res) => {
-    Subscription.find({follower: req.params.id}, (err, subscriptions) => {
-      if (err) return errorGenerator(err, 500, 'Could not find subscriptions for user: ' + req.params.id);
-      res.json(subscriptions);
+    Subscription.find({follower: req.params.id}, {followee: 1}).populate('followee').exec((err, subscribers) => {
+      if (err) return errorGenerator(res, err, 500, 'Could not find subscriptions for user: ' + req.params.id);
+      res.json(subscribers);
+    });
+  });
+
+  app.get('/api/user/:id/subscribers', [validateParam('id'), validRequest, jwtAuth], (req, res) => {
+    Subscription.find({followee: req.params.id}, {follower: 1}).populate('follower').exec((err, subscribers) => {
+      if (err) return errorGenerator(res, err, 500, 'Could not find subscribers for user: ' + req.params.id);
+      res.json(subscribers);
     });
   });
 
