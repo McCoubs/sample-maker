@@ -90,21 +90,11 @@ module.exports = function SampleRouting(app, conn) {
     let skip = parseInt(req.query.skip) || 0;
 
     let paramArray = [];
-<<<<<<< HEAD
     if (req.query.name) paramArray.push({name: {'$regex': new RegExp(req.query.name, "i")}});
     if (req.query.tags) paramArray.push({tags: req.query.tags});
     if (req.query.genres) paramArray.push({genres: req.query.genres});
     //if (req.query.author && mongoose.Types.ObjectId.isValid(req.query.author)) paramArray.push({author: req.query.author});
     let searchParams = (paramArray.length > 0)?{$or: paramArray}:{};
-=======
-    // parse and add queries for tags, genres and author
-    if (req.query.tags) paramArray.push({tags: req.query.tags});
-    if (req.query.genres) paramArray.push({genres: req.query.genres});
-    if (req.query.author && mongoose.Types.ObjectId.isValid(req.query.author)) paramArray.push({author: req.query.author});
-    let searchParams = (paramArray.length > 0) ? {$or: paramArray} : {};
-
-    // find all samples matching the given queries
->>>>>>> origin/development
     Sample.find(searchParams).sort({createdAt: -1}).skip(skip).limit(limit).exec((err, samples) => {
       // return error on error
       if (err || !samples) return errorGenerator(res, err, 500, 'Server ERROR: could not get samples');
