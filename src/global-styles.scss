@@ -84,7 +84,9 @@ label {
     color: $palette-blue;
   }
   li {
-    margin: 3px;
+    border: 1px solid $palette-lightgray;
+    padding-inline: 5px;
+    border-radius: 10%;
   }
   a {
     cursor: pointer;
