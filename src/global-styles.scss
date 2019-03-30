@@ -75,6 +75,22 @@ label {
   color: $palette-error;
 }
 
+.pagination {
+  border: 3px;
+  .disabled {
+    color: $palette-lightgray;
+  }
+  .active {
+    color: $palette-blue;
+  }
+  li {
+    margin: 3px;
+  }
+  a {
+    cursor: pointer;
+  }
+}
+
 @mixin flex-center() {
   display: flex;
   justify-content: center;
