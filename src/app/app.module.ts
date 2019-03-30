@@ -20,6 +20,8 @@ import { HttpErrorInterceptor } from './interceptors/http-error.interceptor';
 import { NotifierModule } from 'angular-notifier';
 import { notifierOptions } from './config/notifier';
 import { UserCardComponent } from './utility-components/user-card/user-card.component';
+import { UserPagesComponent } from './utility-components/user-pages/user-pages.component';
+import { JwPaginationComponent } from 'jw-angular-pagination';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,9 @@ import { UserCardComponent } from './utility-components/user-card/user-card.comp
     SampleCreatorComponent,
     CarouselComponent,
     CreditsComponent,
-    UserCardComponent
+    UserCardComponent,
+    UserPagesComponent,
+    JwPaginationComponent
   ],
   imports: [
     BrowserModule,

@@ -49,13 +49,13 @@
             </div>
         </div>
         <div class="profile-content" *ngIf="selectedTab === 1">
-            <app-user-card *ngFor="let user of subscribers" class="user-card-container" [user]=user></app-user-card>
+            <app-user-pages [users]="subscribers"></app-user-pages>
             <div *ngIf="!subscribers || subscribers.length === 0">
                 No subscribers to display.
             </div>
         </div>
         <div class="profile-content" *ngIf="selectedTab === 2">
-            <app-user-card *ngFor="let user of subscriptions" class="user-card-container" [user]=user></app-user-card>
+            <app-user-pages [users]="subscriptions"></app-user-pages>
             <div *ngIf="!subscriptions || subscriptions.length === 0">
                 No subscriptions to display.
             </div>

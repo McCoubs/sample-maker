@@ -10,7 +10,7 @@
   align-items: center;
   display: flex;
   border-radius: 5px;
-  margin: 5% 0;
+  margin-bottom: 15px;
   @media only screen and (min-width: map_get($grid-breakpoints, 'md')) {
     margin: 0 5%;
   }

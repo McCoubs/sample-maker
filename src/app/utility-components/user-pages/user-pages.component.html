@@ -1,0 +1,4 @@
+<div class="user-card-container">
+  <app-user-card class="user-card"*ngFor="let user of pageOfUsers" [user]="user"></app-user-card>
+  <jw-pagination class="pagination" [items]="userSet" (changePage)="onChangePage($event)"></jw-pagination>
+</div>
