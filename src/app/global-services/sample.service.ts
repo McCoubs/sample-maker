@@ -46,4 +46,8 @@ export class SampleService {
   public downloadSample(id: string | number): Observable<any> {
     return this.http.get(this.endpointService.generateUrl('sample_download', id), {responseType: 'arraybuffer'});
   }
+
+  public deleteSample(id: string | number): Observable<any> {
+    return this.http.delete(this.endpointService.generateUrl('sample', id));
+  }
 }

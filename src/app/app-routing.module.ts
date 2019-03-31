@@ -5,6 +5,7 @@ import { DashboardComponent } from './route-components/dashboard/dashboard.compo
 import { ProfileComponent} from './route-components/profile/profile.component';
 import { AuthGuard} from './guards/auth.guard';
 import { SampleCreatorComponent } from './route-components/sample-creator/sample-creator.component';
+import { CreditsComponent } from './route-components/credits/credits.component';
 
 const routes: Routes = [
   {
@@ -12,17 +13,19 @@ const routes: Routes = [
     component: LoginComponent
   },
   {
+    path: 'credits',
+    component: CreditsComponent
+  },
+  {
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [AuthGuard]
   },
-
   {
     path: 'profile/:id',
     component: ProfileComponent,
     canActivate: [AuthGuard]
   },
-
   {
     path: 'sample-creator',
     component: SampleCreatorComponent,
@@ -35,7 +38,6 @@ const routes: Routes = [
   },
   {
     path: '**',
-    // TODO: make 404 page
     component: DashboardComponent
   }
 ];

@@ -2,14 +2,9 @@
   <div *ngIf="currentSamples > 0" class="prevSet carousel-controls" (click)="loadLast()">
     <img class="icon" src="{{'assets/icons/back.svg'}}">
   </div>
-  <app-card *ngFor="let sample of _displayCache" class="card-container" [sample]=sample></app-card>
+  <app-card *ngFor="let sample of _displayCache" class="card-container" [sample]=sample (sampleDeleted)="sampleDeleted($event)"></app-card>
   <div *ngIf="showNext" class="nextSet carousel-controls" (click)="loadNext()">
     <img class="icon" src="{{'assets/icons/next.svg'}}">
   </div>
   <div *ngIf="noSample">NO SAMPLES FOUND</div>
-  <!--div>
-    Icons made by <a href="https://www.flaticon.com/authors/gregor-cresnar" title="Gregor Cresnar">Gregor Cresnar</a> from 
-    <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by 
-    <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
-  </div-->
 </div>

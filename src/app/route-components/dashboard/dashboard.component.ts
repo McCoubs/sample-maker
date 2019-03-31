@@ -22,9 +22,6 @@ export class DashboardComponent implements OnInit {
     this.sampleService.getSamples(5).subscribe(
       (samples) => {
         this.sampleCache = samples.map((sample) => new Sample(sample));
-      },
-      (error) => {
-        console.log(error);
       }
     );
   }
@@ -42,24 +39,18 @@ export class DashboardComponent implements OnInit {
     (<HTMLInputElement>document.getElementById("searchBar")).value = "";
   }
 
-  setSearch(option){
+  setSearch(option) {
     this.sampleService.getSamples(5, 0, [option]).subscribe(
       (samples) => {
         this.sampleCache = samples.map((sample) => new Sample(sample));
         this.searchParams = [option];
-      },
-      (error) => {
-        console.log(error);
       }
     );
 
     this.userService.getUsers(option).subscribe(
       (users) => {
         this.foundUsers = users;
-      },
-      (error) => {
-        console.log(error);
       }
-    )
+    );
   }
 }

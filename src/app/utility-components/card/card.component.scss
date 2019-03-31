@@ -12,7 +12,7 @@
     margin: 5% 0;
     position: relative;
     @media only screen and (min-width: map_get($grid-breakpoints, 'md')) {
-    margin: 0 5%;
+        margin: 0 5%;
     }
 }
 
@@ -56,14 +56,29 @@
 
 .download-button {
     position: absolute;
-    height: 40px;
-    width: 40px;
-    top: 0;
-    right: 0;
-    margin: 10px;
+    height: 32px;
+    width: 32px;
+    top: 6px;
+    right: 10px;
     cursor: pointer;
+
     .icon {
         height: 100%;
         width: 100%;
     }
+}
+
+.delete-button {
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  top: 10px;
+  left: 10px;
+  cursor: pointer;
+  color: $palette-error;
+
+  .icon {
+    height: 100%;
+    width: 100%;
+  }
 }

@@ -1,15 +1,13 @@
 <div class="card-component">
   <div class="card-image">
     <div class="play-button" (click)="play()">
-      <img class="icon" src="{{playing?'assets/icons/pause-button.svg':'assets/icons/play-button.svg'}}">
+      <img class="icon" src="{{ playing ? 'assets/icons/pause-button.svg' : 'assets/icons/play-button.svg' }}">
     </div>
   </div>
   <div class="info-section">
-    <span class="title info-span">{{_name}}</span>
-    <a class="username info-span" [routerLink]="['/profile', this._authorid]"><span>{{_author}}</span></a>
+    <span class="title info-span">{{ _sample.name }}</span>
+    <a class="username info-span" [routerLink]="['/profile', this._sample?.author]"><span>{{ _author }}</span></a>
   </div>
-  <!--div>Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> 
-    from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> 
-    is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div-->
-  <div class="download-button" (click)="download()"><img class="icon" src="{{'assets/icons/download.svg'}}"></div>
+  <div class="download-button" (click)="download()"><img class="icon" src="{{ 'assets/icons/download.svg' }}"></div>
+  <div *ngIf="_sample.author === _currentUser._id" class="delete-button" (click)="delete()"><fa-icon class="icon" [icon]="faTrash" size="2x"></fa-icon></div>
 </div>

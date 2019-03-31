@@ -1,0 +1,12 @@
+@import "~src/global-styles";
+
+.credits-component {
+  @include flex-center;
+  flex-direction: column;
+  width: 100%;
+
+  .credit {
+    padding: 6px;
+    font-size: 18px;
+  }
+}

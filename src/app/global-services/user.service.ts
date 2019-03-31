@@ -52,7 +52,6 @@ export class UserService {
   public getUsers(name): Observable<any> {
     let params = new HttpParams();
     params = params.append('name', name);
-    console.log(this.endpointService.generateUrl('user'));
     return this.http.get(this.endpointService.generateUrl('users'), {params: params});
   }
 
