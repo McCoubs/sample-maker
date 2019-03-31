@@ -1,0 +1,14 @@
+<div class="subscriber-card">
+  <div class="card-content">
+    <div class="user-details">
+      <fa-icon class="input-icon" [icon]="faSignature"></fa-icon>
+      <a class="username" [routerLink]="['/profile', this.thisUser._id]"><span>{{thisUser?.name}}</span></a>
+    </div>
+  </div>
+  <div class="subscription-samples">
+  <app-carousel *ngIf="userSamples && userSamples.length > 0" [inputCache]="userSamples" [search]="userId"></app-carousel>
+    <div *ngIf="!userSamples || userSamples.length === 0">
+      No samples to display.
+    </div>
+  </div>
+</div>
