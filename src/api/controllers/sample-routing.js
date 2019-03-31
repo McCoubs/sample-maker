@@ -37,7 +37,8 @@ module.exports = function SampleRouting(app, conn) {
     // on successful write
     writestream.on('close', function (file) {
       // create a sample with given data TODO: add genres, tags, etc....
-      Sample.create({ name: req.body.name || file.filename, author: req.user._id, file_id: file._id, tags: req.body.tags }, (err, sample) => {
+      let tagArray = req.body.tags.split(",");
+      Sample.create({ name: req.body.name || file.filename, author: req.user._id, file_id: file._id, tags: tagArray }, (err, sample) => {
         // on error need to delete file and respond with error
         if (err || !sample) {
           gfs.remove({ _id: file._id }, function (err) {
@@ -64,6 +65,25 @@ module.exports = function SampleRouting(app, conn) {
     });
   });
 
+  app.delete('/api/samples/:id', [validateParam('id'), validRequest, jwtAuth], (req, res) => {
+    // attempt to find sample first
+    Sample.findOne({ _id: req.params.id }, (err, sample) => {
+      // check found
+      if (err || !sample) return errorGenerator(res, err, 500, 'no sample found with id: ' + req.params.id);
+      // logged in user can only delete own samples
+      if (sample.author.toString() !== req.user._id) return errorGenerator(res, null, 403, 'Unauthorized: cannot delete other user\'s samples');
+      // try to delete sample
+      Sample.deleteOne({ _id: req.params.id }, (err) => {
+        if (err) return errorGenerator(res, err, 500, 'Unable to fully delete sample: ' + sample.name);
+        // otherwise remove sample audio
+        gfs.remove({ _id: sample.file_id }, (err) => {
+          if (err) return errorGenerator(res, err, 500, 'Unable to fully delete sample: ' + sample.name);
+          res.json('successfully deleted sample: ' + sample.name);
+        });
+      });
+    });
+  });
+
   // get actual music file for sample
   app.get('/api/samples/:id/audio', [validateParam('id'), validRequest, jwtAuth], (req, res) => {
     // find sample
@@ -82,6 +102,7 @@ module.exports = function SampleRouting(app, conn) {
     query('tags').optional().trim().escape(),
     query('genres').optional().trim().escape(),
     query('author').optional().trim().escape(),
+    query('name').optional().trim().escape(),
     validRequest,
     jwtAuth
   ], (req, res) => {
@@ -90,13 +111,10 @@ module.exports = function SampleRouting(app, conn) {
     let skip = parseInt(req.query.skip) || 0;
 
     let paramArray = [];
-    // parse and add queries for tags, genres and author
+    if (req.query.name) paramArray.push({name: {'$regex': new RegExp(req.query.name, "i")}});
     if (req.query.tags) paramArray.push({tags: req.query.tags});
-    if (req.query.genres) paramArray.push({genres: req.query.genres});
     if (req.query.author && mongoose.Types.ObjectId.isValid(req.query.author)) paramArray.push({author: req.query.author});
     let searchParams = (paramArray.length > 0) ? {$or: paramArray} : {};
-
-    // find all samples matching the given queries
     Sample.find(searchParams).sort({createdAt: -1}).skip(skip).limit(limit).exec((err, samples) => {
       // return error on error
       if (err || !samples) return errorGenerator(res, err, 500, 'Server ERROR: could not get samples');

@@ -1,44 +1,51 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Sample } from '../../classes/sample';
 import { SampleService } from '../../global-services/sample.service';
 import { AudioWrapper } from '../../classes/AudioWrapper';
 import { UserService } from '../../global-services/user.service';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { User } from '../../classes/user';
+import { NotifierService } from 'angular-notifier';
 
 @Component({
   selector: 'app-card',
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss']
 })
-export class CardComponent implements OnInit {
-  _name;
-  _author;
-  _authorid;
-  _sample;
-  playing;
-  audioTrack;
+export class CardComponent implements OnInit, OnDestroy {
+
+  _author: string;
+  _sample: Sample;
+  playing: Boolean;
+  audioTrack: AudioWrapper;
+  faTrash = faTrash;
+  _currentUser: User = null;
+  @Output() sampleDeleted = new EventEmitter<Sample>();
+
   @Input()
   set sample(sample: Sample) {
     this._sample = sample;
     this.playing = false;
   }
 
-  constructor(private sampleService: SampleService, private userService: UserService) { }
+  constructor(private sampleService: SampleService, private userService: UserService, private notifierService: NotifierService) {
+    this._currentUser = this.userService.getCurrentUser();
+  }
 
   ngOnInit() {
-    this._name = this._sample.name;
     this.userService.getUser(this._sample.author).subscribe(
       (user) => {
         this._author = user.name;
-        this._authorid = user._id;
-      },
-      (error) => {
-        console.error(error);
       }
     );
   }
 
+  ngOnDestroy() {
+    if (this.audioTrack) this.audioTrack.stopAudio();
+  }
+
   play() {
-    if (!this.audioTrack) this.getTrack();
+    if (!this.audioTrack) this.getTrack('play');
     else if (!this.playing) {
       this.playing = true;
       this.audioTrack.startAudio();
@@ -49,19 +56,28 @@ export class CardComponent implements OnInit {
   }
 
   download() {
-    this.audioTrack.downloadAudio(this._sample.name);
+    if (!this.audioTrack) this.getTrack('dl');
+    else this.audioTrack.downloadAudio(this._sample.name);
   }
 
-  getTrack() {
+  getTrack(option) {
     this.sampleService.downloadSample(this._sample._id).subscribe(
       (arrayBuffer) => {
         this.audioTrack = new AudioWrapper();
         this.audioTrack.decodeArrayBuffer(arrayBuffer, () => {
-          this.playing = true;
-          this.audioTrack.startAudio();
+          if (option === 'play') {
+            this.playing = true;
+            this.audioTrack.startAudio();
+          } else this.audioTrack.downloadAudio(this._sample.name);
         });
-      },
-      (error) => console.log(error)
+      }
     );
+  }
+
+  delete() {
+    this.sampleService.deleteSample(this._sample._id).subscribe((value) => {
+      this.sampleDeleted.emit(this._sample);
+      this.notifierService.notify('success', 'Successfully deleted sample: ' + this._sample.name);
+    });
   }
 }

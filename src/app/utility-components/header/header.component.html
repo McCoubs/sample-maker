@@ -3,6 +3,7 @@
     <a class="logo navigation" [routerLink]="['/dashboard']"><img src="assets/logo.png"></a>
     <a *ngIf="isLoggedIn && !!currentUser" class="navigation" [routerLink]="['/sample-creator']"><span>CREATE</span></a>
     <a *ngIf="isLoggedIn && !!currentUser" class="navigation" [routerLink]="['/profile', currentUser?._id]"><span>PROFILE</span></a>
+    <a class="navigation" [routerLink]="['/credits']"><span>CREDITS</span></a>
   </div>
   <a *ngIf="isLoggedIn && !!currentUser" class="sign-out navigation" (click)="signOut()">SIGN OUT</a>
 </div>

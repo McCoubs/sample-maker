@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { Sample } from '../../classes/sample';
 import { SampleService } from '../../global-services/sample.service';
 
@@ -7,76 +7,57 @@ import { SampleService } from '../../global-services/sample.service';
   templateUrl: './carousel.component.html',
   styleUrls: ['./carousel.component.scss']
 })
-export class CarouselComponent implements OnInit {
+export class CarouselComponent implements OnChanges {
   sampleCache: Array<Array<Sample>>;
   currentSamples = 0;
   showNext = false;
   _displayCache;
+  noSample = false;
   searchParams = [];
+
   @Input()
   set inputCache(inputCache: Array<Sample>) {
     this._displayCache = inputCache;
     this.sampleCache = [];
     this.sampleCache.push(this._displayCache);
-  };
+  }
+
   @Input()
   set search(params) {
     this.searchParams = params;
   }
 
-  constructor(private sampleService: SampleService) {
-
-  }
+  constructor(private sampleService: SampleService) {}
 
   ngOnChanges() {
-    if(this.searchParams && this.searchParams.length > 0 && this._displayCache) {
-      this.showNext = false;
+    this.showNext = false;
+    if (this._displayCache && this._displayCache.length > 0) {
+      this.noSample = false;
       this.sampleCache = [];
       this.sampleCache[0] = this._displayCache;
       this.currentSamples = 0;
-      this.sampleService.getSamples(5, 5, this.searchParams).subscribe(
-        (samples) => {
-          if(samples.length > 0){
-            this.sampleCache.push(samples.map((sample) => new Sample(sample)));
-            this.showNext = true;
-          }
-        },
-        (error) => {
-          console.log("whio[eps");
-        }
-      );
-    }
-  }
-
-  ngOnInit() {
-    this.sampleService.getSamples(5, (this.currentSamples + 1) * 5, this.searchParams).subscribe(
-      (samples) => {
-        if(samples.length > 0){
+      this.loadSamples((samples) => {
+        if (samples.length > 0) {
           this.sampleCache.push(samples.map((sample) => new Sample(sample)));
           this.showNext = true;
         }
-      },
-      (error) => {
-        console.log("whio[eps");
-      }
-    );
+      });
+    } else this.noSample = true;
   }
 
   loadNext() {
     this.currentSamples++;
     this._displayCache = this.sampleCache[this.currentSamples];
-    
-    // if the next isn't already loaded
-    this.sampleService.getSamples(5, (this.currentSamples + 1) * 5, this.searchParams).subscribe(
-      (samples) => {
-        if(samples.length > 0){
+
+    if (!this.sampleCache.length[this.currentSamples + 1]) {
+      this.loadSamples((samples) => {
+        if (samples.length > 0) {
           this.sampleCache.push(samples.map((sample) => new Sample(sample)));
-        } else {this.showNext = false;}
-      },
-      (error) => {
-        console.log("whio[eps");
-      }
-    );
+        } else {
+          this.showNext = false;
+        }
+      });
+    }
   }
 
   loadLast() {
@@ -85,4 +66,19 @@ export class CarouselComponent implements OnInit {
     this.showNext = true;
   }
 
+  loadSamples(callback) {
+    this.sampleService.getSamples(5, (this.currentSamples + 1) * 5, this.searchParams).subscribe(
+      (samples) => {
+        callback(samples);
+      }
+    );
+  }
+
+  // remove deleted from list
+  sampleDeleted($event: Sample) {
+    let tempDisplay = this._displayCache;
+    tempDisplay = tempDisplay.filter((sample) => sample._id !== $event._id);
+    this._displayCache = tempDisplay;
+    this.sampleCache[this.currentSamples] = tempDisplay;
+  }
 }

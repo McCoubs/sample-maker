@@ -212,14 +212,14 @@ export class SampleCreatorComponent implements OnInit, OnDestroy {
     this.ref.detectChanges();
   }
 
-  saveRecording(name: string): void {
+  saveRecording(name: string, tag: string): void {
     // get default
     if (!name || name === '') {
       name = this.uploadedFile.name;
     }
     // save recording
     const file = this.recordedAudio.convertToFile(name);
-    this.sampleService.createSample(file, {}).subscribe(
+    this.sampleService.createSample(file, {tags: tag}).subscribe(
         (sample) => {
           this.notifierService.notify('success', 'New sample: ' + sample.name + ' successfully saved');
           this.app.tick();

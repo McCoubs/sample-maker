@@ -65,7 +65,6 @@ let validateParam = function(input) {
 let validRequest = function(req, res, next) {
   // check req for input errors
   if (!validationResult(req).isEmpty()) {
-    console.log(validationResult(req).array());
     return errorGenerator(res, null, 400, 'One or more inputs provided were improperly provided');
   }
   next();

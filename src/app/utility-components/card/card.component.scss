@@ -10,8 +10,9 @@
     flex-direction: column;
     border-radius: 5px;
     margin: 5% 0;
+    position: relative;
     @media only screen and (min-width: map_get($grid-breakpoints, 'md')) {
-    margin: 0 5%;
+        margin: 0 5%;
     }
 }
 
@@ -51,4 +52,33 @@
         height: 100%;
         width: 100%;
     }
+}
+
+.download-button {
+    position: absolute;
+    height: 32px;
+    width: 32px;
+    top: 6px;
+    right: 10px;
+    cursor: pointer;
+
+    .icon {
+        height: 100%;
+        width: 100%;
+    }
+}
+
+.delete-button {
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  top: 10px;
+  left: 10px;
+  cursor: pointer;
+  color: $palette-error;
+
+  .icon {
+    height: 100%;
+    width: 100%;
+  }
 }
