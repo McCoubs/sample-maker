@@ -6,7 +6,7 @@ import { ProfileComponent} from './route-components/profile/profile.component';
 import { AuthGuard} from './guards/auth.guard';
 import { SampleCreatorComponent } from './route-components/sample-creator/sample-creator.component';
 import { CreditsComponent } from './route-components/credits/credits.component';
-import {SubscriptionPageComponent} from './route-components/subscription-page/subscription-page.component';
+import { SubscriptionPageComponent } from './route-components/subscription-page/subscription-page.component';
 
 const routes: Routes = [
   {

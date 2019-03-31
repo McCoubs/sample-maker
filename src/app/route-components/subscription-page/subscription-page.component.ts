@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {User} from '../../classes/user';
-import {UserService} from '../../global-services/user.service';
+import { User } from '../../classes/user';
+import { UserService } from '../../global-services/user.service';
 
 @Component({
   selector: 'app-subscription-page',
@@ -12,9 +12,7 @@ export class SubscriptionPageComponent implements OnInit {
   subscriptions: Array<User> = [];
   pageOfSubscriptions: Array<User> = [];
   currentUser: User;
-  constructor(
-      private userService: UserService
-  ) { }
+  constructor(private userService: UserService) {}
 
   getSubscriptions(): void {
     this.userService.getUserSubscriptions(this.currentUser._id).subscribe(
@@ -32,5 +30,4 @@ export class SubscriptionPageComponent implements OnInit {
     this.currentUser = this.userService.getCurrentUser();
     this.getSubscriptions();
   }
-
 }
