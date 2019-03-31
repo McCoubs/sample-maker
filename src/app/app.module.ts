@@ -22,6 +22,8 @@ import { notifierOptions } from './config/notifier';
 import { UserCardComponent } from './utility-components/user-card/user-card.component';
 import { UserPagesComponent } from './utility-components/user-pages/user-pages.component';
 import { JwPaginationComponent } from 'jw-angular-pagination';
+import { SubscriptionCardComponent } from './utility-components/subscription-card/subscription-card.component';
+import { SubscriptionPageComponent } from './route-components/subscription-page/subscription-page.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +38,9 @@ import { JwPaginationComponent } from 'jw-angular-pagination';
     CreditsComponent,
     UserCardComponent,
     UserPagesComponent,
-    JwPaginationComponent
+    JwPaginationComponent,
+    SubscriptionCardComponent,
+    SubscriptionPageComponent
   ],
   imports: [
     BrowserModule,

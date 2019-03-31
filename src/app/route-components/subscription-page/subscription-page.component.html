@@ -1,0 +1,11 @@
+<div class="subscription-page-container" *ngIf="subscriptions && subscriptions.length != 0">
+  <div class="subscription-card">
+    <app-subscription-card class="subscription-card" *ngFor="let user of pageOfSubscriptions" [user]="user"></app-subscription-card>
+    <div class="pagination-container">
+      <jw-pagination [items]="subscriptions" (changePage)="onChangePage($event)"></jw-pagination>
+    </div>
+  </div>
+</div>
+<div class="noSubNotif" *ngIf="!subscriptions || subscriptions.length === 0">
+  <div>You haven't subscribed to anyone yet!</div>
+</div>
