@@ -5,9 +5,6 @@
     margin: 0 auto;
     padding: 20px;
     width: 100%;
-    @media only screen and (min-width: map_get($grid-breakpoints, 'md')) {
-        width: 80%;
-    }
 }
 
 .dash-title {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
+import {Component, OnInit, Input, OnDestroy, Output, EventEmitter, ChangeDetectorRef} from '@angular/core';
 import { Sample } from '../../classes/sample';
 import { SampleService } from '../../global-services/sample.service';
 import { AudioWrapper } from '../../classes/AudioWrapper';
@@ -28,7 +28,8 @@ export class CardComponent implements OnInit, OnDestroy {
     this.playing = false;
   }
 
-  constructor(private sampleService: SampleService, private userService: UserService, private notifierService: NotifierService) {
+  constructor(private sampleService: SampleService, private userService: UserService,
+              private notifierService: NotifierService, private ref: ChangeDetectorRef) {
     this._currentUser = this.userService.getCurrentUser();
   }
 
@@ -53,6 +54,7 @@ export class CardComponent implements OnInit, OnDestroy {
       this.playing = false;
       this.audioTrack.stopAudio();
     }
+    this.ref.detectChanges();
   }
 
   download() {
@@ -68,6 +70,7 @@ export class CardComponent implements OnInit, OnDestroy {
           if (option === 'play') {
             this.playing = true;
             this.audioTrack.startAudio();
+            this.ref.detectChanges();
           } else this.audioTrack.downloadAudio(this._sample.name);
         });
       }

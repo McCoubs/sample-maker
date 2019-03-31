@@ -41,17 +41,18 @@
         font-weight: 450;
     }
     &.username {
-        color:$palette-darkgray;
+        color: $palette-darkgray;
     }
 }
 
 .play-button {
-    height: 75px;
-    width: 75px;
-    .icon {
-        height: 100%;
-        width: 100%;
-    }
+  cursor: pointer;
+  height: 75px;
+  width: 75px;
+  .icon {
+    height: 100%;
+    width: 100%;
+  }
 }
 
 .download-button {
