@@ -6,7 +6,7 @@
   </div>
   <div class="info-section">
     <span class="title info-span">{{_name}}</span>
-    <span class="username info-span">{{_author}}</span>
+    <a class="username info-span" [routerLink]="['/profile', this._authorid]"><span>{{_author}}</span></a>
   </div>
   <!--div>Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> 
     from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> 

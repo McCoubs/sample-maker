@@ -1,0 +1,13 @@
+@import '~src/global-styles';
+.user-card-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  .pagination-container {
+    align-self: center;
+  }
+  .user-card {
+    margin-bottom: 15px;
+    width: 100%;
+  }
+}

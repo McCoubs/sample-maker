@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../../global-services/authentication.service';
 import { UserService } from '../../global-services/user.service';
 import { faEnvelope, faSignature } from '@fortawesome/free-solid-svg-icons';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { User } from '../../classes/user';
 import { Sample } from '../../classes/sample';
 import { SampleService } from '../../global-services/sample.service';
@@ -25,9 +25,8 @@ export class ProfileComponent implements OnInit {
   isMyProfile: Boolean = false;
   selectedTab = 0;
   userSamples: Array<Sample> = [];
-  // TODO: these are currently just arrays of IDs
-  subscribers: Array<String> = [];
-  subscriptions: Array<String> = [];
+  subscribers: Array<User> = [];
+  subscriptions: Array<User> = [];
   currentUser = this.userService.getCurrentUser();
   userId = [];
 
@@ -35,58 +34,51 @@ export class ProfileComponent implements OnInit {
       private authService: AuthenticationService,
       private userService: UserService,
       private sampleService: SampleService,
-      private route: ActivatedRoute
-  ) { }
-
-  onSelect(s: string): void {
-    if (s === 'Samples') {
-      this.selectedTab = 0;
-    } else if (s === 'Subscriptions') {
-      this.selectedTab = 1;
-    } else {
-      this.selectedTab = 2;
-    }
-  }
+      private route: ActivatedRoute,
+      private router: Router
+  ) {}
 
   sub(): void {
-    //this.subscribers = this.getSubscribers();
+    this.userService.sub(this.userService.getCurrentUser()._id, this.selectedUser._id).subscribe(
+        (value) => {
+          this.subscribed = true;
+          this.getSubscribers();
+        }
+    );
   }
 
   unsub(): void {
-    //this.subscribers = this.getSubscribers();
+    this.userService.unsub(this.userService.getCurrentUser()._id, this.selectedUser._id).subscribe(
+      (value) => {
+        this.subscribed = false;
+        this.getSubscribers();
+      }
+    );
   }
 
-  edit(): void {
-    this.selectedUser = this.selectedUser;
+  isSubscribed(): void {
+      this.userService.isSubbed(this.currentUser._id, this.selectedUser._id).subscribe(
+          (res) => {
+              this.subscribed = res.follower._id === this.currentUser._id;
+          }
+      );
   }
 
-  hasNoSamples(): Boolean {
-    return this.userSamples.length === 0;
+  getSubscribers(): void {
+      this.userService.getUserSubscribers(this.selectedUser._id).subscribe(
+          (subscriptions) => {
+              this.subscribers = subscriptions.map((sub) => new User(sub.follower));
+          }
+      );
   }
 
-  // getSubscribers(): Array<String> {
-  //   this.userService.getUserSubscribers(this.selectedUser._id).subscribe(
-  //       (subscribers) => {
-  //         return (subscribers.map((subscriber) => String(subscriber)));
-  //       },
-  //       (error) => {
-  //         console.log(error);
-  //       }
-  //   );
-  //   return [];
-  // }
-
-  // getSubscriptions(): Array<String> {
-  //   this.userService.getUserSubscriptions(this.selectedUser._id).subscribe(
-  //       (subscriptions) => {
-  //         return (subscriptions.map((subscription) => String(subscription)));
-  //       },
-  //       (error) => {
-  //         console.log(error);
-  //       }
-  //   );
-  //   return [];
-  // }
+  getSubscriptions(): void {
+      this.userService.getUserSubscriptions(this.selectedUser._id).subscribe(
+          (subs) => {
+              this.subscriptions = subs.map((sub) => new User(sub.followee));
+          }
+      );
+  }
 
   ngOnInit() {
     // on route change
@@ -102,17 +94,21 @@ export class ProfileComponent implements OnInit {
             // set profile user and samples
             this.selectedUser = new User(user);
             this.isMyProfile = this.selectedUser._id === this.currentUser._id;
+            if (!this.isMyProfile) {
+                this.isSubscribed();
+            }
             this.sampleService.getSamples(5, 0, [this.selectedUser._id]).subscribe(
                 (samples) => {
                   this.userSamples = samples.map((sample) => new Sample(sample));
                   this.userId = [this.selectedUser._id];
                 }
             );
-            // this.subscribers = this.getSubscribers();
-            // this.subscriptions = this.getSubscriptions();
+            this.getSubscribers();
+            this.getSubscriptions();
           },
+          // if no user found, re-direct to dashboard
           (error) => {
-            console.log(error);
+            this.router.navigateByUrl('dashboard');
           }
       );
     });
