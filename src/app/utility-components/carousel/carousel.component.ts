@@ -76,9 +76,12 @@ export class CarouselComponent implements OnChanges {
 
   // remove deleted from list
   sampleDeleted($event: Sample) {
-    let tempDisplay = this._displayCache;
-    tempDisplay = tempDisplay.filter((sample) => sample._id !== $event._id);
-    this._displayCache = tempDisplay;
-    this.sampleCache[this.currentSamples] = tempDisplay;
+    // reload carousel
+    this._displayCache = [];
+    this.currentSamples = -1;
+    this.loadSamples((samples) => {
+      this._displayCache = samples.map((sample) => new Sample(sample));
+      this.ngOnChanges();
+    });
   }
 }
