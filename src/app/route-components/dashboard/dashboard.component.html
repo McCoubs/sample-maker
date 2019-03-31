@@ -13,7 +13,7 @@
   <div class="profile-content" *ngIf="searching">
       <div class="dash-title">ARTISTS</div>
       <app-user-pages [users]="foundUsers"></app-user-pages>
-      <div *ngIf="!foundUsers || foundUsers.length === 0">
+      <div *ngIf="!foundUsers || foundUsers.length === 0" class="artist-message">
           NO ARTISTS FOUND
       </div>
   </div>
