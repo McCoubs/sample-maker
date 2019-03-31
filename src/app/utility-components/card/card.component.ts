@@ -52,7 +52,7 @@ export class CardComponent implements OnInit, OnDestroy {
 
   download() {
     if(!this.audioTrack) this.getTrack("dl");
-    this.audioTrack.downloadAudio(this._sample.name);
+    else this.audioTrack.downloadAudio(this._sample.name);
   }
 
   getTrack(option) {
