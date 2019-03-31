@@ -23,6 +23,7 @@ export class AudioWrapper {
   loaded: Boolean = false;
   // list of applied filters
   filterNodes: Array<BiquadFilterNode> = [];
+  playbackRate = 1;
 
   constructor(buffer?: AudioBuffer) {
     // set audio context
@@ -245,6 +246,7 @@ export class AudioWrapper {
       this.sourceNode.connect(this.connectNode);
       // set buffer and start audio
       this.sourceNode.buffer = this.buffer;
+      this.setPlayBackRate(this.playbackRate);
       this.loaded = true;
     }
   }
@@ -274,6 +276,7 @@ export class AudioWrapper {
   }
 
   setPlayBackRate(rate: number): void {
+    this.playbackRate = rate;
     this.sourceNode.playbackRate.value = rate;
   }
 

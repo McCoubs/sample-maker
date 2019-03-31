@@ -5,7 +5,7 @@
       <img class="icon" src="{{'assets/icons/search.svg'}}">
     </div>
     <div *ngIf="searching" class="cancel-search" (click)="reset()">
-        <img class="icon" src="{{'assets/icons/close.svg'}}">
+        <img class="icon" src="{{ 'assets/icons/close.svg' }}">
     </div>
   </div>
   <div class="dash-title">{{searching?"SAMPLES":"NEWEST SAMPLES"}}</div>
