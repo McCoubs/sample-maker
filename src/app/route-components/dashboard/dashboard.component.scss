@@ -10,14 +10,35 @@
     }
 }
 
-.newest-title {
+.dash-title {
     font-size: 24px;
     text-align: center;
     padding-top: 20px;
     margin-bottom: 30px;
 }
 
-.search-button {
-    height: 25px;
-    width: 25px;
+.search-area {
+    margin-top: 30px;
+}
+
+.search-area, .search-button, .cancel-search {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+}
+
+.search-button, .cancel-search {
+    cursor: pointer;
+    width: 75px;
+    background: $palette-lightgray;
+    border: 1px solid $palette-darkgray;
+    .icon {
+        height: 80%;
+    }
+}
+
+.search-bar {
+    height: 100%;
+    width: 50%;
 }

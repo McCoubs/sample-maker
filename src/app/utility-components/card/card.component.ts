@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Sample } from '../../classes/sample';
 import { SampleService } from '../../global-services/sample.service';
 import { AudioWrapper } from '../../classes/AudioWrapper';
@@ -9,7 +9,7 @@ import { UserService } from '../../global-services/user.service';
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss']
 })
-export class CardComponent implements OnInit {
+export class CardComponent implements OnInit, OnDestroy {
   _name;
   _author;
   _authorid;
@@ -37,9 +37,13 @@ export class CardComponent implements OnInit {
     );
   }
 
+  ngOnDestroy() {
+    if(this.audioTrack) this.audioTrack.stopAudio();
+  }
+
   play() {
-    if (!this.audioTrack) this.getTrack();
-    else if (!this.playing) {
+    if(!this.audioTrack) this.getTrack("play");
+    else if(!this.playing){
       this.playing = true;
       this.audioTrack.startAudio();
     } else {
@@ -49,16 +53,19 @@ export class CardComponent implements OnInit {
   }
 
   download() {
-    this.audioTrack.downloadAudio(this._sample.name);
+    if(!this.audioTrack) this.getTrack("dl");
+    else this.audioTrack.downloadAudio(this._sample.name);
   }
 
-  getTrack() {
+  getTrack(option) {
     this.sampleService.downloadSample(this._sample._id).subscribe(
       (arrayBuffer) => {
         this.audioTrack = new AudioWrapper();
         this.audioTrack.decodeArrayBuffer(arrayBuffer, () => {
-          this.playing = true;
-          this.audioTrack.startAudio();
+          if(option === "play"){
+            this.playing = true;
+            this.audioTrack.startAudio();
+          } else this.audioTrack.downloadAudio(this._sample.name);
         });
       },
       (error) => console.log(error)
