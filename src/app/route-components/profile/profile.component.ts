@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../../global-services/authentication.service';
 import { UserService } from '../../global-services/user.service';
 import { faEnvelope, faSignature } from '@fortawesome/free-solid-svg-icons';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { User } from '../../classes/user';
 import { Sample } from '../../classes/sample';
 import { SampleService } from '../../global-services/sample.service';
@@ -25,10 +25,8 @@ export class ProfileComponent implements OnInit {
   isMyProfile: Boolean = false;
   selectedTab = 0;
   userSamples: Array<Sample> = [];
-  // TODO: these are currently just arrays of IDs
   subscribers: Array<User> = [];
   subscriptions: Array<User> = [];
-  isSubbed: Array<User> = [];
   currentUser = this.userService.getCurrentUser();
   userId = [];
 
@@ -36,58 +34,32 @@ export class ProfileComponent implements OnInit {
       private authService: AuthenticationService,
       private userService: UserService,
       private sampleService: SampleService,
-      private route: ActivatedRoute
-  ) { }
+      private route: ActivatedRoute,
+      private router: Router
+  ) {}
 
-  onSelect(s: string): void {
-    if (s === 'Samples') {
-      this.selectedTab = 0;
-    } else if (s === 'Subscribers') {
-      this.selectedTab = 1;
-    } else {
-      this.selectedTab = 2;
-    }
-  }
   sub(): void {
     this.userService.sub(this.userService.getCurrentUser()._id, this.selectedUser._id).subscribe(
         (value) => {
           this.subscribed = true;
           this.getSubscribers();
-        },
-        (error) => {
-          console.log(error);
         }
     );
   }
 
   unsub(): void {
     this.userService.unsub(this.userService.getCurrentUser()._id, this.selectedUser._id).subscribe(
-        (value) => {
-          this.subscribed = false;
-          this.getSubscribers();
-        },
-        (error) => {
-          console.log(error);
-        }
-        );
-  }
-
-  edit(): void {
-    this.selectedUser = this.selectedUser;
-  }
-
-  hasNoSamples(): Boolean {
-    return this.userSamples.length === 0;
+      (value) => {
+        this.subscribed = false;
+        this.getSubscribers();
+      }
+    );
   }
 
   isSubscribed(): void {
       this.userService.isSubbed(this.currentUser._id, this.selectedUser._id).subscribe(
-          (query) => {
-              this.isSubbed = query.map((res) => new User(res.follower));
-              this.subscribed = (this.isSubbed.length > 0);
-          },
-          (error) => {
-              console.log(error);
+          (res) => {
+              this.subscribed = res.follower._id === this.currentUser._id;
           }
       );
   }
@@ -134,8 +106,9 @@ export class ProfileComponent implements OnInit {
             this.getSubscribers();
             this.getSubscriptions();
           },
+          // if no user found, re-direct to dashboard
           (error) => {
-            console.log(error);
+            this.router.navigateByUrl('dashboard');
           }
       );
     });

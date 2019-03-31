@@ -2,13 +2,13 @@
     <div class="profile-header">
         <div class="left-profile-header">
             <div>
-                <img class="profile-pic" src="{{profilePic}}">
+                <img class="profile-pic" src="{{ profilePic }}">
             </div>
             <div class="profile-details">
                 <fa-icon class="input-icon" [icon]="faSignature"></fa-icon>
-                <label class="detail-label">{{selectedUser?.name}}</label><br>
+                <label class="detail-label">{{ selectedUser?.name }}</label><br>
                 <fa-icon class="input-icon" [icon]="faEnvelope"></fa-icon>
-                <label class="detail-label">{{selectedUser?.email}}</label>
+                <label class="detail-label">{{ selectedUser?.email }}</label>
             </div>
         </div>
         <div class="sub-unsub" *ngIf="!isMyProfile">
@@ -23,28 +23,23 @@
                 </button>
             </ng-template>
         </div>
-        <!--<ng-template #editButton>
-            <button class="btn btn-secondary" type="button" (click)="edit()">
-            Edit Profile
-            </button>
-        </ng-template>-->
     </div>
 
     <div class="tab-container">
         <div class="profile-tabs">
-            <button class="btn btn-primary" type="button" (click)="onSelect('Samples')">
-                <span class="tab-header">Samples {{userSamples.length}}</span> <br>
+            <button class="btn btn-primary" type="button" (click)="selectedTab = 0;">
+                <span class="tab-header">Samples {{ userSamples.length }}</span> <br>
             </button>
-            <button class="btn btn-primary" type="button" (click)="onSelect('Subscribers')">
-                <span class="tab-header">Subscribers {{subscribers.length}}</span>
+            <button class="btn btn-primary" type="button" (click)="selectedTab = 1;">
+                <span class="tab-header">Subscribers {{ subscribers.length }}</span>
             </button>
-            <button class="btn btn-primary" type="button" (click)="onSelect('Subscriptions')">
-                <span class="tab-header">Subscriptions {{subscriptions.length}}</span> <br>
+            <button class="btn btn-primary" type="button" (click)="selectedTab = 2;">
+                <span class="tab-header">Subscriptions {{ subscriptions.length }}</span> <br>
             </button>
         </div>
         <div class="profile-content" *ngIf="selectedTab === 0">
-            <app-carousel [inputCache]="userSamples" [search]="userId"></app-carousel>
-            <div *ngIf="!userSamples || hasNoSamples()">
+            <app-carousel *ngIf="userSamples && userSamples.length > 0" [inputCache]="userSamples" [search]="userId"></app-carousel>
+            <div *ngIf="!userSamples || userSamples.length === 0">
                 No samples to display.
             </div>
         </div>

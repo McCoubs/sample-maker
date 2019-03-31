@@ -71,26 +71,41 @@ module.exports = function UserRouting(app) {
     });
   });
 
-  app.get('/api/user/:id/subscribers/:id2', [validateParam('id'), validateParam('id2'), validRequest, jwtAuth], (req, res) => {
-    Subscription.find({follower: req.params.id, followee: req.params.id2}, {follower: 1}).populate('follower').exec((err, sub) => {
-      if (err) return errorGenerator(res, err, 500, 'Ids do not exist: ' + req.params.id + ' and ' + req.params.id2);
+  app.get('/api/user/:follower_id/subscribers/:followee_id', [validateParam('follower_id'), validateParam('followee_id'), validRequest, jwtAuth], (req, res) => {
+    let follower_id = req.params.follower_id;
+    let followee_id = req.params.followee_id;
+    Subscription.findOne({follower: follower_id, followee: followee_id}, {follower: 1}).populate('follower').exec((err, sub) => {
+      if (err) return errorGenerator(res, err, 500, 'Error finding relationship does not exist between: ' + follower_id + ' and ' + followee_id);
       res.json(sub);
     });
   });
 
-  app.post('/api/user/:id/subscribers/:id2', [validateParam('id'), validateParam('id2'), validRequest, jwtAuth], (req, res) => {
-    Subscription.create({follower: req.params.id, followee: req.params.id2}, (err, sub) => {
-      if (err) return errorGenerator(res, err, 500, 'Could not subscribe to user: ' + req.params.id2);
-      res.json(sub);
+  app.post('/api/user/:follower_id/subscribers/:followee_id', [validateParam('follower_id'), validateParam('followee_id'), validRequest, jwtAuth], (req, res) => {
+    let follower_id = req.params.follower_id;
+    let followee_id = req.params.followee_id;
+    // check signed in user is one creating relationship
+    if (req.user._id !== follower_id) return errorGenerator(res, null, 403, 'Unauthorized: cannot sub for another user');
+    // check for pre-existing relationship
+    Subscription.findOne({follower: follower_id, followee: followee_id}, (err, foundSub) => {
+      if (err) return errorGenerator(res, err, 500, 'Could not subscribe to user: ' + followee_id);
+      if (foundSub) return res.json(foundSub);
+      // otherwise create new relationship
+      Subscription.create({follower: follower_id, followee: followee_id}, (err, createdSub) => {
+        if (err || !createdSub) return errorGenerator(res, err, 500, 'Could not subscribe to user: ' + followee_id);
+        res.json(createdSub);
+      });
     });
   });
 
-  app.delete('/api/user/:id/subscribers/:id2', [validateParam('id'), validateParam('id2'), validRequest, jwtAuth], (req, res) => {
-    Subscription.remove({follower: req.params.id, followee: req.params.id2}, (err, sub) => {
-      if (err) return errorGenerator(res, err, 500, 'Could not unsubscribe to user: ' + req.params.id);
-      res.json(sub);
+  app.delete('/api/user/:follower_id/subscribers/:followee_id', [validateParam('follower_id'), validateParam('follower_id'), validRequest, jwtAuth], (req, res) => {
+    let follower_id = req.params.follower_id;
+    let followee_id = req.params.followee_id;
+    // check signed in user is one deleting  relationship
+    if (req.user._id !== follower_id) return errorGenerator(res, null, 403, 'Unauthorized: cannot unsub for another user');
+    Subscription.deleteOne({follower: follower_id, followee: followee_id}, (err) => {
+      if (err) return errorGenerator(res, err, 500, 'Could not unsubscribe to user: ' + followee_id);
+      res.json('successfully unsubscribed from: ' + followee_id);
     });
-    console.log(req.params);
   });
 
   app.get('/api/user/:id/subscriptions', [validateParam('id'), validRequest, jwtAuth], (req, res) => {

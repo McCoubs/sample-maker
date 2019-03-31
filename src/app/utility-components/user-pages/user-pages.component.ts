@@ -13,13 +13,11 @@ export class UserPagesComponent implements OnInit {
   set users(givenSet: Array<User>) {
     this.userSet = givenSet;
   }
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   onChangePage(nextPage: Array<User>) {
     this.pageOfUsers = nextPage;
   }
-
 }
