@@ -15,18 +15,17 @@ export class EndpointService {
     users: '/api/users',
     user: '/api/users/:id',
     user_samples: '/api/user/:id/samples',
-    user_subscribers: 'api/user/:id/subscribers',
-    user_subscriptions: 'api/user/:id/subscriptions',
+    user_subscribers: '/api/user/:id/subscribers',
+    user_subscriptions: '/api/user/:id/subscriptions',
     samples: '/api/samples',
     sample: '/api/samples/:id',
-    subscribe: '/api/subscribe',
-    unsubscribe: '/api/unsubscribe',
+    user_subscriber: '/api/user/:id/subscribers/:id2',
     sample_download: '/api/samples/:id/audio'
   };
 
   constructor() {}
 
-  generateUrl(endpoint: string, id?: number | string): string {
+  generateUrl(endpoint: string, id?: number | string, id2?: number | string): string {
     // generate base url
     let url = this.baseUrl + this.endpoints[endpoint];
     // if id provided, find and replace it
@@ -35,6 +34,13 @@ export class EndpointService {
         url = url.replace(':id', id.toString());
       } else {
         url = url + '/' + id;
+      }
+    }
+    if (!isNullOrUndefined(id2)) {
+      if (url.indexOf(':id2') !== -1) {
+        url = url.replace(':id2', id2.toString());
+      } else {
+        url = url + '/' + id2;
       }
     }
     return url;

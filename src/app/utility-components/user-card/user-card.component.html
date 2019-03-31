@@ -1,0 +1,21 @@
+<div class="user-card">
+  <div class="card-content">
+    <img class="user-pic" src="{{profilePic}}">
+    <div class="user-details">
+      <fa-icon class="input-icon" [icon]="faSignature"></fa-icon>
+      <a class="username" [routerLink]="['/profile', this.thisUser._id]"><span>{{thisUser?.name}}</span></a>
+    </div>
+  </div>
+  <div class="sub-unsub" *ngIf="!isMe">
+    <div *ngIf="!subscribed; else unsubButton">
+      <button id="subscribe-button" class="btn btn-secondary" type="button" (click)="sub()">
+        Subscribe
+      </button>
+    </div>
+    <ng-template #unsubButton>
+      <button class="btn btn-secondary" type="button btn-secondary" (click)="unsub()">
+        Unsubscribe
+      </button>
+    </ng-template>
+  </div>
+</div>
