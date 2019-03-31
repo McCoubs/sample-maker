@@ -20,7 +20,7 @@ Once the music has been created it will be saved to the database and be availabl
 
 ### User Features
 - Sample creation/saving/downloading
-- Sample publishing to allow other users to interact with and listen to samples (public versus private samples)
+- Sample publishing to allow other users to interact with and listen to samples
 - User creation, login, authentication
 - Home page, search options
 - User profiles
@@ -33,7 +33,6 @@ Once the music has been created it will be saved to the database and be availabl
 ## Additional Features for Final
 - Sample uploading
 - User subscriptions
-- Sample description pages
 - Sample editing
 
 ## Description of Technologies Used
