@@ -38,9 +38,11 @@
       <span class="title">Saving Controls</span>
       <div class="diff-container">
         <input #nameInput type="text" placeholder="Recording Name..." class="form-control">
-        <input #tagInput type="text" placeholder="Enter Tags" class="form-control">
-        <button class="btn btn-primary" (click)="saveRecording(nameInput.value, tagInput.value)">Save recording</button>
-        <button class="btn btn-primary" (click)="downloadRecording(nameInput.value)">Download recording</button>
+        <input #tagInput type="text" placeholder="Enter Tags (separate with ',')" class="form-control">
+        <div class="save-down-btns">
+          <button class="btn btn-primary" (click)="saveRecording(nameInput.value, tagInput.value)">Save recording</button>
+          <button class="btn btn-primary" (click)="downloadRecording(nameInput.value)">Download recording</button>
+        </div>
       </div>
     </div>
   </div>

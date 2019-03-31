@@ -8,8 +8,15 @@
         <img class="icon" src="{{'assets/icons/close.svg'}}">
     </div>
   </div>
-  <div class="newest-title">{{searching?"SAMPLES":"NEWEST SAMPLES"}}</div>
+  <div class="dash-title">{{searching?"SAMPLES":"NEWEST SAMPLES"}}</div>
   <app-carousel [inputCache]="sampleCache" [search]="searchParams"></app-carousel>
+  <div class="profile-content" *ngIf="searching">
+      <div class="dash-title">ARTISTS</div>
+      <app-user-pages [users]="foundUsers"></app-user-pages>
+      <div *ngIf="!foundUsers || foundUsers.length === 0">
+          NO ARTISTS FOUND
+      </div>
+  </div>
   
   <!--input #fileTester type="file" name="fileUpload"/>
   <button (click)="press(fileTester.files[0])"> butt dasfasdfsa dfsdf dsf</button-->

@@ -178,4 +178,16 @@
       text-align: center;
     }
   }
+
+  .saving-controls {
+    .diff-container{
+      flex-direction: column;
+    }
+
+    .save-down-btns {
+      display: flex;
+      justify-content: space-around;
+      width: 50%;
+    }
+  }
 }

@@ -122,6 +122,15 @@ module.exports = function UserRouting(app) {
     });
   });
 
+  app.get('/api/users/', [validRequest, jwtAuth], (req, res) => {
+    let searchParams = {};
+    if(req.query.name) searchParams = {name: {'$regex': new RegExp(req.query.name, "i")}};
+    User.find(searchParams).exec((err, users) => {
+      if (err) return errorGenerator(res, err, 500, 'Could not find user');
+      res.json(users);
+    });
+  });
+
   // TODO: implement FE and BE deletion routing
   app.delete('/api/users/:id', (req, res) => {
 

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SampleService } from '../../global-services/sample.service';
 import { Sample } from '../../classes/sample';
+import { UserService } from '../../global-services/user.service';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -12,8 +13,9 @@ export class DashboardComponent implements OnInit {
   sampleCache: Array<string>;
   searchParams = [];
   searching = false;
+  foundUsers = [];
 
-  constructor(private sampleService: SampleService) {}
+  constructor(private sampleService: SampleService, private userService: UserService) {}
 
   ngOnInit() {
     this.sampleCache = [];
@@ -50,5 +52,14 @@ export class DashboardComponent implements OnInit {
         console.log(error);
       }
     );
+
+    this.userService.getUsers(option).subscribe(
+      (users) => {
+        this.foundUsers = users;
+      },
+      (error) => {
+        console.log(error);
+      }
+    )
   }
 }

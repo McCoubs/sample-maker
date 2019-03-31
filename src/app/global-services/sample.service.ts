@@ -38,7 +38,7 @@ export class SampleService {
     if (searchOptions && searchOptions.length > 0) {
       params = params.append('name', searchOptions.join(','));
       params = params.append('tags', searchOptions.join(','));
-      params = params.append('genres', searchOptions.join(','));
+      params = params.append('author', searchOptions.join(','));
     }
     return this.http.get(this.endpointService.generateUrl('samples'), {params: params});
   }

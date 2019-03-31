@@ -5,7 +5,7 @@ import { User } from '../classes/user';
 import { isNullOrUndefined } from 'util';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { EndpointService } from './endpoint.service';
 
 @Injectable({
@@ -47,6 +47,13 @@ export class UserService {
     // empty vars and storage
     this.currentUser = null;
     this.setCookie('currentUser', null);
+  }
+
+  public getUsers(name): Observable<any> {
+    let params = new HttpParams();
+    params = params.append('name', name);
+    console.log(this.endpointService.generateUrl('user'));
+    return this.http.get(this.endpointService.generateUrl('users'), {params: params});
   }
 
   public isSubbed(id: string | number, id2: string | number): Observable<any> {
