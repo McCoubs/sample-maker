@@ -2,8 +2,6 @@ export class User {
   _id: string;
   email: string;
   name: string;
-  subscriptions: string;
-  subscribers: string;
   exp: number;
   iat: number;
 
@@ -13,7 +11,5 @@ export class User {
     this.name = data.name;
     this.exp = data.exp;
     this.iat = data.iat;
-    this.subscriptions = data.subscriptions;
-    this.subscribers = data.subscribers;
   }
 }

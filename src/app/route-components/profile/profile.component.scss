@@ -2,7 +2,7 @@
 
 .profile-component {
   display: flex;
-  justify-content: left;
+  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
   margin-top: 40px;
@@ -12,6 +12,39 @@
     width: 80%;
   }
 
+  .profile-header {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .left-profile-header {
+      display: flex;
+      align-items: center;
+      .profile-pic {
+        border-radius: 50%;
+        height: 125px;
+        width: 125px;
+        margin-right: 15px;
+        padding: 8px 0;
+      }
+      .profile-details {
+        font-size: 20px;
+      }
+      .input-icon {
+        height: 30px;
+        width: 30px;
+        color: $palette-blue;
+        bottom: 15px;
+        margin-right: 10px;
+        font-size: 20px;
+      }
+    }
+    .sub-unsub {
+      margin-right: 30px;
+    }
+  }
   .tab-container {
     width: 100%;
     background-color: $palette-blue;
@@ -30,34 +63,10 @@
       padding: 10px;
     }
   }
-
   .tab-header {
     font-weight: bold;
   }
 
-
-  .profile-pic {
-    border-radius: 50%;
-    height:125px;
-    width:125px;
-    margin-right: 15px;
-    padding: 8px 0;
-  }
-
-  .profile-details {
-    flex-basis: 72%;
-    font-size: 20px;
-    position: relative;
-  }
-
-  .input-icon {
-    height: 30px;
-    width: 30px;
-    color: $palette-blue;
-    bottom: 15px;
-    margin-right: 10px;
-    font-size: 20px;
-  }
 }
 
 

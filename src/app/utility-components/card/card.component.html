@@ -7,6 +7,6 @@
   </div>
   <div class="info-section">
     <span class="title info-span">{{_name}}</span>
-    <span class="username info-span">{{_author}}</span>
+    <a class="username info-span" [routerLink]="['/profile', this._authorid]"><span>{{_author}}</span></a>
   </div>
 </div>
