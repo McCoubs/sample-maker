@@ -1,0 +1,13 @@
+.subscription-page-container {
+  display: flex;
+  margin-top: 10px;
+  margin-right: 50px;
+  margin-left: 50px;
+  .subscription-card {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .pagination-container {
+    align-self: center;
+  }
+}
