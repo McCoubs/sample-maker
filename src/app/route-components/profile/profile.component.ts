@@ -59,7 +59,7 @@ export class ProfileComponent implements OnInit {
   isSubscribed(): void {
       this.userService.isSubbed(this.currentUser._id, this.selectedUser._id).subscribe(
           (res) => {
-              this.subscribed = res.follower._id === this.currentUser._id;
+              this.subscribed = res && res.follower && res.follower._id === this.currentUser._id;
           }
       );
   }
