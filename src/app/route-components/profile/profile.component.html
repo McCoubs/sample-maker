@@ -7,8 +7,10 @@
             <div class="profile-details">
                 <fa-icon class="input-icon" [icon]="faSignature"></fa-icon>
                 <label class="detail-label">{{ selectedUser?.name }}</label><br>
-                <fa-icon class="input-icon" [icon]="faEnvelope"></fa-icon>
-                <label class="detail-label">{{ selectedUser?.email }}</label>
+                <ng-container *ngIf="isMyProfile">
+                    <fa-icon class="input-icon" [icon]="faEnvelope"></fa-icon>
+                    <label class="detail-label">{{ selectedUser?.email }}</label>
+                </ng-container>
             </div>
         </div>
         <div class="sub-unsub" *ngIf="!isMyProfile">
