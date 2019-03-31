@@ -28,7 +28,7 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'subscriptions/:id',
+    path: 'my-subscriptions',
     component: SubscriptionPageComponent,
     canActivate: [AuthGuard]
   },
