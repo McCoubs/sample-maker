@@ -51,7 +51,7 @@ module.exports = function UserRouting(app) {
     });
   });
 
-  app.post('/api/logout', jwtAuth, (req, res) => {
+  app.post('/api/logout', (req, res) => {
     // empty cookie and respond
     res.cookies.set('authorization-token', '', { sameSite: true, httpOnly: inProd, secure: inProd });
     res.json({'success' : true});
