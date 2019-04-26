@@ -4,9 +4,9 @@
 ## Team Members
 Name | UTorID
 --- | ---
-Ajiteshwar Rai | raiajite
-Derek Nguyen | nguy1524
-Spencer McCoubrey | mccoubr5
+Ajiteshwar Rai | ########
+Derek Nguyen | ########
+Spencer McCoubrey | ########
 
 ## Decription of Application
 Sampling other works has been a staple of the music industry for years, and this application hopes to grow the collaborative spirit of music by allowing anyone to create and use samples.
